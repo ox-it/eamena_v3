@@ -14,6 +14,13 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+UPDATE 12 Jun 2016
+Concept.py containing a modified  get_preflabel_from_conceptid in which lang is directly acquired 
+from views/resources.py via request.LANGUAGE_CODE instead of default settings.LANGUAGE_CODE. 
+I have temporarily commented ll.419 and 422 as my Elasticsearch needs to be reindexed after the 
+valuetype of the Arabic labels was changed via query from altLabels to prefLabels.
 '''
 
 import uuid
