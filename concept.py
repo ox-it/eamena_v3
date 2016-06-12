@@ -14,6 +14,11 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+UDPATED 12 Jun 2016
+Language acquisition now directly from thread by importing django.utils import translation and using translation.get_language() instead
+of the default settings.LANGUAGE_CODE. This allows the code to read the language dynamically changed via the Language form in
+the template header.htm whose options are populated via a custom context processor header
 '''
 
 import uuid
