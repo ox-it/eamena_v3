@@ -14,11 +14,6 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-UDPATED 12 Jun 2016
-Language acquisition now directly from thread by importing django.utils import translation and using translation.get_language() instead
-of the default settings.LANGUAGE_CODE. This allows the code to read the language dynamically changed via the Language form in
-the template header.htm whose options are populated via a custom context processor header
 '''
 
 import uuid
@@ -385,6 +380,7 @@ class Concept(object):
         else:
             concept = self
         for value in concept.values:
+            
             if value.type == 'prefLabel':
                 if value.language == lang:
                     return value
@@ -631,7 +627,8 @@ class Concept(object):
         cursor = connection.cursor()
         language = translation.get_language()
         entitytype = models.EntityTypes.objects.get(pk=entitytypeid)
-
+        
+#         Query modified to search for labels in the language corresponding to the one recorded in the user's thread. The language is passed as a parameter to cursor.execute()
         sql = """
         WITH RECURSIVE children AS (
             SELECT d.conceptidfrom, d.conceptidto, c2.value, c.languageid, c2.valueid as valueid, c.value as valueto, c.valueid as valueidto, c.valuetype as vtype, 1 AS depth, array[d.conceptidto] AS conceptpath, array[c.valueid] AS idpath        ---|NonRecursive Part
@@ -640,7 +637,7 @@ class Concept(object):
                 JOIN concepts.values c2 ON(c2.conceptid = d.conceptidfrom) 
                 WHERE d.conceptidfrom = '{0}'
                 and c2.valuetype = 'prefLabel'
-                and lower(c.languageid) = '{1}'
+                and lower(c.languageid) = %s
                 and c.valuetype in ('prefLabel', 'sortorder', 'collector')
                 and (d.relationtype = 'member' or d.relationtype = 'hasTopConcept')
                 UNION
@@ -649,17 +646,21 @@ class Concept(object):
                 JOIN children b ON(b.conceptidto = d.conceptidfrom) 
                 JOIN concepts.values v ON(v.conceptid = d.conceptidto) 
                 JOIN concepts.values v2 ON(v2.conceptid = d.conceptidfrom) 
-                WHERE lower(v.languageid) = '{1}'
+                WHERE lower(v.languageid) = %s
                 and v2.valuetype = 'prefLabel'
                 and v.valuetype in ('prefLabel','sortorder', 'collector')
                 and (d.relationtype = 'member' or d.relationtype = 'hasTopConcept')
             ) SELECT conceptidfrom, conceptidto, value, valueid, valueto, valueidto, depth, idpath, conceptpath, vtype FROM children ORDER BY depth, conceptpath;
-        """.format(entitytype.conceptid_id, language)
-
+        """.format(entitytype.conceptid_id)
 
         column_names = ['conceptidfrom', 'conceptidto', 'value', 'valueid', 'valueto', 'valueidto', 'depth', 'idpath', 'conceptpath', 'vtype']
-        cursor.execute(sql)
+        cursor.execute(sql, [language, language])
         rows = cursor.fetchall()
+        
+#         If a prefLabel in the right language does not exist, the query is defaulted to the language passed in settings.LANGUAGE_CODE 
+        if len(rows) == 0:
+            cursor.execute(sql, [settings.LANGUAGE_CODE.lower(), settings.LANGUAGE_CODE.lower()])
+            rows = cursor.fetchall()
 
         class Val(object):
             def __init__(self, conceptid):
