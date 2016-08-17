@@ -627,6 +627,8 @@ class Concept(object):
         cursor = connection.cursor()
         language = translation.get_language()
         entitytype = models.EntityTypes.objects.get(pk=entitytypeid)
+        list_of_good_concepts = []
+        list_of_bad_indices = []
         
 #         Query modified to search for labels in the language corresponding to the one recorded in the user's thread. The language is passed as a parameter to cursor.execute()
         sql = """
@@ -701,8 +703,24 @@ class Concept(object):
                             path.pop(0)
                             _findNarrower(child, path, rec)
                 val.children.sort(key=lambda x: (x.sortorder, x.text))
-
-        for row in rows:
+        
+        for row in rows: # Looks for concepts which have a label in the target language
+            rec = dict(zip(column_names, row))
+            if str(rec['languageid']).lower() == language:
+                path = rec['conceptpath'][-37:-1] #Retrieves the bottom conceptid in the conceptpath
+                list_of_good_concepts.append(path)
+                
+        for row in rows: # Looks for concepts which have multiple-language labels, including the target language, and builds an index of those rows
+            rec = dict(zip(column_names, row))
+            if str(rec['languageid']).lower() != language:
+                for concept in list_of_good_concepts:
+                    if rec['conceptpath'][-37:-1] == concept:  #Retrieves the bottom conceptid in the conceptpath
+                        list_of_bad_indices.append(rows.index(row))
+                        
+        removeset = set(list_of_bad_indices)
+        newrows = [v for i, v in enumerate(rows) if i not in removeset] # Builds the new set of rows, having purged the rows which contain concept labels in other languages for concepts that have labels in the target language
+        
+        for row in newrows:
             rec = dict(zip(column_names, row))
             path = rec['conceptpath'][1:-1].split(',')
             _findNarrower(result, path, rec)
