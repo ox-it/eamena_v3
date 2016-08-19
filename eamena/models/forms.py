@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
 from arches.app.models.models import RelatedResource
 from arches.app.models.entity import Entity
 from arches.app.models.resource import Resource
@@ -123,6 +124,17 @@ class ExternalReferenceForm(ResourceForm):
         }
 
     def update(self, data, files):
+        URLValidation = re.compile(r"(([a-z]{3,6}://)|(^|\s))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-]*\b([^@]|$)") #Main URL validation to make sure data includes a real URL
+        for branch in data['URL.E51']:
+            for node in branch['nodes']:
+                if node['entitytypeid'] == 'URL.E51':
+                    if URLValidation.match(node['value']) != None: # Checks if string is URL
+                        if node['value'][0:4] != 'http': #If string is a URL, but it doesn't begin with the http protocol, it adds http:// at the beginning of the string
+                            node['value'] = "http://" + node['value']
+                    else: # If not, it removes the branch from the branch list.
+                        data['URL.E51'].remove(branch)
+                    
+                                                
         self.update_nodes('URL.E51', data)
         return
 
