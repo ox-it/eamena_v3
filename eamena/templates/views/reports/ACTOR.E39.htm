@@ -286,10 +286,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                     {% else %}
                                                         {% for URL_E51 in report_info.source.graph.URL_E51 %}
                                                            <dd class="arches-report-subsection-item arches-report-spacer"> <a href="{{ URL_E51.URL_E51__value }}" target="_blank">{{URL_E51.URL_E51__value}}</a>
-                                                            {% if 'URL_ACCESS_DATE_E50'  in URL_E51 %}
-                                                                {% for URL_ACCESS_DATE_E50 in URL_E51.URL_ACCESS_DATE_E50 %}
-                                                                    {{URL_ACCESS_DATE_E50.URL_ACCESS_DATE_E50__value}} <span class="arches-report-subsection-item-type">({% trans "Access date" %})</span>
-                                                                {% endfor %}
+                                                            {% if URL_E51.URL_ACCESS_DATE_E50__value %}
+                                                                  <span class="arches-report-subsection-item-type">{% trans "Access date: " %}</span> {{ URL_E51.URL_ACCESS_DATE_E50__value}} 
                                                             {% endif %}
                                                             </dd>
                                                         {% endfor %}
