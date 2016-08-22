@@ -37,7 +37,6 @@ def datetime_nodes_to_dates(branch_list):
             if isinstance(node.value, datetime):
                 node.value = node.value.date()
                 node.label = node.value
-
     return branch_list
 
 
@@ -91,7 +90,7 @@ class SummaryForm(ResourceForm):
             }
 
             self.data['ASSESSMENT_TYPE.E55'] = {
-                'branch_lists': self.get_nodes('ASSESSMENT_TYPE.E55'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('ASSESSMENT_TYPE.E55')),
                 'domains': {
                     'ASSESSMENT_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_TYPE.E55'),
                     'ASSESSOR_NAME_TYPE.E55' : Concept().get_e55_domain('ASSESSOR_NAME_TYPE.E55'),
@@ -141,7 +140,7 @@ class ExternalReferenceForm(ResourceForm):
     def load(self, lang):
         if self.resource:
             self.data['URL.E51'] = {
-                'branch_lists': self.get_nodes('URL.E51'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('URL.E51')),
                 'domains': {
 
                 }
@@ -414,7 +413,7 @@ class MeasurementForm(ResourceForm):
     def load(self, lang):
         if self.resource:
             self.data['DISTURBANCE_STATE.E3'] = {
-                'branch_lists': self.get_nodes('DISTURBANCE_STATE.E3'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('DISTURBANCE_STATE.E3')),
                 'domains': {
                     'DISTURBANCE_CAUSE_TYPE.E55' : Concept().get_e55_domain('DISTURBANCE_CAUSE_TYPE.E55'),
                     'DISTURBANCE_CAUSE_CERTAINTY_TYPE.E55': Concept().get_e55_domain('DISTURBANCE_CAUSE_CERTAINTY_TYPE.E55'),
