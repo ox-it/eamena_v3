@@ -32,6 +32,7 @@ from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Matc
 
 
 def report(request, resourceid):
+
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
@@ -116,6 +117,10 @@ def report(request, resourceid):
 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
+        print related_resource
+        VirtualGlobeName = []
+        VirtualGlobe = False
+        OtherImagery = True
         information_resource_type = 'DOCUMENT'
         related_resource['relationship'] = []
         if related_resource['entitytypeid'] == 'HERITAGE_RESOURCE.E18':
@@ -145,6 +150,7 @@ def report(request, resourceid):
                     related_resource['relationship'].append(get_preflabel_from_valueid(entity['value'], lang)['value'])
                 
             for entity in related_resource['child_entities']:
+                print entity
                 if entity['entitytypeid'] == 'FILE_PATH.E62':
                     related_resource['file_path'] = settings.MEDIA_URL + entity['label']
                 if entity['entitytypeid'] == 'THUMBNAIL.E62':
@@ -153,8 +159,22 @@ def report(request, resourceid):
                 if entity['entitytypeid'] == 'TILE_SQUARE_DETAILS.E44': #If this node is populated, the Info resource is assumed to be a Map and its default name is set to Sheet Name
                     related_resource['primaryname'] = entity['label']                      
                 elif entity['entitytypeid'] == 'CATALOGUE_ID.E42': #If this node is populated, the Info resource is assumed to be Imagery and its default name is set to Catalog ID.
-                        related_resource['primaryname'] = entity['label']
+                    related_resource['primaryname'] = entity['label']
+                    OtherImagery = False
+                elif entity['entitytypeid'] == 'IMAGERY_CREATOR_APPELLATION.E82': #If this node is populated, and Catalogue_ID.E42 is not (checked by bool OtherImagery), the Info resource is assumed to be a VirtualGlobe
+                    VirtualGlobe = True
+                    VirtualGlobeName.append(entity['label'])
+            
+            if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
+                for entity in related_resource['domains']:
+                    if entity['entitytypeid'] == 'IMAGERY_SOURCE_TYPE.E55':
+                        VirtualGlobeName.append(entity['label'])
+                for entity in related_resource['dates']:
+                    if entity['entitytypeid'] == 'DATE_OF_ACQUISITION.E50':
+                        VirtualGlobeName.append(entity['label'])
                 
+                related_resource['primaryname'] = " - ".join(VirtualGlobeName)
+
                     
         # get the relationship between the two entities
         for relationship in related_resource_info['resource_relationships']:
