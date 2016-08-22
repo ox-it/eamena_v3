@@ -1058,7 +1058,7 @@ class PublicationForm(ResourceForm):
             }
             
             self.data['DATE_OF_PUBLICATION.E50'] = {
-                'branch_lists': self.get_nodes('DATE_OF_PUBLICATION.E50'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('DATE_OF_PUBLICATION.E50')),
                 'domains': {
                 }
             }
@@ -1098,7 +1098,7 @@ class SharedDataForm(ResourceForm):
             }
 
             self.data['SHARED_DATA_SOURCE_DATE_OF_CREATION.E50'] = {
-                'branch_lists': self.get_nodes('SHARED_DATA_SOURCE_DATE_OF_CREATION.E50'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('SHARED_DATA_SOURCE_DATE_OF_CREATION.E50')),
                 'domains': {
                 }
             }
@@ -1159,7 +1159,7 @@ class CartographyForm(ResourceForm):
             }
 
             self.data['DATE_OF_CREATION.E50'] = {
-                'branch_lists': self.get_nodes('DATE_OF_CREATION.E50'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('DATE_OF_CREATION.E50')),
                 'domains': {
                 }
             }
@@ -1247,14 +1247,14 @@ class ImageryForm(ResourceForm):
             }
 
             self.data['DATE_OF_ACQUISITION.E50'] = {
-                'branch_lists': self.get_nodes('DATE_OF_ACQUISITION.E50'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('DATE_OF_ACQUISITION.E50')),
                 'domains': {
                 }
             }
 
 
             self.data['IMAGERY_DATE_OF_PUBLICATION.E50'] = {
-                'branch_lists': self.get_nodes('IMAGERY_DATE_OF_PUBLICATION.E50'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('IMAGERY_DATE_OF_PUBLICATION.E50')),
                 'domains': {
                 }
             }
