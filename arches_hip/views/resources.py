@@ -120,7 +120,7 @@ def report(request, resourceid):
 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
-        print related_resource
+
         VirtualGlobeName = []
         OtherImageryName = []
         VirtualGlobe = False
