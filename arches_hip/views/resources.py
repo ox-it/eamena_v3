@@ -110,15 +110,17 @@ def report(request, resourceid):
         'ACTOR': [],
         'HISTORICAL_EVENT': [],
         'INFORMATION_RESOURCE_IMAGE': [],
-        'INFORMATION_RESOURCE_DOCUMENT': []
+        'INFORMATION_RESOURCE_DOCUMENT': [],
+        'INFORMATION_RESOURCE_MAP': [],
+        'INFORMATION_RESOURCE_SATELLITE': []
     }
 
     related_resource_info = get_related_resources(resourceid, lang)
 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
-        print related_resource
         VirtualGlobeName = []
+        OtherImageryName = []
         VirtualGlobe = False
         OtherImagery = True
         information_resource_type = 'DOCUMENT'
@@ -150,20 +152,22 @@ def report(request, resourceid):
                     related_resource['relationship'].append(get_preflabel_from_valueid(entity['value'], lang)['value'])
                 
             for entity in related_resource['child_entities']:
-                print entity
                 if entity['entitytypeid'] == 'FILE_PATH.E62':
                     related_resource['file_path'] = settings.MEDIA_URL + entity['label']
                 if entity['entitytypeid'] == 'THUMBNAIL.E62':
                     related_resource['thumbnail'] = settings.MEDIA_URL + entity['label']
                     information_resource_type = 'IMAGE'
                 if entity['entitytypeid'] == 'TILE_SQUARE_DETAILS.E44': #If this node is populated, the Info resource is assumed to be a Map and its default name is set to Sheet Name
-                    related_resource['primaryname'] = entity['label']                      
-                elif entity['entitytypeid'] == 'CATALOGUE_ID.E42': #If this node is populated, the Info resource is assumed to be Imagery and its default name is set to Catalog ID.
                     related_resource['primaryname'] = entity['label']
+                    information_resource_type = 'MAP'                      
+                elif entity['entitytypeid'] == 'CATALOGUE_ID.E42': #If this node is populated, the Info resource is assumed to be Imagery other than VirtualGlobe type
+                    OtherImageryName.append(entity['label'])
                     OtherImagery = False
+                    information_resource_type = 'SATELLITE'
                 elif entity['entitytypeid'] == 'IMAGERY_CREATOR_APPELLATION.E82': #If this node is populated, and Catalogue_ID.E42 is not (checked by bool OtherImagery), the Info resource is assumed to be a VirtualGlobe
                     VirtualGlobe = True
                     VirtualGlobeName.append(entity['label'])
+                    information_resource_type = 'SATELLITE'
             
             if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
                 for entity in related_resource['domains']:
@@ -172,9 +176,12 @@ def report(request, resourceid):
                 for entity in related_resource['dates']:
                     if entity['entitytypeid'] == 'DATE_OF_ACQUISITION.E50':
                         VirtualGlobeName.append(entity['label'])
-                
                 related_resource['primaryname'] = " - ".join(VirtualGlobeName)
-
+            elif OtherImagery == False: #This routine creates the concatenated primary name for Imagery related resource
+                for entity in related_resource['dates']:
+                    if entity['entitytypeid'] == 'DATE_OF_ACQUISITION.E50':
+                        OtherImageryName.append(entity['label'])
+                related_resource['primaryname'] = " - ".join(OtherImageryName)
                     
         # get the relationship between the two entities
         for relationship in related_resource_info['resource_relationships']:
@@ -186,6 +193,7 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
+
 
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
