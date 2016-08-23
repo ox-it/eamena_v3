@@ -200,34 +200,42 @@
 
                                 <!-- Spacer -->
                                 <div class="arches-report-spacer hidden-xs"></div>
-
+                                {% if 'INFORMATION_RESOURCE_SHARED' in related_resource_dict %}
                                 <div class="row">
+                               
                                     <div class="col-xs-12">
-
                                         <dl>
                                             <dt>
-                                                <h5 class="arches-report-subsection-title arches-report-spacer">
-                                                    {% trans "Images" %}
+                                                <h5 class="arches-report-subsection-title">
+                                                    {% trans "Shared Data" %}
                                                 </h5>
                                             </dt>
 
-                                            <!-- Links for Image Gallery Supply Image in the href, thumbnails in the img tags -->
-                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_IMAGE %}
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SHARED %}
                                                 <dd class="arches-report-subsection-item">
+                                                    <span class="arches-report-subsection-item-type">
+                                                        {% trans "Data contributed by: " %}
+                                                    </span>
+
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
-                                                        <img src="{{related_resource.thumbnail}}" alt="" class="arches-report-image-thumbnail" style="width: 25%; margin-bottom: 20px; border: solid 1px #999;" onerror="this.src='{{STATIC_URL}}img/photo_missing.png';">
+                                                        {{related_resource.primaryname|cut:"T00:00:00"}}
                                                     </a>
+
+
                                                 </dd>
 
                                                 {% empty %}
                                                     <dd class="arches-report-subsection-item">
                                                         {% trans "None" %}
                                                     </dd>                                                        
-                                            {% endfor %}
-                                            
+                                            {% endfor %} 
+                          
                                         </dl>
                                     </div>
                                 </div>
+                               {% endif %}
+                               <!-- End List of Related Resources (Shared Data)-->
+
                                 {% if 'INFORMATION_RESOURCE_DOCUMENT' in related_resource_dict %}
                                 <div class="row">
                                
@@ -333,6 +341,34 @@
                                 </div>
                                {% endif %}
                                <!-- End List of Related Resources (Satellite)--> 
+                                <div class="row">
+                                    <div class="col-xs-12">
+
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title arches-report-spacer">
+                                                    {% trans "Images" %}
+                                                </h5>
+                                            </dt>
+
+                                            <!-- Links for Image Gallery Supply Image in the href, thumbnails in the img tags -->
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_IMAGE %}
+                                                <dd class="arches-report-subsection-item">
+                                                    <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
+                                                        <img src="{{related_resource.thumbnail}}" alt="" class="arches-report-image-thumbnail" style="width: 25%; margin-bottom: 20px; border: solid 1px #999;" onerror="this.src='{{STATIC_URL}}img/photo_missing.png';">
+                                                    </a>
+                                                </dd>
+
+                                                {% empty %}
+                                                    <dd class="arches-report-subsection-item">
+                                                        {% trans "None" %}
+                                                    </dd>                                                        
+                                            {% endfor %}
+                                            
+                                        </dl>
+                                    </div>
+                                </div>
+                             <!-- End List of Related Resources (Image)--->
                             </div>
                             <!-- End Section Content-->
                         </div>

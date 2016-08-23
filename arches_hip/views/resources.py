@@ -112,13 +112,15 @@ def report(request, resourceid):
         'INFORMATION_RESOURCE_IMAGE': [],
         'INFORMATION_RESOURCE_DOCUMENT': [],
         'INFORMATION_RESOURCE_MAP': [],
-        'INFORMATION_RESOURCE_SATELLITE': []
+        'INFORMATION_RESOURCE_SATELLITE': [],
+        'INFORMATION_RESOURCE_SHARED': []
     }
 
     related_resource_info = get_related_resources(resourceid, lang)
 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
+        print related_resource
         VirtualGlobeName = []
         OtherImageryName = []
         VirtualGlobe = False
@@ -160,6 +162,9 @@ def report(request, resourceid):
                 if entity['entitytypeid'] == 'TILE_SQUARE_DETAILS.E44': #If this node is populated, the Info resource is assumed to be a Map and its default name is set to Sheet Name
                     related_resource['primaryname'] = entity['label']
                     information_resource_type = 'MAP'                      
+                elif entity['entitytypeid'] == 'SHARED_DATA_SOURCE_APPELLATION.E82': #If this node is populated, the Info resource is assumed to be a Shared Dataset and its default name is set to Shared Dated Source
+                    related_resource['primaryname'] = entity['label']
+                    information_resource_type = 'SHARED'        
                 elif entity['entitytypeid'] == 'CATALOGUE_ID.E42': #If this node is populated, the Info resource is assumed to be Imagery other than VirtualGlobe type
                     OtherImageryName.append(entity['label'])
                     OtherImagery = False
