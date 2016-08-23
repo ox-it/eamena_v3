@@ -228,21 +228,21 @@
                                         </dl>
                                     </div>
                                 </div>
-
+                                {% if 'INFORMATION_RESOURCE_DOCUMENT' in related_resource_dict %}
                                 <div class="row">
                                
                                     <div class="col-xs-12">
                                         <dl>
                                             <dt>
                                                 <h5 class="arches-report-subsection-title">
-                                                    {% trans "Documents" %}
+                                                    {% trans "Bibliography" %}
                                                 </h5>
                                             </dt>
 
                                             {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_DOCUMENT %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
-                                                        {{related_resource.primaryname}}
+                                                        {{related_resource.primaryname|cut:"T00:00:00"}}
                                                     </a>
 
                                                     <span class="arches-report-subsection-item-type">
@@ -261,7 +261,78 @@
                                         </dl>
                                     </div>
                                 </div>
-                                <!-- End List of Related Resources (Documents)-->
+                               {% endif %}
+                               <!-- End List of Related Resources (Bibliography)-->
+                               {% if 'INFORMATION_RESOURCE_MAP' in related_resource_dict %} 
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    {% trans "Maps" %}
+                                                </h5>
+                                            </dt>
+
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_MAP %}
+                                                <dd class="arches-report-subsection-item">
+                                                    <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
+                                                        {{related_resource.primaryname|cut:"T00:00:00"}}
+                                                    </a>
+
+                                                    <span class="arches-report-subsection-item-type">
+                                                        {% if related_resource.relationship|length > 0 %}
+                                                            ({{related_resource.relationship|join:", "}})
+                                                        {% endif %}
+                                                    </span>
+                                                </dd>
+
+                                                {% empty %}
+                                                    <dd class="arches-report-subsection-item">
+                                                        {% trans "None" %}
+                                                    </dd>                                                        
+                                            {% endfor %} 
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               {% endif %}
+                               <!-- End List of Related Resources (Maps)--> 
+                               {% if 'INFORMATION_RESOURCE_SATELLITE' in related_resource_dict %} 
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    {% trans "Imagery" %}
+                                                </h5>
+                                            </dt>
+
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SATELLITE %}
+                                                <dd class="arches-report-subsection-item">
+                                                    <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
+                                                        {{related_resource.primaryname|cut:"T00:00:00"}}
+                                                    </a>
+
+                                                    <span class="arches-report-subsection-item-type">
+                                                        {% if related_resource.relationship|length > 0 %}
+                                                            ({{related_resource.relationship|join:", "}})
+                                                        {% endif %}
+                                                    </span>
+                                                </dd>
+
+                                                {% empty %}
+                                                    <dd class="arches-report-subsection-item">
+                                                        {% trans "None" %}
+                                                    </dd>                                                        
+                                            {% endfor %} 
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               {% endif %}
+                               <!-- End List of Related Resources (Satellite)--> 
                             </div>
                             <!-- End Section Content-->
                         </div>
