@@ -14,7 +14,7 @@
                 {% for CULTURAL_PERIOD_E55 in PHASE_TYPE_ASSIGNMENT_E17.CULTURAL_PERIOD_E55 %}
                     <dd class="arches-report-subsection-item">
                          {{CULTURAL_PERIOD_E55.CULTURAL_PERIOD_E55__value}}
-                       {% trans "(Certainty:" %}{{ CULTURAL_PERIOD_E55.CULTURAL_PERIOD_CERTAINTY_TYPE_E55__value }}) 
+                       <span class="arches-report-subsection-item-type">{% trans "(Certainty:" %}{{ CULTURAL_PERIOD_E55.CULTURAL_PERIOD_CERTAINTY_TYPE_E55__value }}) </span>
                     </dd>
                     {% empty %}
                 {% endfor %}            

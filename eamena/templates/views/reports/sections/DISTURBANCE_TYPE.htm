@@ -27,13 +27,13 @@
             {% endif %} 
             {% if 'DISTURBANCE_DATE_START_E49' in DISTURBANCE_STATE_E3 %}
                 {% for DISTURBANCE_DATE_START_E49 in DISTURBANCE_STATE_E3.DISTURBANCE_DATE_START_E49 %}
-                    (From {{ DISTURBANCE_DATE_START_E49.DISTURBANCE_DATE_START_E49__value|cut:"T00:00:00" }} )
+                  <span class="arches-report-subsection-item-type"> - {% trans "From: " %} </span>{{ DISTURBANCE_DATE_START_E49.DISTURBANCE_DATE_START_E49__value|cut:"T00:00:00" }}
                 {% endfor %}             
             {% endif %}            
             
             {% if 'DISTURBANCE_DATE_END_E49' in DISTURBANCE_STATE_E3 %}
                 {% for DISTURBANCE_DATE_END_E49 in DISTURBANCE_STATE_E3.DISTURBANCE_DATE_END_E49 %}
-                    (To {{ DISTURBANCE_DATE_END_E49.DISTURBANCE_DATE_END_E49__value|cut:"T00:00:00" }} )
+                   <span class="arches-report-subsection-item-type">  - {% trans "To: " %} </span>{{ DISTURBANCE_DATE_END_E49.DISTURBANCE_DATE_END_E49__value|cut:"T00:00:00" }}
                 {% endfor %} 
             {% endif %}
 

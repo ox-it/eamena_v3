@@ -13,14 +13,14 @@
                 <dd class="arches-report-subsection-item">
                 {% for FEATURE_EVIDENCE_TYPE_E55 in FEATURE_EVIDENCE_ASSIGNMENT_E17.FEATURE_EVIDENCE_TYPE_E55  %}
 
-                            {{ FEATURE_EVIDENCE_TYPE_E55.FEATURE_EVIDENCE_TYPE_E55__value }}  {% trans "(Form Type)" %}
+                            {{ FEATURE_EVIDENCE_TYPE_E55.FEATURE_EVIDENCE_TYPE_E55__value }}  <span class="arches-report-subsection-item-type">{% trans "(Form Type)" %}</span>
              
                  {% endfor %}
                  {% if 'FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55' in FEATURE_EVIDENCE_ASSIGNMENT_E17 %}
 
                 {% for FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55 in FEATURE_EVIDENCE_ASSIGNMENT_E17.FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55  %}
                         
-                       {{ FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55.FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55__value }}  {% trans "(Certainty)" %}
+                       {{ FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55.FEATURE_EVIDENCE_TYPE_CERTAINTY_TYPE_E55__value }}<span class="arches-report-subsection-item-type">{% trans " (Certainty)" %}</span> 
 
                 {% empty %}
                 {% endfor %} 
@@ -29,7 +29,7 @@
 
                     {% for FEATURE_EVIDENCE_NUMBER_TYPE_E55 in FEATURE_EVIDENCE_ASSIGNMENT_E17.FEATURE_EVIDENCE_NUMBER_TYPE_E55  %}
                             
-                           {{ FEATURE_EVIDENCE_NUMBER_TYPE_E55.FEATURE_EVIDENCE_NUMBER_TYPE_E55__value }}  {% trans "(Number)" %}
+                           {{ FEATURE_EVIDENCE_NUMBER_TYPE_E55.FEATURE_EVIDENCE_NUMBER_TYPE_E55__value }}  <span class="arches-report-subsection-item-type">{% trans "(Number)" %}</span>
 
                     {% empty %}
                     {% endfor %} 
