@@ -145,60 +145,46 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                                     <div class="arches-report-subsection-content">
 
-                                        <!-- Titles -->
+                                        <!-- Types -->
                                         <div class="row">
                                              <div class="col-xs-12">
                                                 <dl>
                                                     <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Titles" %}</h5>
+                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Resource type(s)" %}</h5>
                                                     </dt>
 
-                                                    {% if 'TITLE_E41' not in report_info.source.graph %}
+                                                    {% if 'RESOURCE_CREATION_EVENT_E65' not in report_info.source.graph %}
                                                         <dd class="arches-report-subsection-item">
-                                                            {% trans "No titles recorded" %}
+                                                            {% trans "No types recorded" %}
                                                         </dd>
                                                     {% else %}
-                                                        {% for TITLE_E41 in report_info.source.graph.TITLE_E41 %}
-                                                            <dd class="arches-report-subsection-item">
-                                                                {{ TITLE_E41.TITLE_E41__value }} <span class="arches-report-subsection-item-type">({{TITLE_E41.TITLE_TYPE_E55__value}})</span>
-                                                            </dd>
+                                                        {% for RESOURCE_CREATION_EVENT_E65 in report_info.source.graph.RESOURCE_CREATION_EVENT_E65 %}
+                                                            {% if 'INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17'  in RESOURCE_CREATION_EVENT_E65 %}
+                                                                {% for INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 in RESOURCE_CREATION_EVENT_E65.INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 %}
+                                                                    {% if 'INFORMATION_RESOURCE_TYPE_E55'  in INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 %}
+                                                                        {% for INFORMATION_RESOURCE_TYPE_E55 in INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17.INFORMATION_RESOURCE_TYPE_E55 %}
+
+                                                                            <dd class="arches-report-subsection-item">
+                                                                                {{ INFORMATION_RESOURCE_TYPE_E55.INFORMATION_RESOURCE_TYPE_E55__value }}
+                                                                            </dd>
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                
+                                                            {% endif %}
                                                         {% endfor %}            
                                                     {% endif %}
 
                                                 </dl>
                                             </div>
                                         </div>
-
-                                        <!-- Identifiers -->
-                                        <div class="row">
-                                             <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Identifiers" %}</h5>
-                                                    </dt>
-
-                                                    {% if 'IDENTIFIER_E42' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No identifiers recorded" %}
-                                                        </dd>
-                                                    {% else %}
-                                                        {% for IDENTIFIER_E42 in report_info.source.graph.IDENTIFIER_E42 %}
-                                                            <dd class="arches-report-subsection-item">
-                                                                {{ IDENTIFIER_E42.IDENTIFIER_TYPE_E55__value }}
-                                                            </dd>
-                                                        {% endfor %}            
-                                                    {% endif %}
-
-                                                </dl>
-                                            </div>
-                                        </div>
-
+                                        
                                         <!-- Formats -->
                                         <div class="row">
                                              <div class="col-xs-12">
                                                 <dl>
                                                     <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Formats" %}</h5>
+                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Resource format(s)" %}</h5>
                                                     </dt>
 
                                                     {% if 'INFORMATION_CARRIER_E84' not in report_info.source.graph %}
@@ -218,34 +204,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                                 </dl>
                                             </div>
                                         </div>
-
-                                        <!-- Languages -->
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">Languages</h5>
-                                                    </dt>
-
-                                                    {% if 'LANGUAGE_E55' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No languages recorded" %}
-                                                        </dd>
-                                                    {% else %}
-                                                        {% for LANGUAGE_E55 in report_info.source.graph.LANGUAGE_E55 %}
-                                                            <dd class="arches-report-subsection-item">
-                                                                {{ LANGUAGE_E55.LANGUAGE_E55__value }}
-                                                            </dd>
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                    
-                                                </dl>
-                                            </div>
-                                        </div>
-
-                                        <!-- Keywords -->
-                                        {% include 'views/reports/sections/KEYWORD.E55.htm' %}
-
+                                        
+                                        <!-- Info-Specific sections -->
+                                        {% if 'Imagery' in report_info.subtype %}
+                                            {% include 'views/reports/sections/IMAGERY_REPORT.htm' %}
+                                        {% elif 'Cartography' in report_info.subtype %}
+                                            {% include 'views/reports/sections/CARTOGRAPHY_REPORT.htm' %}
+                                        {% elif 'Shared' in report_info.subtype %}
+                                            {% include 'views/reports/sections/SHARED_REPORT.htm' %}
+                                        {% else %}
+                                            {% include 'views/reports/sections/OTHER_INFO_RES.htm' %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <!-- End Section Content-->
@@ -256,13 +225,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                             <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
 
-
-                            <!-- Image Section  ONLY FOR RESOURCES THAT ARE IMAGE FORMATS -->
+                            <!-- URLs -->
                             <div class="row">
 
                                 <!-- Section sub-header -->
                                 <div class="col-sm-4">
-                                    <h3 class="arches-report-subsection">{% trans "Digital Representation" %}</h3>
+                                    <h3 class="arches-report-subsection">{% trans "URLs" %}</h3>
                                 </div>
                                 <!-- End Section sub-header -->
 
@@ -271,350 +239,32 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                                     <!-- Spacer -->
                                     <div class="arches-report-spacer hidden-xs"></div>
-
                                     <div class="arches-report-subsection-content">
-
-                                        <!-- Image -->
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <dl>
-
-                                                    <!-- Links for Image Gallery Supply Image in the href, thumbnails in the img tags -->
-                                                    {% for FILE_PATH_E62 in report_info.source.graph.FILE_PATH_E62 %}
-
-                                                        {% if 'THUMBNAIL_E62' in report_info.source.graph %}
-
-                                                            <dd class="arches-report-subsection-item">
-                                                                <div id="" style="margin-top: 5px;">
-                                                                    <img src="{{MEDIA_URL}}{{FILE_PATH_E62.FILE_PATH_E62__label}}" alt="" class="" style="width: 100%; margin-bottom: 30px; border: solid 1px #555;" onerror="this.src='{{STATIC_URL}}img/photo_missing.png';">
-                                                                </div>
+                                                    {% if 'URL_E51' not in report_info.source.graph %}
+                                                        <dd class="arches-report-subsection-item">
+                                                            {% trans "No URLs recorded" %}
+                                                        </dd>
+                                                    {% else %}
+                                                        {% for URL_E51 in report_info.source.graph.URL_E51 %}
+                                                           <dd class="arches-report-subsection-item arches-report-spacer"> <a href="{{ URL_E51.URL_E51__value }}" target="_blank">{{URL_E51.URL_E51__value}}</a>
+                                                            {% if URL_E51.URL_ACCESS_DATE_E50__value %}
+                                                                  <span class="arches-report-subsection-item-type">{% trans "Access date: " %}</span> {{ URL_E51.URL_ACCESS_DATE_E50__value|cut:"T00:00:00"}} 
+                                                            {% endif %}
                                                             </dd>
-
-                                                        {% else %}
-
-                                                            <dd class="arches-report-subsection-item">
-                                                                <div id="" style="margin-top: 5px;">
-                                                                    <a href="{{MEDIA_URL}}{{FILE_PATH_E62.FILE_PATH_E62__label}}" title="{% trans "View document" %}">
-                                                                        <i class="fa fa-file-text-o"></i> {% trans "Link to document" %}
-                                                                    </a>
-                                                                </div>
-                                                            </dd>
-
-                                                        {% endif %}
-
-                                                        {% empty %}
-                                                            <dd class="arches-report-subsection-item">
-                                                                {% trans "None" %}
-                                                            </dd>                                                        
-                                                    {% endfor %}
-
-                                                </dl>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <!-- End Section Content-->
-
-                            </div>
-                            <!-- End Image Section -->
-
-
-                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
-                            
-                            <!-- Location -->
-                            <div class="row">
-
-                                <!-- Section sub-header -->
-                                <div class="col-sm-4">
-                                    <h3 class="arches-report-subsection">{% trans "Coverage" %}</h3>
-                                </div>
-                                <!-- End Section sub-header -->
-
-                                 <!-- Section Content -->
-                                <div class="col-sm-8">
-
-                                    <!-- Spacer -->
-                                    <div class="arches-report-spacer hidden-xs"></div>
-
-                                    <div class="arches-report-subsection-content">
-
-                                        <!-- Location Description -->
-                                        {% include 'views/reports/sections/DESCRIPTION_OF_LOCATION.E62.htm' %}
-
-                                        <!-- Temporal Coverage Description -->
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Temporal Coverage" %}</h5>
-                                                    </dt>
-
-                                                    {% if 'TEMPORAL_COVERAGE_E4' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No coverage recorded" %}
-                                                        </dd>
-                                                    {% else %}
-                                                        {% for TEMPORAL_COVERAGE_E4 in report_info.source.graph.TEMPORAL_COVERAGE_E4 %}
-                                                            {% for TEMPORAL_COVERAGE_TIME___SPAN_E52 in TEMPORAL_COVERAGE_E4.TEMPORAL_COVERAGE_TIME___SPAN_E52 %}
-                                                                <dd class="arches-report-subsection-item">
-                                                                    {{ TEMPORAL_COVERAGE_TIME___SPAN_E52.TEMPORAL_COVERAGE_TIME___SPAN_E52__value }}
-                                                                </dd>
-                                                            {% endfor %}
-                                                        {% endfor %}            
-                                                    {% endif %}
-
-                                                </dl>
-
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                <!-- End Section Content-->
-
-                            </div>
-                            <!-- End Location Section -->
-
-
-                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
-
-
-                            <!-- Classification -->
-                            <div class="row">
-
-                                <!-- Section sub-header -->
-                                <div class="col-sm-4">
-                                    <h3 class="arches-report-subsection">{% trans "Creation and Publication" %}</h3>
-                                </div>
-                                <!-- End Section sub-header -->
-
-                                 <!-- Section Content -->
-                                <div class="col-sm-8">
-
-                                    <!-- Spacer -->
-                                    <div class="arches-report-spacer hidden-xs"></div>
-
-                                    <div class="arches-report-subsection-content">
-
-                                        <!-- Resource Creation -->
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Resource Creation" %}</h5>
-                                                    </dt>
-
-                                                    {% if 'RESOURCE_CREATION_EVENT_E65' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No creation information recorded" %}
-                                                        </dd>
-                                                    {% else %}
-
-                                                        <dd class="arches-report-subsection-item arches-report-spacer">
-
-                                                        {% for RESOURCE_CREATION_EVENT_E65 in report_info.source.graph.RESOURCE_CREATION_EVENT_E65 %}
-
-                                                            {% if 'INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17' in RESOURCE_CREATION_EVENT_E65 %}
-                                                                {% for INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 in RESOURCE_CREATION_EVENT_E65.INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 %}
-                                                                    {% if 'INFORMATION_RESOURCE_TYPE_E55' in INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17 %}
-                                                                        <span class="arches-report-subsection-item-type">
-                                                                            {% trans "Type" %}:
-                                                                        </span>
-                                                                        {% for INFORMATION_RESOURCE_TYPE_E55 in INFORMATION_RESOURCE_TYPE_ASSIGNMENT_E17.INFORMATION_RESOURCE_TYPE_E55 %}
-                                                                            {{INFORMATION_RESOURCE_TYPE_E55.INFORMATION_RESOURCE_TYPE_E55__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
-                                                            {% if 'TIME___SPAN_RESOURCE_CREATION_EVENT_E52' in RESOURCE_CREATION_EVENT_E65 %}
-                                                                {% for TIME___SPAN_RESOURCE_CREATION_EVENT_E52 in RESOURCE_CREATION_EVENT_E65.TIME___SPAN_RESOURCE_CREATION_EVENT_E52 %}
-                                                                    {% if 'DATE_OF_CREATION_E50' in TIME___SPAN_RESOURCE_CREATION_EVENT_E52 %}
-                                                                        <span class="arches-report-subsection-item-type">
-                                                                            {% trans "Created on" %}:
-                                                                        </span>
-                                                                        {% for DATE_OF_CREATION_E50 in TIME___SPAN_RESOURCE_CREATION_EVENT_E52.DATE_OF_CREATION_E50 %}
-                                                                            {{DATE_OF_CREATION_E50.DATE_OF_CREATION_E50__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
-                                                            {% if 'CREATOR_E39' in RESOURCE_CREATION_EVENT_E65 %}
-                                                                {% for CREATOR_E39 in RESOURCE_CREATION_EVENT_E65.CREATOR_E39 %}
-                                                                    {% if 'CREATOR_APPELLATION_E82' in CREATOR_E39 %}
-                                                                        <span class="arches-report-subsection-item-type">
-                                                                            {% trans "Creator" %}:
-                                                                        </span>
-                                                                        {% for CREATOR_APPELLATION_E82 in CREATOR_E39.CREATOR_APPELLATION_E82 %}
-                                                                            {{CREATOR_APPELLATION_E82.CREATOR_APPELLATION_E82__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
-                                                            {% if 'CONTRIBUTOR_E39' in RESOURCE_CREATION_EVENT_E65 %}
-                                                                {% for CONTRIBUTOR_E39 in RESOURCE_CREATION_EVENT_E65.CONTRIBUTOR_E39 %}
-                                                                    {% if 'CONTRIBUTOR_APPELLATION_E82' in CONTRIBUTOR_E39 %}
-                                                                        <span class="arches-report-subsection-item-type">
-                                                                            {% trans "Contributor" %}:
-                                                                        </span>
-                                                                        {% for CONTRIBUTOR_APPELLATION_E82 in CONTRIBUTOR_E39.CONTRIBUTOR_APPELLATION_E82 %}
-                                                                            {{CONTRIBUTOR_APPELLATION_E82.CONTRIBUTOR_APPELLATION_E82__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
                                                         {% endfor %}
-
-                                                    {% endif %} 
-
-                                                </dl>
-                                            </div>
-                                        </div>
-
-                                        <!-- Resource Creation -->
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Publishers" %}</h5>
-                                                    </dt>
-
-                                                    {% if 'PUBLICATION_EVENT_E12' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No creation information recorded" %}
-                                                        </dd>
-                                                    {% else %}
-
-                                                        <dd class="arches-report-subsection-item arches-report-spacer">
-
-                                                        {% for PUBLICATION_EVENT_E12 in report_info.source.graph.PUBLICATION_EVENT_E12 %}
-
-                                                            {% if 'PUBLISHER_E39' in PUBLICATION_EVENT_E12 %}
-                                                                {% for PUBLISHER_E39 in PUBLICATION_EVENT_E12.PUBLISHER_E39 %}
-                                                                    {% if 'PUBLISHER_APPELLATION_E82' in PUBLISHER_E39 %}
-                                                                        {% for PUBLISHER_APPELLATION_E82 in PUBLISHER_E39.PUBLISHER_APPELLATION_E82 %}
-                                                                            {{PUBLISHER_APPELLATION_E82.PUBLISHER_APPELLATION_E82__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
-                                                            {% if 'TIME___SPAN_PUBLICATION_EVENT_E52' in PUBLICATION_EVENT_E12 %}
-                                                                {% for TIME___SPAN_PUBLICATION_EVENT_E52 in PUBLICATION_EVENT_E12.TIME___SPAN_PUBLICATION_EVENT_E52 %}
-                                                                    {% if 'DATE_OF_PUBLICATION_E50' in TIME___SPAN_PUBLICATION_EVENT_E52 %}
-                                                                        <span class="arches-report-subsection-item-type">
-                                                                            {% trans "Publication date" %}:
-                                                                        </span>
-                                                                        {% for DATE_OF_PUBLICATION_E50 in TIME___SPAN_PUBLICATION_EVENT_E52.DATE_OF_PUBLICATION_E50 %}
-                                                                            {{DATE_OF_PUBLICATION_E50.DATE_OF_PUBLICATION_E50__value}}
-                                                                        {% endfor %} 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            {% endif %}  
-
-                                                        {% endfor %}
-
-                                                    {% endif %} 
-
-                                                </dl>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Copy Right -->
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <dl>
-                                                    <dt>
-                                                        <h5 id="" class="arches-report-subsection-title">{% trans "Copy Rights" %}</h5>
-                                                    </dt>
-
-                                                    {% if 'RIGHT_DESCRIPTION_E30' not in report_info.source.graph %}
-                                                        <dd class="arches-report-subsection-item">
-                                                            {% trans "No rights recorded" %}
-                                                        </dd>
-                                                    {% else %}
-                                                        {% for RIGHT_DESCRIPTION_E30 in report_info.source.graph.RIGHT_DESCRIPTION_E30 %}
-                                                            <dd class="arches-report-subsection-item">{{RIGHT_DESCRIPTION_E30.RIGHT_TYPE_E55__label}}</dd>
-                                                        {% endfor %}              
                                                     {% endif %}
-
                                                 </dl>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-                                <!-- End Section Content-->
-
                             </div>
-                            <!-- End Classification Section -->
+                            <!-- End URLs Section -->
 
 
-                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
-
-
-                            <!-- Descriptions -->
-                            <div class="row">
-
-                                <!-- Section sub-header -->
-                                <div class="col-sm-4">
-                                    <h3 class="arches-report-subsection">{% trans "Resource Descriptions" %}</h3>
-                                </div>
-                                <!-- End Section sub-header -->
-
-                                 <!-- Section Content -->
-                                <div class="col-sm-8">
-
-                                    <!-- Spacer -->
-                                    <div class="arches-report-spacer hidden-xs"></div>
-
-                                    <div class="arches-report-subsection-content">
-
-                                        <!-- Descriptions -->
-                                        {% include 'views/reports/sections/DESCRIPTION.E62.htm' %}
-
-                                    </div>
-                                </div>
-                                <!-- End Section Content-->
-
-                            </div>
-                            <!-- End Descriptions Section -->
-
-
-                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
-
-
-                            <!-- External System References -->
-                            <div class="row">
-
-                                <!-- Section sub-header -->
-                                <div class="col-sm-4">
-                                    <h3 class="arches-report-subsection">{% trans "External System References" %}</h3>
-                                </div>
-                                <!-- End Section sub-header -->
-
-                                 <!-- Section Content -->
-                                <div class="col-sm-8">
-
-                                    <!-- Spacer -->
-                                    <div class="arches-report-spacer hidden-xs"></div>
-
-                                    <div class="arches-report-subsection-content">
-
-                                        <!-- Moficiations -->
-                                        {% include 'views/reports/sections/EXTERNAL_XREF.E42.htm' %}
-
-                                    </div>
-                                </div>
-                                <!-- End Section Content-->
-
-                            </div>
-                            <!-- End Descriptions Section -->
                         </div>
                     </div>
                     <!-- End Project Information -->

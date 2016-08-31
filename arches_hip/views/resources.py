@@ -28,7 +28,7 @@ from arches.app.views.concept import get_preflabel_from_valueid
 from arches.app.views.concept import get_preflabel_from_conceptid
 from arches.app.views.resources import get_related_resources
 from arches.app.search.search_engine_factory import SearchEngineFactory
-from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match
+from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested
 
 
 def report(request, resourceid):
@@ -40,8 +40,29 @@ def report(request, resourceid):
     report_info['type'] = report_info['_type']
     report_info['source']['graph'] = report_info['source']['graph']
     del report_info['_source']
-    del report_info['_type']
-
+    del report_info['_type']            
+                
+    if report_info['type'] == "INFORMATION_RESOURCE.E73": # These clauses produce subtypes for Imagery, Shared Dataset and Cartography Info Resources, with the aim of producing different Report pages for each of these Resource Types
+        report_info['subtype'] = ''
+        if 'ACQUISITION_ASSIGNMENT_E17' in report_info['source']['graph'] or 'CATALOGUE_E42' in report_info['source']['graph']:
+            report_info['subtype'] = 'Imagery'
+        if 'RESOURCE_CREATION_EVENT_E65' in report_info['source']['graph']:
+            for value in report_info['source']['graph']['RESOURCE_CREATION_EVENT_E65']:
+                if 'CREATOR_E39' in value:
+                    for subvalue in value['CREATOR_E39']:
+                        if 'IMAGERY_CREATOR_APPELLATION_E82' in subvalue:
+                            report_info['subtype'] = 'Imagery'
+                        elif 'SHARED_DATA_SOURCE_CREATOR_APPELLATION_E82' in subvalue:
+                            report_info['subtype'] = 'Shared'
+        if 'PUBLICATION_EVENT_E12' in report_info['source']['graph']:
+            for value in report_info['source']['graph']['PUBLICATION_EVENT_E12']:
+                if 'PUBLICATION_ASSIGNMENT_E17' in value:
+                    for subvalue in value['PUBLICATION_ASSIGNMENT_E17']:
+                        if 'TILE_SQUARE_APPELLATION_E44' in subvalue or 'TILE_SQUARE_DETAILS_E44' in subvalue:
+                            report_info['subtype'] = 'Cartography'
+                        elif 'IMAGERY_SOURCE_TYPE_E55' in subvalue:
+                            report_info['subtype'] = 'Imagery'
+        
     def get_evaluation_path(valueid):
         value = models.Values.objects.get(pk=valueid)
         concept_graph = Concept().get(id=value.conceptid_id, include_subconcepts=False, 
@@ -120,7 +141,6 @@ def report(request, resourceid):
 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
-
         VirtualGlobeName = []
         OtherImageryName = []
         VirtualGlobe = False
@@ -208,5 +228,6 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
             'active_page': 'ResourceReport'
+            
         },
         context_instance=RequestContext(request))        
