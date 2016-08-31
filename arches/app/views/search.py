@@ -202,7 +202,6 @@ def build_search_results_dsl(request):
     
 #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
-    print query
     return query
 
 def buffer(request):
