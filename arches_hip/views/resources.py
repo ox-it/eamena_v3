@@ -32,7 +32,6 @@ from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Matc
 
 
 def report(request, resourceid):
-
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
@@ -54,6 +53,8 @@ def report(request, resourceid):
                             report_info['subtype'] = 'Imagery'
                         elif 'SHARED_DATA_SOURCE_CREATOR_APPELLATION_E82' in subvalue:
                             report_info['subtype'] = 'Shared'
+                if 'SHARED_DATA_SOURCE_SHARER_E39' in value:
+                    report_info['subtype'] = 'Shared'
         if 'PUBLICATION_EVENT_E12' in report_info['source']['graph']:
             for value in report_info['source']['graph']['PUBLICATION_EVENT_E12']:
                 if 'PUBLICATION_ASSIGNMENT_E17' in value:
@@ -62,7 +63,8 @@ def report(request, resourceid):
                             report_info['subtype'] = 'Cartography'
                         elif 'IMAGERY_SOURCE_TYPE_E55' in subvalue:
                             report_info['subtype'] = 'Imagery'
-        
+
+
     def get_evaluation_path(valueid):
         value = models.Values.objects.get(pk=valueid)
         concept_graph = Concept().get(id=value.conceptid_id, include_subconcepts=False, 
