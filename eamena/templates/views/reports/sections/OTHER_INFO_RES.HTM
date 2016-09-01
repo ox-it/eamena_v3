@@ -53,7 +53,7 @@
 						{% if 'DATE_OF_PUBLICATION_E50' in TIME___SPAN_PUBLICATION_EVENT_E52 %}
 							{% for DATE_OF_PUBLICATION_E50 in TIME___SPAN_PUBLICATION_EVENT_E52.DATE_OF_PUBLICATION_E50 %}
 					                    <dd class="arches-report-subsection-item">
-					                        {{ DATE_OF_PUBLICATION_E50.DATE_OF_PUBLICATION_E50__value|cut:"T00:00:00" }}
+					                        {{ DATE_OF_PUBLICATION_E50.DATE_OF_PUBLICATION_E50__value|slice:"4" }}
 					                    </dd>
 					                 {% endfor %}
 				                 {% endif %}
