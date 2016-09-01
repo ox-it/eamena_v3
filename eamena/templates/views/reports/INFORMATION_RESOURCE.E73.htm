@@ -110,7 +110,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <div class="">
                     <i class="center-icon rounded-x fa fa-folder-open"></i>
                     <div class="">
-                        <h2 class="arches-report-section-header">{% trans "Resource Description" %}</h2>
+                        <h2 class="arches-report-section-header">
+                        {% if 'Imagery' in report_info.subtype %}
+                            {% trans "Resource Description" %}
+                        {% elif 'Cartography' in report_info.subtype %}
+                            {% trans "Cartography Description" %}
+                        {% elif 'Shared' in report_info.subtype %}
+                            {% trans "Shared Dataset Description" %}
+                        {% else %}
+                            {% trans "Resource Description" %}
+                        {% endif %}
+                        </h2>
                     </div> 
                 </div>
 
@@ -132,13 +142,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             <div class="row">
 
                                 <!-- Section sub-header -->
-                                <div class="col-sm-4">
+                                <div class="col-sm-2">
                                     <h3 class="arches-report-subsection">{% trans "Resource Summary" %}</h3>
                                 </div>
                                 <!-- End Section sub-header -->
 
                                 <!-- Section Content -->
-                                <div class="col-sm-8">
+                                <div class="col-sm-10">
 
                                     <!-- Spacer -->
                                     <div class="arches-report-spacer hidden-xs"></div>
@@ -229,13 +239,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             <div class="row">
 
                                 <!-- Section sub-header -->
-                                <div class="col-sm-4">
+                                <div class="col-sm-2">
                                     <h3 class="arches-report-subsection">{% trans "URLs" %}</h3>
                                 </div>
                                 <!-- End Section sub-header -->
 
                                  <!-- Section Content -->
-                                <div class="col-sm-8">
+                                <div class="col-sm-10">
 
                                     <!-- Spacer -->
                                     <div class="arches-report-spacer hidden-xs"></div>

@@ -83,7 +83,7 @@
 		            {% else %}
 		                {% for TITLE_E41 in report_info.source.graph.TITLE_E41 %}
 		                    <dd class="arches-report-subsection-item">
-		                        {{ TITLE_E41.TITLE_E41__value }}
+		                        {{ TITLE_E41.TITLE_E41__value|title }}
 		                    </dd>
 		                {% endfor %}            
 		            {% endif %}
