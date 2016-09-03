@@ -127,7 +127,7 @@ class Entity(object):
         Saves an entity back to the db, returns a DB model instance, not an instance of self
 
         """
-        
+        type = ''
         is_new_entity = False
         is_new_resource = False
         entitytype = archesmodels.EntityTypes.objects.get(pk = self.entitytypeid)
@@ -148,6 +148,7 @@ class Entity(object):
                 type = 'EAMENA'
             else:
                 type = re.split("\W+|_", str(entitytype))[0]
+
                 
             entity2 = archesmodels.Entities()
             entity2.entitytypeid = archesmodels.EntityTypes.objects.get(pk = "EAMENA_ID.E42")
@@ -161,7 +162,6 @@ class Entity(object):
             uniqueidmodelinstance.id_type = type
             try:
                 lastID = uniqueidmodel.objects.filter(id_type__exact=type).latest()
-                print lastID.val
                 IdInt = int(lastID.val) + 1
                 uniqueidmodelinstance.val = str(IdInt)
                 
@@ -191,7 +191,7 @@ class Entity(object):
             #                 self.add_child_entity(rule[0].entitytyperange_id, rule[0].propertyid_id, concept.id, '')
             #         elif len(self.child_entities) == 1:
             #             self.child_entities[0].value = concept.id
-            if not (isinstance(themodelinstance, archesmodels.Files)): 
+            if not (isinstance(themodelinstance, archesmodels.Files)) and not (isinstance(themodelinstance, archesmodels.UniqueIds)):
                 setattr(themodelinstance, columnname, self.value)
 
                 themodelinstance.save()
@@ -214,7 +214,6 @@ class Entity(object):
         for child_entity in self.child_entities:
 
             child = child_entity._save()
- 
             rule = archesmodels.Rules.objects.get(entitytypedomain = entity.entitytypeid, entitytyperange = child.entitytypeid, propertyid = child_entity.property)
             archesmodels.Relations.objects.get_or_create(entityiddomain = entity, entityidrange = child, ruleid = rule)
         
