@@ -16,6 +16,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import datetime
+import re
+from django.conf import settings
 import uuid
 import types
 import copy
@@ -85,7 +88,6 @@ class Entity(object):
         self.entitytypeid = entity.entitytypeid_id
         self.entityid = entity.pk
         self.businesstablename = entity.entitytypeid.businesstablename if entity.entitytypeid.businesstablename else ''
-        print "Entityid %s, entitytypeid %s, value %s, label %s, businesstablename %s" %(self.entityid,self.entitytypeid,self.value,self.label,entity.entitytypeid.businesstablename)
         # get the entity value if any
         if entity.entitytypeid.businesstablename != None:
             themodel = self._get_model(entity.entitytypeid.businesstablename)
@@ -98,6 +100,12 @@ class Entity(object):
             elif (isinstance(themodelinstance, archesmodels.Files)): 
                 self.label = themodelinstance.getname()
                 self.value = themodelinstance.geturl() 
+            elif (isinstance(themodelinstance, archesmodels.UniqueIds)):
+                type = themodelinstance.id_type
+                zerosLength = settings.ID_LENGTH if  settings.ID_LENGTH > len(themodelinstance.val) else len(themodelinstance.val)
+                self.value = type +"-"+themodelinstance.val.zfill(zerosLength)
+                self.label = type +"-"+themodelinstance.val.zfill(zerosLength)
+
             else:
                 self.value = getattr(themodelinstance, columnname, 'Entity %s could not be found in the table %s' % (pk, entity.entitytypeid.businesstablename))                   
                 self.label = self.value
@@ -119,7 +127,7 @@ class Entity(object):
         Saves an entity back to the db, returns a DB model instance, not an instance of self
 
         """
-        print "Entitytypeid 1: %s" % self.entitytypeid
+        
         is_new_entity = False
         is_new_resource = False
         entitytype = archesmodels.EntityTypes.objects.get(pk = self.entitytypeid)
@@ -127,23 +135,42 @@ class Entity(object):
             uuid.UUID(self.entityid)
         except(ValueError):
             is_new_entity = True
-            if self.entitytypeid == 'HERITAGE_RESOURCE_GROUP.E27': #to change to dynamically pick up resources from data.entity_types
+            if entitytype.isresource:
                 is_new_resource = True
-                self.entityid = str(uuid.uuid4())
-            else:
-                self.entityid = str(uuid.uuid4())
+            self.entityid = str(uuid.uuid4())
         
         entity = archesmodels.Entities()
         entity.entitytypeid = entitytype
-        print "Entitytype: %s" % entitytype
         entity.entityid = self.entityid
         entity.save()
-        print "Entitytypeid 2: %s" % entity.entitytypeid
-#         if (is_new_resource): #Being developed. When a new resource is created, the save method automatically produces and alphanumeric string that populates SITE_ID.E42
-#             uniqueidmodel = self._get_model('strings')
-#             uniqueidmodelinstance = uniqueidmodel()
-#             print "Uniquemodelinstance %s" % uniqueidmodelinstance
-#             print "Number of strings in data.strings %s" % Strings.objects.all().count()
+        if is_new_resource: #When a new resource is created, the save method automatically produces an alphanumeric string that populates EAMENA_ID.E42
+            if str(entitytype) in settings.EAMENA_RESOURCES:
+                type = 'EAMENA'
+            else:
+                type = re.split("\W+|_", str(entitytype))[0]
+                
+            entity2 = archesmodels.Entities()
+            entity2.entitytypeid = archesmodels.EntityTypes.objects.get(pk = "EAMENA_ID.E42")
+            entity2.entityid = str(uuid.uuid4())
+            entity2.save()
+            rule = archesmodels.Rules.objects.get(entitytypedomain = entity.entitytypeid, entitytyperange = entity2.entitytypeid, propertyid = 'P1')
+            archesmodels.Relations.objects.get_or_create(entityiddomain = entity, entityidrange = entity2, ruleid = rule)
+            uniqueidmodel = self._get_model('uniqueids')
+            uniqueidmodelinstance = uniqueidmodel()
+            uniqueidmodelinstance.entityid = entity2
+            uniqueidmodelinstance.id_type = type
+            try:
+                lastID = uniqueidmodel.objects.filter(id_type__exact=type).latest()
+                print lastID.val
+                IdInt = int(lastID.val) + 1
+                uniqueidmodelinstance.val = str(IdInt)
+                
+            except:
+                uniqueidmodelinstance.val = str(1)
+                
+            uniqueidmodelinstance.order_date = datetime.datetime.now()
+            uniqueidmodelinstance.save()
+            
         columnname = entity.entitytypeid.getcolumnname()
         if columnname != None:
             themodel = self._get_model(entity.entitytypeid.businesstablename)
@@ -183,11 +210,11 @@ class Entity(object):
                     themodelinstance.save()
                     self.value = themodelinstance.geturl()
                     self.label = themodelinstance.getname()
-        print "entitytypeid 3: %s" % entity.entitytypeid
+
         for child_entity in self.child_entities:
-            print "entitytypeid 4: %s" % entitytype
+
             child = child_entity._save()
-            print "Entitytypedomain %s, entitydomain %s,  entitytyperange %s, entityrange %s" % (entity.entitytypeid, entity, child.entitytypeid, child)
+ 
             rule = archesmodels.Rules.objects.get(entitytypedomain = entity.entitytypeid, entitytyperange = child.entitytypeid, propertyid = child_entity.property)
             archesmodels.Relations.objects.get_or_create(entityiddomain = entity, entityidrange = child, ruleid = rule)
         
@@ -407,8 +434,8 @@ class Entity(object):
         def appendValue(entity):
             if entity.entitytypeid == entitytypeid:
                 ret.append(entity)
-
         self.traverse(appendValue)
+
         return ret
 
     def traverse(self, func, scope=None):

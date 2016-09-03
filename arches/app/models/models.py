@@ -415,12 +415,6 @@ class Strings(models.Model):
     class Meta:
         db_table = u'strings'
 
-# class UniqueIds(models.Model):
-#     entityid = models.ForeignKey('Entities', primary_key=True, db_column='entityid')
-#     val = models.TextField()
-#     class Meta:
-#         db_table = u'uniqueids'
-
 
 class Dates(models.Model):
     entityid = models.ForeignKey('Entities', primary_key=True, db_column='entityid')
@@ -632,3 +626,13 @@ class Overlays(models.Model):
     objects = models.GeoManager()
     class Meta:
         db_table = u'aux"."overlays'
+
+class UniqueIds(models.Model):
+    entityid = models.ForeignKey('Entities', primary_key=True, db_column='entityid')
+    val = models.TextField()
+    id_type = models.TextField()
+    order_date = models.DateTimeField()
+    
+    class Meta:
+        db_table = u'uniqueids'
+        get_latest_by = "order_date"
