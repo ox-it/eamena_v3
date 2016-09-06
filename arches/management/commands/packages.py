@@ -34,6 +34,7 @@ from arches.management.commands import utils
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.models import models
 import csv
+import arches.app.utils.backlogids as create_backlog
 
 class Command(BaseCommand):
     """
@@ -43,7 +44,7 @@ class Command(BaseCommand):
     
     option_list = BaseCommand.option_list + (
         make_option('-o', '--operation', action='store', dest='operation', default='setup',
-            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources'],
+            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog'],
             help='Operation Type; ' +
             '\'setup\'=Sets up Elasticsearch and core database schema and code' + 
             '\'setup_db\'=Truncate the entire arches based db and re-installs the base schema' + 
@@ -104,6 +105,9 @@ class Command(BaseCommand):
 
         if options['operation'] == 'export_resources':
             self.export_resources(package_name, options['dest_dir'])
+        
+        if options['operation'] == 'create_backlog':
+            self.create_backlog()
 
     def setup(self, package_name):
         """
@@ -358,3 +362,7 @@ class Command(BaseCommand):
         for path in settings.TEMPLATE_DIRS:
             server.watch(path)
         server.serve(port=settings.LIVERELOAD_PORT)
+
+    def create_backlog(self):
+        print "Function called"
+        create_backlog.createBacklogIds()
