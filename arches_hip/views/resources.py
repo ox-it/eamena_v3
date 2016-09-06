@@ -35,9 +35,12 @@ def report(request, resourceid):
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
+    primaryname = se.search(index='entity', id = resourceid)
     report_info['source'] = report_info['_source']
     report_info['type'] = report_info['_type']
     report_info['source']['graph'] = report_info['source']['graph']
+    if primaryname['_source']['primaryname']:
+        report_info['source']['primaryname'] = primaryname['_source']['primaryname']
     del report_info['_source']
     del report_info['_type']            
                 
