@@ -116,6 +116,7 @@ class ResourceLoader(object):
             else:
                 new_resource = Resource(resource)
                 new_resource.save(user=self.user, note=load_id, resource_uuid=new_resource.entityid)
+                new_resource = Resource().get(new_resource.entityid)
                 try:
                     new_resource.index()
                 except:
