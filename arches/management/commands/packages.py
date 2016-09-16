@@ -44,7 +44,7 @@ class Command(BaseCommand):
     
     option_list = BaseCommand.option_list + (
         make_option('-o', '--operation', action='store', dest='operation', default='setup',
-            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog'],
+            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog', 'remove_resources_from_csv'],
             help='Operation Type; ' +
             '\'setup\'=Sets up Elasticsearch and core database schema and code' + 
             '\'setup_db\'=Truncate the entire arches based db and re-installs the base schema' + 
@@ -93,6 +93,9 @@ class Command(BaseCommand):
             
         if options['operation'] == 'remove_resources':     
             self.remove_resources(options['load_id'])
+        
+        if options['operation'] == 'remove_resources_from_csv':     
+            self.remove_resources_from_csv(options['source'])
 
         if options['operation'] == 'load_concept_scheme':
             self.load_concept_scheme(package_name, options['source'])
@@ -316,6 +319,10 @@ class Command(BaseCommand):
 
         """
         resource_remover.delete_resources(load_id)
+          
+    def remove_resources_from_csv(self, data_source):
+      
+        resource_remover.delete_resources_from_csv(data_source)
 
     def load_concept_scheme(self, package_name, data_source=None):
         """
