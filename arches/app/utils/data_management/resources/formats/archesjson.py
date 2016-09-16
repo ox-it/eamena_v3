@@ -25,27 +25,23 @@ class JsonWriter(Writer):
         super(JsonWriter, self).__init__()
 
     def write_resources(self, resources, resource_export_configs):
-#         cursor = connection.cursor()
-#         cursor.execute("""select entitytypeid from data.entity_types where isresource = TRUE""")
-#         resource_types = cursor.fetchall()
         json_resources = []
         json_resources_for_export = []
         iso_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         json_file_name = os.path.join('{0}_{1}.{2}'.format('EAMENA', iso_date, 'json'))
         f = StringIO()
-#         for resource_type in resource_types:
+
 
         for count, resource in enumerate(resources, 1):
             if count % 1000 == 0:
                 print "%s Resources exported" % count            
-#             resources = archesmodels.Entities.objects.filter(pk = resource_type)
-#             print "Writing {0} {1} resources".format(len(resources), resource_type[0])
             errors = []
             
             try:
                 a_resource = Resource().get(resource['_id'])
+                
                 a_resource.form_groups = None
-                json_resources.append(a_resource['hits']['hits'])
+                json_resources.append(a_resource)
             except Exception as e:
                 if e not in errors:
                     errors.append(e)
