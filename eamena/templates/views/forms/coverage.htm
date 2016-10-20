@@ -39,7 +39,7 @@
 
             <!-- Map Tools Panel -->
             <div class="row">
-                <div class="col-xs-4 col-xs-offset-1" style="">
+                <div class="col-xs-4 {% if LANGUAGE_BIDI %}col-xs-offset-7{%else %} col-xs-offset-1{% endif %}" style="">
 
                     <div id="basemaps-panel" class="tools-panel hidden" style="margin-top: -490px; overflow-y: scroll; height: 435px;">
                         <div class="modal-header arches-modal-header">
@@ -84,7 +84,7 @@
 
             <!-- Overlays Panel -->
             <div class="row">
-                <div class="col-xs-4 col-xs-offset-1" style="">
+                <div class="col-xs-4 {% if LANGUAGE_BIDI %}col-xs-offset-7{%else %} col-xs-offset-1{% endif %}" style="">
 
                     <div id="overlay-panel" class="tools-panel hidden" style="margin-top: -490px; overflow-y: scroll; overflow-x: hidden; height: 435px;">
                         <div class="modal-header arches-modal-header">
@@ -167,7 +167,8 @@
             <!-- Map Tools -->
             <div class="row" style="height:0px;">
 
-                <div class="btn-group" style="top:-100px;left:86px;">
+                <div class="btn-group" style="top:-100px;left:{% if LANGUAGE_BIDI %}-{% endif %}86px;">
+
 
                     <button id="inventory-home" type="button" class="btn btn-primary arches-map-tools-pressed hidden" style="width: 50px; border: 1px solid rgba(206,217,233,.95);"><i class="fa fa-caret-down"></i>
                     </button>

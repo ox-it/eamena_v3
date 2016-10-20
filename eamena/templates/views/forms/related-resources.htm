@@ -185,7 +185,7 @@
     <div class="margin-bottom-50">
         <div class="row" id="search-results" style="margin-left:0px; margin-right:0px;">
            <!-- Results Header -->
-                    <h2 id="search-results-count"  class="text-muted margin-left-5" style="margin-bottom: 30px;margin-top:0px"><span data-bind="text: total()"></span> Results &nbsp;
+                    <h2 id="search-results-count"  class="text-muted margin-left-5" style="margin-bottom: 30px;margin-top:0px"><span data-bind="text: total()"></span> {% trans "Results" %} &nbsp;
 
                         <span class="hidden-xs" style="margin-top: -5px;">  
                             <button class="btn btn-success btn-xs" id="map-filter-button" style=""> 
@@ -255,7 +255,7 @@
                             <div class="col-xs-11 col-xs-offset-1 col-sm-4 col-sm-offset-7 col-md-3 map-loading loading-mask" style="display: none;">
                                                     
                                 <img src="{% static 'img/spinner.gif' %}" height="28" width="28" style="margin-top: 2px;">
-                                <p class="map-loading-text">Loading results...</p>
+                                <p class="map-loading-text" style="direction:ltr;">{% trans "Loading results..." %}</p>
                                
                             </div>
                         </div>
