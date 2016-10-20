@@ -40,7 +40,7 @@
 
                 <!-- Map Tools Panel -->
                 <div class="row" >
-                    <div class="col-xs-4 col-xs-offset-1" style="">
+                    <div class="col-xs-4 {% if LANGUAGE_BIDI %}col-xs-offset-7{%else %} col-xs-offset-1{% endif %}" style="">
 
                         <div id="basemaps-panel" class="tools-panel hidden" style="margin-top: -490px; overflow-y: scroll; height: 435px;">
                             <div class="modal-header arches-modal-header">
@@ -85,7 +85,7 @@
 
                 <!-- Overlays Panel -->
                 <div class="row">
-                    <div class="col-xs-4 col-xs-offset-1" style="">
+                    <div class="col-xs-4 {% if LANGUAGE_BIDI %}col-xs-offset-7{%else %} col-xs-offset-1{% endif %}" style="">
 
                         <div id="overlay-panel" class="tools-panel hidden" style="margin-top: -490px; overflow-y: scroll; overflow-x: hidden; height: 435px;">
                             <div class="modal-header arches-modal-header">
@@ -168,7 +168,7 @@
                 <!-- Map Tools -->
                 <div class="row" style="height:0px;">
 
-                    <div class="btn-group" style="top:-100px;left:86px;">
+                    <div class="btn-group" style="top:-100px;left:{% if LANGUAGE_BIDI %}-{% endif %}86px;">
 
                         <button id="inventory-home" type="button" class="btn btn-primary arches-map-tools-pressed hidden" style="width: 50px; border: 1px solid rgba(206,217,233,.95);"><i class="fa fa-caret-down"></i>
                         </button>
@@ -327,7 +327,7 @@
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('SITE_LOCATION_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="location certainty">
+                                        <input data-bind="select2: {value: getEditedNode('SITE_LOCATION_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'location certainty' %}">
                                             
                                             {% include 'views/components/add-item-button.htm' %}
                                             </div>
@@ -338,7 +338,7 @@
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('SITE_LOCATION_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="location certainty">
+                                        <input data-bind="select2: {value: getEditedNode('SITE_LOCATION_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'location certainty' %}">
                                             
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -413,7 +413,7 @@
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('SITE_SIZE_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="extent certainty">
+                                        <input data-bind="select2: {value: getEditedNode('SITE_SIZE_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'extent certainty' %}">
                                             
                                             {% include 'views/components/add-item-button.htm' %}
                                             </div>
@@ -424,7 +424,7 @@
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('SITE_SIZE_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="extent certainty">
+                                        <input data-bind="select2: {value: getEditedNode('SITE_SIZE_CERTAINTY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'extent certainty' %}">
                                             
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -498,7 +498,7 @@
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="Country">
+                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'Country' %}">
                                             
                                             {% include 'views/components/add-item-button.htm' %}
                                             </div>
@@ -509,7 +509,7 @@
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="extent certainty">
+                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'Country' %}">
                                             
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -580,7 +580,7 @@
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('PLACE_TOPOGRAPHY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="topography">
+                                        <input data-bind="select2: {value: getEditedNode('PLACE_TOPOGRAPHY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'topography' %}">
                                             
                                             {% include 'views/components/add-item-button.htm' %}
                                             </div>
@@ -591,7 +591,7 @@
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('PLACE_TOPOGRAPHY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="topography">
+                                        <input data-bind="select2: {value: getEditedNode('PLACE_TOPOGRAPHY_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'topography' %}">
                                             
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -627,7 +627,7 @@
                         <dd class="margin-left-5">
                             <div class="arches-crud-record">
                                 <a href="javascript:void(0);" class="arches-CRUD-child" title="{% trans "Remove this relationship" %}" data-bind="click: $parent.deleteItem.bind($parent)"><i class="arches-CRUD-delete fa fa-times-circle"></i></a>
-                                <a href="javascript:void(0);" class="arches-CRUD-child manage-address" title="Edit this setting" data-bind="click: $parent.editItem.bind($parent), text: nodes.get('PLACE_TOPOGRAPHY_TYPE.E55', 'label')"></a>
+                                <a href="javascript:void(0);" class="arches-CRUD-child manage-address" title="{% trans 'Edit this setting' %}" data-bind="click: $parent.editItem.bind($parent), text: nodes.get('PLACE_TOPOGRAPHY_TYPE.E55', 'label')"></a>
                             </div>
                         </dd>
                     </div>
@@ -676,10 +676,10 @@
                                 <!-- Form for screens > xs -->
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
-                                        <input class="form-control" style="width: 50%; height: 32px;" id="address" placeholder="resource address" data-bind='value: getEditedNode("PLACE_ADDRESS.E45", "value")'>
+                                        <input class="form-control" style="width: 50%; height: 32px;" id="address" placeholder="{% trans 'resource address' %}" data-bind='value: getEditedNode("PLACE_ADDRESS.E45", "value")'>
                                         
                                         <!-- Address Type -->
-                                        <input style="width:30%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form address-type" placeholder="type" data-bind="select2: {value: getEditedNode('ADDRESS_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADDRESS_TYPE.E55'}">
+                                        <input style="width:30%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form address-type" placeholder="{% trans 'Type' %}" data-bind="select2: {value: getEditedNode('ADDRESS_TYPE.E55', 'value'), placeholder: '{% trans "Type" %}', dataKey: 'ADDRESS_TYPE.E55'}">
                                         <!-- Address Type -->
                                         
                                         {% include 'views/components/add-item-button.htm' %}
@@ -691,13 +691,13 @@
                                 <!-- Form for screens = xs -->
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group" style="width: 100%">
-                                        <input class="form-control" style="width: 100%; height: 32px;" id="address" placeholder="resource address" data-bind='value: getEditedNode("PLACE_ADDRESS.E45", "value")'>
+                                        <input class="form-control" style="width: 100%; height: 32px;" id="address" placeholder="{% trans 'resource address' %}" data-bind='value: getEditedNode("PLACE_ADDRESS.E45", "value")'>
 
                                         <!-- Spacer (for xs screens) -->
                                         <div class="margin-top-5 hidden-sm hidden-md hidden-lg"></div>
                                         
                                         <!-- Address Type -->
-                                        <input style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form address-type" placeholder="type" data-bind="select2: {value: getEditedNode('ADDRESS_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADDRESS_TYPE.E55'}">
+                                        <input style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form address-type" placeholder="{% trans 'Type' %}" data-bind="select2: {value: getEditedNode('ADDRESS_TYPE.E55', 'value'),  placeholder: '{% trans "Type" %}', dataKey: 'ADDRESS_TYPE.E55'}">
                                         <!-- Address Type -->
 
                                         <!-- Spacer (for xs screens) -->
@@ -806,9 +806,9 @@
                                     <form class="form-inline arches-form hidden-xs" role="form">
                                         <div class="form-group margin-top-5" style="width: 100%">
                                            
-                                            <input data-bind="select2: {value: getEditedNode('ADMINISTRATIVE_SUBDIVISION_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADMINISTRATIVE_SUBDIVISION_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form admin-area-type" placeholder="Admin Area Type">&nbsp;
+                                            <input data-bind="select2: {value: getEditedNode('ADMINISTRATIVE_SUBDIVISION_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADMINISTRATIVE_SUBDIVISION_TYPE.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form admin-area-type" placeholder="{% trans 'Admin Area Type' %}">&nbsp;
 
-                                            <input class="form-control" id="ad_area_type" style="width: 30%; height: 32px;" placeholder="Area Name" data-bind='value: getEditedNode("ADMINISTRATIVE_SUBDIVISION.E48", "value")'>
+                                            <input class="form-control" id="ad_area_type" style="width: 30%; height: 32px;" placeholder="{% trans 'Area Name' %}" data-bind='value: getEditedNode("ADMINISTRATIVE_SUBDIVISION.E48", "value")'>
 
                                             {% include 'views/components/add-item-button.htm' %}
                                         </div>
@@ -819,12 +819,12 @@
                                     <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                         <div class="form-group margin-top-5" style="width: 100%">
                                            
-                                            <input data-bind="select2: {value: getEditedNode('ADMINISTRATIVE_SUBDIVISION_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADMINISTRATIVE_SUBDIVISION_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form admin-area-type" placeholder="Admin Area Type">
+                                            <input data-bind="select2: {value: getEditedNode('ADMINISTRATIVE_SUBDIVISION_TYPE.E55', 'value'), placeholder: 'Type', dataKey: 'ADMINISTRATIVE_SUBDIVISION_TYPE.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form admin-area-type" placeholder="{% trans 'Admin Area Type' %}">
 
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
 
-                                            <input class="form-control" id="ad_area_type" style="width: 100%; height: 32px;" placeholder="Area Name" data-bind='value: getEditedNode("ADMINISTRATIVE_SUBDIVISION.E48", "value")'>
+                                            <input class="form-control" id="ad_area_type" style="width: 100%; height: 32px;" placeholder="{% trans 'Area Name' %}" data-bind='value: getEditedNode("ADMINISTRATIVE_SUBDIVISION.E48", "value")'>
 
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -902,7 +902,7 @@
                                         <form class="form-inline arches-form hidden-xs" role="form">
                                             <div class="form-group margin-top-5" style="width: 100%">
                                                 
-                                                <input class="form-control arches-form-input" id="ad_apn" style="width: 30%;" placeholder="Parcel Number" data-bind='value: getEditedNode("PLACE_APPELLATION_CADASTRAL_REFERENCE.E44", "value")'>
+                                                <input class="form-control arches-form-input" id="ad_apn" style="width: 30%;" placeholder="{% trans 'Parcel Number' %}" data-bind='value: getEditedNode("PLACE_APPELLATION_CADASTRAL_REFERENCE.E44", "value")'>
 
                                                 {% include 'views/components/add-item-button.htm' %}
 
@@ -914,7 +914,7 @@
                                         <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                             <div class="form-group margin-top-5" style="width: 100%">
                                                 
-                                                <input class="form-control arches-form-input" id="ad_apn" style="width: 100%;" placeholder="Parcel Number" data-bind='value: getEditedNode("PLACE_APPELLATION_CADASTRAL_REFERENCE.E44", "value")'>
+                                                <input class="form-control arches-form-input" id="ad_apn" style="width: 100%;" placeholder="{% trans 'Parcel Number' %}" data-bind='value: getEditedNode("PLACE_APPELLATION_CADASTRAL_REFERENCE.E44", "value")'>
 
                                                 <!-- Spacer (for xs screens) -->
                                                 <div class="margin-top-5 hidden-sm hidden-md hidden-lg"></div>
@@ -942,7 +942,7 @@
                     <div class="arches-crud-child-section">
                         <dl>
                             <dd class="arches-CRUD-child-title">
-                                This resource is related to the following Parcels:
+                                {% trans 'This resource is related to the following Parcels:' %}
                             </dd>  
 
                             <div data-bind="visible: getBranchLists().length == 0" class="margin-left-5 txt-color-blue">{% trans "No Parcels Defined" %}</div>   
