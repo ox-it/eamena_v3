@@ -1300,3 +1300,23 @@ class ImageryForm(ResourceForm):
             }
 
         return
+        
+class EditHistory(ResourceForm):
+    @staticmethod
+    def get_info():
+        return {
+            'id': 'edit-history',
+            'icon': 'fa-step-backward',
+            'name': _('Review Edit History'),
+            'class': EditHistory
+        }
+
+class DeleteResourceForm(ResourceForm):
+    @staticmethod
+    def get_info():
+        return {
+            'id': 'delete-resource',
+            'icon': 'fa-times-circle',
+            'name': _('Delete Resource'),
+            'class': DeleteResourceForm
+        }

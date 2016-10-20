@@ -17,12 +17,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
 from django.conf import settings
 import arches.app.models.models as archesmodels
-from arches.app.models.edit_history import EditHistory
 from arches.app.models.resource import Resource as ArchesResource
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 from eamena.models import forms
-from arches.app.models.forms import DeleteResourceForm
 from django.utils.translation import ugettext as _
 from arches.app.models.entity import Entity
 
@@ -118,8 +116,8 @@ class Resource(ArchesResource):
                 'icon': 'fa-wrench',
                 'name': _('Manage Resource'),
                 'forms': [
-                    EditHistory.get_info(),
-                    DeleteResourceForm.get_info()
+                    forms.EditHistory.get_info(),
+                    forms.DeleteResourceForm.get_info()
                 ]
             })
             
