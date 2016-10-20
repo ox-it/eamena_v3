@@ -13,7 +13,7 @@
                 {% for SITE_FUNCTION_TYPE_E55 in report_info.source.graph.SITE_FUNCTION_TYPE_E55 %}
                     <dd class="arches-report-subsection-item">
                      {{ SITE_FUNCTION_TYPE_E55.SITE_FUNCTION_TYPE_E55__value }}
-                     <span class="arches-report-subsection-item-type">{% trans "(Certainty:" %}{{ SITE_FUNCTION_TYPE_E55.SITE_FUNCTION_CERTAINTY_TYPE_E55__value }})</span>
+                     <span class="arches-report-subsection-item-type">( {% trans "Certainty" %}{{ SITE_FUNCTION_TYPE_E55.SITE_FUNCTION_CERTAINTY_TYPE_E55__value }} )</span>
                     </dd>
                     {% empty %}
                 {% endfor %}            
