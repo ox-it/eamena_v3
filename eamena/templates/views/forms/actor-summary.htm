@@ -205,7 +205,7 @@
                                 <form class="form-inline arches-form hidden-xs" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="Country">
+                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:50%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'Country' %}">
                                             
                                             {% include 'views/components/add-item-button.htm' %}
                                     </div>
@@ -216,7 +216,7 @@
                                 <form class="form-inline arches-form hidden-sm hidden-md hidden-lg" role="form">
                                     <div class="form-group margin-top-5" style="width: 100%">
                                         
-                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="extent certainty">
+                                        <input data-bind="select2: {value: getEditedNode('MODERN_COUNTRY_TERRITORY.E55', 'value'), placeholder: 'Country', dataKey: 'MODERN_COUNTRY_TERRITORY.E55'}" style="width:100%; height: 36px; padding-top: 2px;" class="select2 arches-select2-crud-form location-setting" placeholder="{% trans 'Country' %}">
                                             
                                             <!-- Spacer (for xs screens) -->
                                             <div class="margin-top-10 hidden-sm hidden-md hidden-lg"></div>
@@ -242,7 +242,7 @@
             <div class="arches-crud-child-section">
                 <dl>
                     <dd class="arches-CRUD-child-title">
-                        {% trans "This actor is located in the following Country:" %}
+                        {% trans "This actor's country of origin is:" %}
                     </dd>
                     <dd class="margin-left-5" style="display: none;" data-bind="visible: true">
                     <div data-bind="visible: getBranchLists().length == 0" class="margin-left-5 txt-color-blue">{% trans "No Country Defined" %}</div>
