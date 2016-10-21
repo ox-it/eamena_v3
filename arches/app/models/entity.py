@@ -180,14 +180,7 @@ class Entity(object):
               archesmodels.UniqueIds.objects.get(pk=self.entityid)
             except ObjectDoesNotExist:
               self.create_uniqueids(str(entitytype), is_new_resource=False)
-#               uniqueidmodel = self._get_model('uniqueids')
-#               uniqueidmodelinstance = uniqueidmodel()
-#               uniqueidmodelinstance.entityid = archesmodels.Entities.objects.get(pk=self.entityid)
-#               uniqueidmodelinstance.id_type = self.value.split("-")[0]              
-#               IdInt = int(filter(unicode.isdigit, self.value))
-#               uniqueidmodelinstance.val = str(IdInt)
-#               uniqueidmodelinstance.order_date = datetime.datetime.now()
-#               uniqueidmodelinstance.save()
+
                                      
         columnname = entity.entitytypeid.getcolumnname()
         if columnname != None:
@@ -210,8 +203,19 @@ class Entity(object):
             #         elif len(self.child_entities) == 1:
             #             self.child_entities[0].value = concept.id
             if not (isinstance(themodelinstance, archesmodels.Files)) and not (isinstance(themodelinstance, archesmodels.UniqueIds)):
+                # Validating dates
+                if isinstance(themodelinstance, archesmodels.Dates):
+                  try:
+                    datetime.datetime.strptime(self.value, '%Y-%m-%d')
+                  except ValueError:
+                    try:
+                      d = datetime.datetime.strptime(self.value,'%d-%m-%Y')
+                      self.value = d.strftime('%Y-%m-%d')
+                    except ValueError:
+                      raise ValueError("The value inserted is not a date")
+                    
                 setattr(themodelinstance, columnname, self.value)
-
+                
                 themodelinstance.save()
                 self.label = self.value
                 
