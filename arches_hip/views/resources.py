@@ -169,6 +169,9 @@ def report(request, resourceid):
                 if entity['entitytypeid'] == 'ACTOR_TYPE.E55':
                     related_resource['relationship'].append(get_preflabel_from_conceptid(entity['conceptid'], lang)['value'])
                     related_resource['actor_relationshiptype'] = ''
+            for entity in related_resource['child_entities']:
+                if entity['entitytypeid'] == 'ACTOR_APPELLATION.E82':
+                    related_resource['primaryname'] = entity['value']
         elif related_resource['entitytypeid'] == 'HISTORICAL_EVENT.E5':
             for entity in related_resource['domains']:
                 if entity['entitytypeid'] == 'HISTORICAL_EVENT_TYPE.E55':
@@ -198,6 +201,9 @@ def report(request, resourceid):
                     VirtualGlobe = True
                     VirtualGlobeName.append(entity['label'])
                     information_resource_type = 'SATELLITE'
+                elif entity['entitytypeid'] == 'TITLE.E41':
+                    related_resource['primaryname'] = entity['value']
+                  
             
             if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
                 for entity in related_resource['domains']:
