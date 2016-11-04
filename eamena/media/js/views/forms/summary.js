@@ -50,6 +50,7 @@ define(['jquery',
                     el: this.$el.find('#subjects-section')[0],
                     data: this.data,
                     dataKey: 'SITE_FUNCTION_TYPE.E55',
+                    rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
@@ -60,6 +61,7 @@ define(['jquery',
                     el: this.$el.find('#overall-certainty-section')[0],
                     data: this.data,
                     dataKey: 'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55',
+                    rules: true,
                     validateBranch: function (nodes) {
                          return this.validateHasValues(nodes);
                     }
@@ -70,6 +72,7 @@ define(['jquery',
                      el: this.$el.find('#culturalperiod-section')[0],
                      data: this.data,
                      dataKey: 'CULTURAL_PERIOD.E55',
+                     rules: true,
                      validateBranch: function (nodes) {
                            return this.validateHasValues(nodes);
                      }
@@ -90,6 +93,7 @@ define(['jquery',
                     el: this.$el.find('#assessment-section')[0],
                     data: this.data,
                     dataKey: 'ASSESSMENT_TYPE.E55',
+                    rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
@@ -108,6 +112,7 @@ define(['jquery',
                     el: this.$el.find('#sitemorph-section')[0],
                     data: this.data,
                     dataKey: 'SITE_MORPHOLOGY_TYPE.E55',
+                    rules: true,
                     validateBranch: function (nodes) {
                          return this.validateHasValues(nodes);
                     }
@@ -117,6 +122,7 @@ define(['jquery',
                     el: this.$el.find('#siteshape-section')[0],
                     data: this.data,
                     dataKey: 'SITE_OVERALL_SHAPE_TYPE.E55',
+                    rules: true,
                     validateBranch: function (nodes) {
                          return this.validateHasValues(nodes);
                     }                                         

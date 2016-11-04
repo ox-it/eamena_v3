@@ -12,6 +12,7 @@
                 el: this.$el.find('#threat-state-section')[0],
                 data: this.data,
                 dataKey: 'THREAT_STATE.E3',
+                rules: true,
                 validateBranch: function (nodes) {
                     valid = true;
                     _.each(nodes, function (node) {
@@ -34,6 +35,7 @@
                 el: this.$el.find('#disturbance-state-section')[0],
                 data: this.data,
                 dataKey: 'DISTURBANCE_STATE.E3',
+                rules: true,
                 validateBranch: function (nodes) {
                     var valid = true;
                     _.each(nodes, function (node) {
@@ -82,6 +84,7 @@
                 el: this.$el.find('#condition-type-section')[0],
                 data: this.data,
                 dataKey: 'CONDITION_TYPE.E55',
+                rules: true,
                 validateBranch: function (nodes) {                  
                     return this.validateHasValues(nodes);
                 }
@@ -91,6 +94,7 @@
                 el: this.$el.find('#disturbance-extent-section')[0],
                 data: this.data,
                 dataKey: 'DISTURBANCE_EXTENT_TYPE.E55',
+                rules: true,
                 validateBranch: function (nodes) {
                     return this.validateHasValues(nodes);
                 }

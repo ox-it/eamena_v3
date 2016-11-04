@@ -7,6 +7,7 @@
                 el: this.$el.find('#feature-section')[0],
                 data: this.data,
                 dataKey: 'FEATURE_EVIDENCE_ASSIGNMENT.E17',
+                rules: true,
                 validateBranch: function (nodes) {                       
                     return this.validateHasValues(nodes);
                 }
@@ -16,6 +17,7 @@
                 el: this.$el.find('#interpretation-section')[0],
                 data: this.data,
                 dataKey: 'FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17',
+                rules: true,
                 validateBranch: function (nodes) {
                     return this.validateHasValues(nodes);
                 }
