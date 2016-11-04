@@ -13,8 +13,20 @@
                 data: this.data,
                 dataKey: 'THREAT_STATE.E3',
                 validateBranch: function (nodes) {
-                    return true;
-                    return this.validateHasValues(nodes);
+                    valid = true;
+                    _.each(nodes, function (node) {
+                      if (node.entitytypeid === 'THREAT_CAUSE_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }
+                      if (node.entitytypeid === 'THREAT_CAUSE_CERTAINTY_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }                      
+                    }, this);
+                    return valid;
                 }
             }));
                            
@@ -23,8 +35,45 @@
                 data: this.data,
                 dataKey: 'DISTURBANCE_STATE.E3',
                 validateBranch: function (nodes) {
-                    return true;                        
-                    return this.validateHasValues(nodes);
+                    var valid = true;
+                    _.each(nodes, function (node) {
+                      if (node.entitytypeid === 'DISTURBANCE_CAUSE_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }
+                      if (node.entitytypeid === 'DISTURBANCE_CAUSE_CERTAINTY_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }
+                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }                                                              
+                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55 ') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }  
+                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55 ') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }
+                      if (node.entitytypeid === 'DISTURBANCE_TYPE.E55') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      } 
+                      if (node.entitytypeid === 'DISTURBANCE_DATE_END.E49') {
+                          if (node.value === ''){
+                              valid = false;
+                          }
+                      }                                                  
+                    }, this);
+                    return valid;
                 }
             }));
                            
@@ -33,8 +82,7 @@
                 el: this.$el.find('#condition-type-section')[0],
                 data: this.data,
                 dataKey: 'CONDITION_TYPE.E55',
-                validateBranch: function (nodes) {
-                    return true;                        
+                validateBranch: function (nodes) {                  
                     return this.validateHasValues(nodes);
                 }
             }));
@@ -44,7 +92,6 @@
                 data: this.data,
                 dataKey: 'DISTURBANCE_EXTENT_TYPE.E55',
                 validateBranch: function (nodes) {
-                    return true;
                     return this.validateHasValues(nodes);
                 }
             }));

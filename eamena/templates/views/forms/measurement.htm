@@ -30,7 +30,7 @@
                             
                             </dd>
                     <!-- End Form -->
-                    
+                <div class="alert alert-danger branch-invalid-alert" role="alert" style="display:none;">{% trans "This field must be entered." %}</div>         
                     
                 </dl>
                 
@@ -93,7 +93,7 @@
                             
                             </dd>
                     <!-- End Form -->
-                    
+                    <div class="alert alert-danger branch-invalid-alert" role="alert" style="display:none;">{% trans "This field must be entered." %}</div>       
                     
                 </dl>
                 
@@ -227,7 +227,7 @@
                             
                             </dd>
                     <!-- End Form -->
-                    
+                <div class="alert alert-danger branch-invalid-alert" role="alert" style="display:none;">{% trans "The following fields must be entered: Disturbance Cause; Disturbance Cause Certainty; Effect 1; Effect 1 Certainty; Disturbance Type; Date Type; Date to" %}</div>          
                     
                 </dl>
                 
@@ -253,21 +253,21 @@
                                 <a href="javascript:void(0)" class="arches-CRUD-child" title="{% trans "Delete this measurement" %}"><i data-bind='click: $parent.deleteItem.bind($parent)' class="arches-CRUD-delete fa fa-times-circle"></i></a>
                                 <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind='click: $parent.editItem.bind($parent)' title="{% trans "Edit this measurement" %}">
                                     <span data-bind="{text: nodes.get('DISTURBANCE_CAUSE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "cause" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_CAUSE_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "cause certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_1_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 1" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 1 certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_2_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 2" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_2_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 2 certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_3_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 3" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_3_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 3 certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_4_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 4" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_4_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 4 certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_5_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 5" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_5_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "effect 5 certainty" %}),</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "type" %})</span>
-                                    <span data-bind="{text: nodes.get('DISTURBANCE_DATE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "date type" %}),</span>
-                                    <span data-bind='text: nodes.get("DISTURBANCE_DATE_START.E49", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier">({% trans "start" %}),</span>
-                                    <span data-bind='text: nodes.get("DISTURBANCE_DATE_END.E49", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier">({% trans "end" %})</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_CAUSE_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "cause certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_1_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 1" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 1 certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_2_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 2" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_2_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 2 certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_3_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 3" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_3_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 3 certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_4_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 4" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_4_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 4 certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_5_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 5" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_EFFECT_5_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "effect 5 certainty" %} ),</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "type" %} )</span>
+                                    <span data-bind="{text: nodes.get('DISTURBANCE_DATE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "date type" %} ),</span>
+                                    <span data-bind='text: nodes.get("DISTURBANCE_DATE_START.E49", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier">( {% trans "start" %} ),</span>
+                                    <span data-bind='text: nodes.get("DISTURBANCE_DATE_END.E49", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier">( {% trans "end" %} )</span>
                                 </a>
                             </div>
                         </div>
@@ -317,7 +317,7 @@
                             </dd>
                     <!-- End Form -->
                     
-                    
+                <div class="alert alert-danger branch-invalid-alert" role="alert" style="display:none;">{% trans "The following fields must be entered: Threat Cause; Threat Cause Certainty" %}</div>           
                 </dl>
                 
             </div>
@@ -341,9 +341,9 @@
                             <div class="arches-crud-record">
                                 <a href="javascript:void(0)" class="arches-CRUD-child" title="{% trans "Delete this measurement" %}"><i data-bind='click: $parent.deleteItem.bind($parent)' class="arches-CRUD-delete fa fa-times-circle"></i></a>
                                 <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind='click: $parent.editItem.bind($parent)' title="{% trans "Edit this measurement" %}">
-                                   <span data-bind="{text: nodes.get('THREAT_CAUSE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "cause" %})</span>
-                                    <span data-bind="{text: nodes.get('THREAT_CAUSE_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "cause certainty" %})</span>
-                                    <span data-bind="{text: nodes.get('THREAT_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ({% trans "type" %}),</span>
+                                   <span data-bind="{text: nodes.get('THREAT_CAUSE_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "cause" %} )</span>
+                                    <span data-bind="{text: nodes.get('THREAT_CAUSE_CERTAINTY_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "cause certainty" %} )</span>
+                                    <span data-bind="{text: nodes.get('THREAT_TYPE.E55', 'label')}" style="padding-right:2px"></span><span class="text-muted arches-crud-type-identifier"> ( {% trans "type" %} ),</span>
                                 </a>
                             </div>
                         </div>
