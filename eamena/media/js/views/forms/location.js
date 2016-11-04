@@ -115,31 +115,52 @@ define([
             this.addBranchList(new BranchList({
                 el: this.$el.find('#locationcertainty-section')[0],
                 data: this.data,
-                dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55'
+                dataKey: 'SITE_LOCATION_CERTAINTY_TYPE.E55',
+                rules: true,
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                }
             }));
                            
             this.addBranchList(new BranchList({
                 el: this.$el.find('#size-section')[0],
                 data: this.data,
-                dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55'
+                dataKey: 'SITE_SIZE_CERTAINTY_TYPE.E55',
+                rules: true,
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                }
             }));
                            
             this.addBranchList(new BranchList({
                 el: this.$el.find('#country-section')[0],
                 data: this.data,
-                dataKey: 'MODERN_COUNTRY_TERRITORY.E55'
+                dataKey: 'MODERN_COUNTRY_TERRITORY.E55',
+                rules: true,
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                }
             }));
                            
             this.addBranchList(new BranchList({
                 el: this.$el.find('#toposetting-section')[0],
                 data: this.data,
-                dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55'
+                dataKey: 'PLACE_TOPOGRAPHY_TYPE.E55',
+                rules: true,
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                }                
+                
             }));
                            
             this.addBranchList(new BranchList({
                 el: this.$el.find('#grid_ID-section')[0],
                 data: this.data,
-                dataKey: 'GRID_ID.E42'
+                dataKey: 'GRID_ID.E42',
+                rules: true,
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                }
             }));
                            
             this.addBranchList(new BranchList({
