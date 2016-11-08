@@ -49,22 +49,7 @@
                               valid = false;
                           }
                       }
-                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_TYPE.E55') {
-                          if (node.value === ''){
-                              valid = false;
-                          }
-                      }                                                              
-                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55 ') {
-                          if (node.value === ''){
-                              valid = false;
-                          }
-                      }  
-                      if (node.entitytypeid === 'DISTURBANCE_EFFECT_1_CERTAINTY_TYPE.E55 ') {
-                          if (node.value === ''){
-                              valid = false;
-                          }
-                      }
-                      if (node.entitytypeid === 'DISTURBANCE_TYPE.E55') {
+                      if (node.entitytypeid === 'DISTURBANCE_DATE_TYPE.E55') {
                           if (node.value === ''){
                               valid = false;
                           }
