@@ -109,8 +109,12 @@ class ResourceLoader(object):
                     entityid = ''
                     
                 master_graph.save(user=self.user, note=load_id, resource_uuid=entityid)
-                master_graph.index()
                 resource.entityid = master_graph.entityid
+                new_resource = Resource().get(resource.entityid)
+                try:
+                    new_resource.index()
+                except:
+                    print 'Could not index resource. This may be because the valueid of a concept is not in the database.'                
                 legacyid_to_entityid[resource.resource_id] = master_graph.entityid
             
             else:
