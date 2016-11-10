@@ -143,7 +143,6 @@ def report(request, resourceid):
     }
 
     related_resource_info = get_related_resources(resourceid, lang)
-
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
         VirtualGlobeName = []
@@ -152,6 +151,9 @@ def report(request, resourceid):
         OtherImagery = True
         information_resource_type = 'DOCUMENT'
         related_resource['relationship'] = []
+        related_resource['datefrom'] = []
+        related_resource['dateto'] = []
+        related_resource['notes'] = []
         if related_resource['entitytypeid'] == 'HERITAGE_RESOURCE.E18':
             for entity in related_resource['domains']:
                 if entity['entitytypeid'] == 'RESOURCE_TYPE_CLASSIFICATION.E55':
@@ -219,12 +221,13 @@ def report(request, resourceid):
                         OtherImageryName.append(entity['label'])
                 related_resource['primaryname'] = " - ".join(OtherImageryName)
                     
-        # get the relationship between the two entities
+        # get the relationship between the two entities as well as the notes and dates, if the exist
         for relationship in related_resource_info['resource_relationships']:
             if relationship['entityid1'] == related_resource['entityid'] or relationship['entityid2'] == related_resource['entityid']: 
                 related_resource['relationship'].append(get_preflabel_from_valueid(relationship['relationshiptype'], lang)['value'])
-
-
+                if relationship['datestarted']: related_resource['datefrom'] = relationship['datestarted']
+                if relationship['dateended']: related_resource['dateto'] = relationship['dateended']
+                if relationship['notes']: related_resource['notes'] = relationship['notes']
         entitytypeidkey = related_resource['entitytypeid'].split('.')[0]
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
