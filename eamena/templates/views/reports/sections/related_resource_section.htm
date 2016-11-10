@@ -166,6 +166,20 @@
                                                             ( {{related_resource.relationship|join:", "}} )
                                                         {% endif %}
                                                     </span> 
+                                                     {% if related_resource.datefrom|length > 0 %}
+                                                    <span class="arches-report-subsection-item-type">
+                                                       
+                                                        From: 
+                                                        
+                                                    </span> {{related_resource.datefrom}} 
+                                                    {% endif %}
+                                                    {% if related_resource.dateto|length > 0 %}
+                                                    <span class="arches-report-subsection-item-type">
+                                                       
+                                                        To: 
+                                                        
+                                                    </span> {{related_resource.dateto}} 
+                                                    {% endif %}
                                                 </dd>
 
                                                 {% empty %}
@@ -251,6 +265,9 @@
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
                                                         {{related_resource.primaryname|cut:"T00:00:00"}}
+                                                        {% if related_resource.notes|length > 0 %}
+                                                        ,  {{related_resource.notes}} 
+                                                        {% endif %}
                                                     </a>
 
                                                     <span class="arches-report-subsection-item-type">
