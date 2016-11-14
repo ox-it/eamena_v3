@@ -104,7 +104,7 @@ class Entity(object):
                 zerosLength = settings.ID_LENGTH if  settings.ID_LENGTH > len(themodelinstance.val) else len(themodelinstance.val)
                 self.value = type +"-"+themodelinstance.val.zfill(zerosLength)
                 self.label = type +"-"+themodelinstance.val.zfill(zerosLength)
-
+                
             else:
                 self.value = getattr(themodelinstance, columnname, 'Entity %s could not be found in the table %s' % (pk, entity.entitytypeid.businesstablename))                   
                 self.label = self.value
@@ -116,8 +116,8 @@ class Entity(object):
         
         # get the child entities if any
         child_entities = archesmodels.Relations.objects.filter(entityiddomain = pk)
-        for child_entity in child_entities:       
-            self.append_child(Entity().get(child_entity.entityidrange_id, entity)) 
+        for child_entity in child_entities:   
+            self.append_child(Entity().get(child_entity.entityidrange_id, entity))
         return self
         
     def create_uniqueids(self, entitytype, is_new_resource = False):  # Method that creates UniqueIDs and its correlated Entity when a new resource is saved, or else only a UniqueId when the entity is already present (this will happen if the entities are created via importer.py
@@ -134,6 +134,7 @@ class Entity(object):
           entity2.save()
           rule = archesmodels.Rules.objects.get(entitytypedomain = self.entitytypeid, entitytyperange = entity2.entitytypeid, propertyid = 'P1')
           archesmodels.Relations.objects.get_or_create(entityiddomain = archesmodels.Entities.objects.get(pk=self.entityid), entityidrange = entity2, ruleid = rule)
+          
         
         uniqueidmodel = self._get_model('uniqueids')
         uniqueidmodelinstance = uniqueidmodel()
@@ -150,6 +151,8 @@ class Entity(object):
                 
         uniqueidmodelinstance.order_date = datetime.datetime.now()
         uniqueidmodelinstance.save()
+        if is_new_resource:
+          return entity2.entityid
                         
     def _save(self):
         """
@@ -173,7 +176,8 @@ class Entity(object):
         entity.entityid = self.entityid
         entity.save()
         if is_new_resource:
-          self.create_uniqueids(str(entitytype), is_new_resource)
+          newid = self.create_uniqueids(str(entitytype), is_new_resource)
+          self.append_child(Entity().get(newid, archesmodels.Entities.objects.get(pk = entity.entityid)))
         else:
           if str(entitytype) == 'EAMENA_ID.E42':
             try:
@@ -204,7 +208,7 @@ class Entity(object):
             #             self.child_entities[0].value = concept.id
             if not (isinstance(themodelinstance, archesmodels.Files)) and not (isinstance(themodelinstance, archesmodels.UniqueIds)):
                 # Validating dates
-                if isinstance(themodelinstance, archesmodels.Dates):
+                if isinstance(themodelinstance, archesmodels.Dates) and is_new_entity ==True:
                   try:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d')
                   except ValueError:
@@ -234,7 +238,6 @@ class Entity(object):
                     self.label = themodelinstance.getname()
 
         for child_entity in self.child_entities:
-
             child = child_entity._save()
             rule = archesmodels.Rules.objects.get(entitytypedomain = entity.entitytypeid, entitytyperange = child.entitytypeid, propertyid = child_entity.property)
             archesmodels.Relations.objects.get_or_create(entityiddomain = entity, entityidrange = child, ruleid = rule)
