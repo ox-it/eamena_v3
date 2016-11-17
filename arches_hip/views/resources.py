@@ -52,9 +52,11 @@ def report(request, resourceid):
     iv, encrypted = GeoCrypt.encrypt(geometry, GeoCrypt.KEY)
     ciphertext = binascii.b2a_base64(encrypted).rstrip()
     result = {
+      'editor': 'true' if 'edit' in request.user.user_groups else 'false',
       'key': GeoCrypt.KEY,
       'iv': iv,
       'ciphertext': ciphertext
+      
     }
 
 	
