@@ -31,11 +31,22 @@ require([
             if(resource_geometry.length > 0){
                 var geom = JSON.parse(result.toString(CryptoJS.enc.Utf8));
                 this.map = new MapView({
-                    el: $('#map'),
-                    controls: []
+                    el: $('#map')
                 });
-                
-                ko.applyBindings(this.map, $('#basemaps-panel')[0]);
+            
+            var logged = geom_encr.editor
+            if (logged === 'false') {        
+                var dragPan;
+                this.map.map.getInteractions().forEach(function(interaction) {
+                  if (interaction instanceof ol.interaction.DragPan) {
+                    dragPan = interaction;
+                  }
+                }, this);
+                if (dragPan) {
+                  this.map.map.removeInteraction(dragPan);
+                };
+            };              
+            ko.applyBindings(this.map, $('#basemaps-panel')[0]);
 
                 this.highlightFeatures(JSON.parse(result.toString(CryptoJS.enc.Utf8)));
                 this.zoomToResource('1');
