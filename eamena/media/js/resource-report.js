@@ -1,31 +1,44 @@
 require([
     'jquery',
+    'views/crypto/components/core',
     'underscore',
     'arches',
     'bootstrap',
     'views/map',
     'openlayers', 
+    'views/crypto/components/cipher-core',
     'knockout',
-    'utils'
-], function($, _, arches, bootstrap, MapView, ol, ko, utils) {
+    'utils',
+    'views/crypto/components/enc-base64',
+    'views/crypto/rollups/aes',
+    'views/crypto/components/mode-cfb',
+], function($,crypto, _, arches, bootstrap, MapView, ol, ciphercore, ko, utils, encbase, aes, cfb) {
     var ReportView = Backbone.View.extend({
 
         initialize: function(options) { 
             var resize;
             var self = this;
-            var resource_geometry = $('#resource_geometry');
-            
-            if(resource_geometry.length > 0){
-                var geom = JSON.parse(resource_geometry.val());
-                this.map = new MapView({
-                    el: $('#map')
-                });
 
+            var resource_geometry = $('#resource_geometry');
+            var geom_encr = JSON.parse(resource_geometry.val());
+            var key = CryptoJS.enc.Hex.parse(geom_encr.key);
+            var iv = CryptoJS.enc.Hex.parse(geom_encr.iv);
+            var cipher = CryptoJS.lib.CipherParams.create({
+                ciphertext: CryptoJS.enc.Base64.parse(geom_encr.ciphertext)
+            }),
+                result = CryptoJS.AES.decrypt(cipher, key, {iv: iv, mode: CryptoJS.mode.CFB});
+                
+            if(resource_geometry.length > 0){
+                var geom = JSON.parse(result.toString(CryptoJS.enc.Utf8));
+                this.map = new MapView({
+                    el: $('#map'),
+                    controls: []
+                });
+                
                 ko.applyBindings(this.map, $('#basemaps-panel')[0]);
 
-                this.highlightFeatures(JSON.parse(resource_geometry.val()));
+                this.highlightFeatures(JSON.parse(result.toString(CryptoJS.enc.Utf8)));
                 this.zoomToResource('1');
-
                 var hideAllPanels = function(){
                     $("#basemaps-panel").addClass("hidden");
 

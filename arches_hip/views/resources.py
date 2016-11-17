@@ -29,6 +29,9 @@ from arches.app.views.concept import get_preflabel_from_conceptid
 from arches.app.views.resources import get_related_resources
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested
+from django.contrib.gis.geos import GEOSGeometry
+import binascii
+from arches.app.utils.encrypt import Crypter
 
 
 def report(request, resourceid):
@@ -40,10 +43,21 @@ def report(request, resourceid):
     report_info['type'] = report_info['_type']
     report_info['source']['graph'] = report_info['source']['graph']
     if primaryname['_source']['primaryname']:
-        report_info['source']['primaryname'] = primaryname['_source']['primaryname']
+        report_info['source']['primaryname'] = primaryname['_source']['primaryname'] 
     del report_info['_source']
     del report_info['_type']            
-                
+    
+    geometry = JSONSerializer().serialize(report_info['source']['geometry'])
+    GeoCrypt = Crypter(settings.ENCODING_KEY)
+    iv, encrypted = GeoCrypt.encrypt(geometry, GeoCrypt.KEY)
+    ciphertext = binascii.b2a_base64(encrypted).rstrip()
+    result = {
+      'key': GeoCrypt.KEY,
+      'iv': iv,
+      'ciphertext': ciphertext
+    }
+
+	
     if report_info['type'] == "INFORMATION_RESOURCE.E73": # These clauses produce subtypes for Imagery, Shared Dataset and Cartography Info Resources, with the aim of producing different Report pages for each of these Resource Types
         report_info['subtype'] = ''
         if 'ACQUISITION_ASSIGNMENT_E17' in report_info['source']['graph'] or 'CATALOGUE_E42' in report_info['source']['graph']:
@@ -235,7 +249,8 @@ def report(request, resourceid):
 
 
     return render_to_response('resource-report.htm', {
-            'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+            'geometry': JSONSerializer().serialize(result),
+#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
             'resourceid': resourceid,
             'report_template': 'views/reports/' + report_info['type'] + '.htm',
             'report_info': report_info,
