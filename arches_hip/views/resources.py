@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import re
+import urllib,json
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
@@ -32,6 +33,8 @@ from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Matc
 from django.contrib.gis.geos import GEOSGeometry
 import binascii
 from arches.app.utils.encrypt import Crypter
+from arches.app.utils.spatialutils import getdates
+
 
 
 def report(request, resourceid):
@@ -248,8 +251,7 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
-
-
+        
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
@@ -258,7 +260,7 @@ def report(request, resourceid):
             'report_info': report_info,
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
-            'active_page': 'ResourceReport'
-            
+            'active_page': 'ResourceReport',
+            'BingDates': getdates(JSONSerializer().serialize(report_info['source']['geometry']['geometries'][0])) # Retrieving the dates of Bing Imagery
         },
         context_instance=RequestContext(request))        

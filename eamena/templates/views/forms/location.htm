@@ -7,6 +7,7 @@
 
 
     <div id="geom-list-section" >
+
         <!-- Map -->
         <div class="row margin-bottom-10">
             <div class="col-xs-12">
@@ -21,6 +22,7 @@
                         </dt>
 
                         <!-- Map -->
+                        
                         <div id="map" class="map arches-report-map margin-left-0 margin-top-10"></div>
                         
                         <!-- Geometry Type -->
@@ -37,7 +39,12 @@
                           
                     </dl>
                 </div>
-
+                <!-- Map: Date of Bing Imagery--->
+                <div class="row">
+                    <div class="col-xs-12" style="margin-left:-10px;">
+                        <div id = "datescontainer" style= "float: right; margin-top: -500px;  z-index: 30000;color:#fff; display:hidden;"> <span id="imagery-tag">{% trans "Date of imagery: " %}</span><div id="imagery-date" ></div></div>
+                    </div>
+                </div>
                 <!-- Map Tools Panel -->
                 <div class="row" >
                     <div class="col-xs-4 {% if LANGUAGE_BIDI %}col-xs-offset-7{%else %} col-xs-offset-1{% endif %}" style="">

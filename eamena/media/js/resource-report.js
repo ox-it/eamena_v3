@@ -81,6 +81,11 @@ require([
                         baseLayer.layer.setVisible(baseLayer.id == basemap);
                     });
                     hideAllPanels();
+                    if (basemap ==='Aerial') {
+                        $("#imagery-date").show();
+                    }else {
+                        $("#imagery-date").hide();
+                    };
                 });
 
                 //Close Button

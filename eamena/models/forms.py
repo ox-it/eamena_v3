@@ -30,6 +30,8 @@ from django.forms.models import model_to_dict
 from django.utils.translation import ugettext as _
 # from django.forms.models import model_to_dict
 from datetime import datetime
+from arches.app.utils.spatialutils import getdates
+
 
 def datetime_nodes_to_dates(branch_list):
     for branch in branch_list:
@@ -526,14 +528,17 @@ class LocationForm(ResourceForm):
         return
 
     def load(self, lang):
-        
+        geom = self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47')[0]['nodes'][0]
         self.data['SPATIAL_COORDINATES_GEOMETRY.E47'] = {
             'branch_lists': self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47'),
             'domains': {
                 'GEOMETRY_QUALIFIER.E55': Concept().get_e55_domain('GEOMETRY_QUALIFIER.E55')
-            }
+            },
+            'BingDates': getdates(geom.value)
         }
-
+        
+        
+        
         self.data['PLACE_ADDRESS.E45'] = {
             'branch_lists': self.get_nodes('PLACE_ADDRESS.E45'),
             'domains': {

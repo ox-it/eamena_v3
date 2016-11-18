@@ -15,7 +15,7 @@ define([
             var map = new MapView({
                 el: this.$el.find('.map')
             });
-
+            
             var addFeature = function (feature, editing) {
                 var branch = koMapping.fromJS({
                     'editing': ko.observable(editing), 
@@ -35,7 +35,26 @@ define([
                 self.trigger('change', 'geometrychange', branch);
                 self.trigger('geometrychange', feature, wkt.writeGeometry(geom));
             };
+            var object = JSON.parse($('#formdata').val());
+            var datesall =[];
+            datesall.push(object['SPATIAL_COORDINATES_GEOMETRY.E47']['BingDates']['start']);
+            datesall.push(object['SPATIAL_COORDINATES_GEOMETRY.E47']['BingDates']['end']);
+            var nonull = _.reject(datesall, function(date) {
+                return date === 'null';
+            });
+            var dates = _.uniq(nonull);
+            if (dates.length>1) {
+                var datestring = dates[0].slice(0,-4) && "/" && dates[0].slice(0,-4);
+            }else if (dates.length == 1) {
+                var datestring = dates[0].slice(0,-4);
+            }else{
+                var datestring = "None"
+                
+            };
+            $("#imagery-date").text(datestring);
+            $("#datescontainer").show();
 
+                
             var bulkAddFeatures = function (features) {
                 _.each(features, function(feature, i) {
                     addFeature(feature, i===features.length-1);
@@ -239,7 +258,13 @@ define([
                 _.each(map.baseLayers, function(baseLayer){
                     baseLayer.layer.setVisible(baseLayer.id == basemap);
                 });
-                $("#inventory-home").click()
+                $("#inventory-home").click();
+                if (basemap ==='Aerial') {
+                    $("#imagery-date").text(datestring);
+                    $("#datescontainer").show();
+                }else {
+                    $("#datescontainer").hide()
+                };                             
             });
 
             var formatConstructors = [

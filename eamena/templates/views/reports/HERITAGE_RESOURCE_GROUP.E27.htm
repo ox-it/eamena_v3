@@ -23,7 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 <!-- End Fixed Nav for Report -->
-<div id="report-body" class="report-body">
+
+<div id="report-body" class="report-body" >
     
      {% if geometry != 'null' %}
         <!--=== Map Block ===-->
@@ -33,12 +34,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <div id="olmap" class="fill"></div>
                 <div style="display:none;" id="map-data">
                     <input type="hidden" id="resource_geometry" value='{{ geometry }}' />
+                    
                 </div>
             </div>
 
             <!-- Map: Project Info Panel -->
             <div class="container">
-
+                <div class="row">
+                    <div class="col-xs-12" style="">
+                          <div id ="imagery-date" style="float:right; margin-top: -40px; width:200px; color:#fff;">{% trans "Date of imagery:" %} {% if BingDates.start != 'null' %} <span>{{BingDates.start|cut:"GMT"}}</span> {% endif %}  {% if BingDates.end != 'null' %}<span> {{BingDates.end|cut:"GMT"}}</span> {% endif %} {% if BingDates.start == 'null' and BingDates.end == 'null'  %} {% trans "No dates available" %} {% endif %} </div>
+                </div>
+            </div>
                 <!-- Map Tools Panel -->
                 <div class="row">
                     <div class="col-xs-12 col-sm-6" style="">
@@ -158,7 +164,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         <!-- Time Spans -->
                                         {% include 'views/reports/sections/TIME_SPANS.htm' %}
 
-
                                     </div>
                                 </div>
                                 <!-- End Section Content-->
@@ -264,9 +269,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <!-- End Resource Description Section -->
 
 
-    {% if 'CONDITION_ASSESMENT_E14' in report_info.source.graph %}
-        {% include 'views/reports/sections/condition_assessment_section.htm' %}
-    {% endif %}
 
     {% if 'EVALUATION_CRITERIA_ASSIGNMENT_E13' in report_info.source.graph %}
         {% include 'views/reports/sections/evaluation_section.htm' %}
