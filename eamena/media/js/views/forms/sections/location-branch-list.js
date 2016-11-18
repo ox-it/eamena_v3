@@ -40,13 +40,13 @@ define([
             datesall.push(object['SPATIAL_COORDINATES_GEOMETRY.E47']['BingDates']['start']);
             datesall.push(object['SPATIAL_COORDINATES_GEOMETRY.E47']['BingDates']['end']);
             var nonull = _.reject(datesall, function(date) {
-                return date === 'null';
+                return date ==null;
             });
             var dates = _.uniq(nonull);
             if (dates.length>1) {
                 var datestring = dates[0].slice(0,-4) && "/" && dates[0].slice(0,-4);
             }else if (dates.length == 1) {
-                var datestring = dates[0].slice(0,-4);
+                    var datestring = dates[0].slice(0,-4);
             }else{
                 var datestring = "None"
                 

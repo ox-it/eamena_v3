@@ -18,9 +18,8 @@ define([
             var includeAdminAreas = (resourcetypeid !== 'ACTOR.E39');
             var includeParcels = !_.contains(['ACTOR.E39', 'ACTIVITY.E7', 'HISTORICAL_EVENT.E5'], resourcetypeid);
             var adminAreaTypeLookup = {};
-
             BaseForm.prototype.initialize.apply(this);
-
+            
             _.each(this.data["ADMINISTRATIVE_SUBDIVISION.E48"].domains["ADMINISTRATIVE_SUBDIVISION_TYPE.E55"], function (typeRecord) {
                 adminAreaTypeLookup[typeRecord.text] = typeRecord.id;
             });

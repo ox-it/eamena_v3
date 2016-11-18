@@ -38,13 +38,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </div>
 
-            <!-- Map: Project Info Panel -->
+            
             <div class="container">
+            <!-- Map: Date of Bing Imagery-->
                 <div class="row">
                     <div class="col-xs-12" style="">
-                          <div id ="imagery-date" style="float:right; margin-top: -40px; width:200px; color:#fff;">{% trans "Date of imagery:" %} {% if BingDates.start != 'null' %} <span>{{BingDates.start|cut:"GMT"}}</span> {% endif %}  {% if BingDates.end != 'null' %}<span> {{BingDates.end|cut:"GMT"}}</span> {% endif %} {% if BingDates.start == 'null' and BingDates.end == 'null'  %} {% trans "No dates available" %} {% endif %} </div>
+                          <div id ="imagery-date" style="float:right; margin-top: -40px; width:200px; color:#fff;">{% trans "Date of imagery:" %} {% if BingDates.start != None %} <span>{{BingDates.start|cut:"GMT"}}</span> {% endif %}  {% if BingDates.end != None %}<span> {{BingDates.end|cut:"GMT"}}</span> {% endif %} {% if BingDates.start == None and BingDates.end == None  %} {% trans "No dates available" %} {% endif %} </div>
+                    </div>
                 </div>
-            </div>
                 <!-- Map Tools Panel -->
                 <div class="row">
                     <div class="col-xs-12 col-sm-6" style="">
