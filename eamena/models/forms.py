@@ -528,13 +528,13 @@ class LocationForm(ResourceForm):
         return
 
     def load(self, lang):
-        geom = self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47')[0]['nodes'][0]
+        geom = self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47')[0]['nodes'][0] if self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47') else ''
         self.data['SPATIAL_COORDINATES_GEOMETRY.E47'] = {
             'branch_lists': self.get_nodes('SPATIAL_COORDINATES_GEOMETRY.E47'),
             'domains': {
                 'GEOMETRY_QUALIFIER.E55': Concept().get_e55_domain('GEOMETRY_QUALIFIER.E55')
             },
-            'BingDates': getdates(geom.value)
+            'BingDates': getdates(geom.value) if geom else ''
         }
         
         
