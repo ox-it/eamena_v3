@@ -35,6 +35,7 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.models import models
 import csv
 import arches.app.utils.backlogids as create_backlog
+import arches.app.utils.legacyidsfixer as legacy_fixer
 
 class Command(BaseCommand):
     """
@@ -44,7 +45,7 @@ class Command(BaseCommand):
     
     option_list = BaseCommand.option_list + (
         make_option('-o', '--operation', action='store', dest='operation', default='setup',
-            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog', 'remove_resources_from_csv'],
+            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog', 'remove_resources_from_csv', 'legacy_fixer'],
             help='Operation Type; ' +
             '\'setup\'=Sets up Elasticsearch and core database schema and code' + 
             '\'setup_db\'=Truncate the entire arches based db and re-installs the base schema' + 
@@ -111,6 +112,8 @@ class Command(BaseCommand):
         
         if options['operation'] == 'create_backlog':
             self.create_backlog()
+        if options['operation'] == 'legacy_fixer':
+            self.legacy_fixer(options['source'])
 
     def setup(self, package_name):
         """
@@ -360,6 +363,9 @@ class Command(BaseCommand):
             csvwriter.writeheader()
             for csv_record in related_resources:
                 csvwriter.writerow({k: str(v).encode('utf8') for k, v in csv_record.items()})
+                
+    def legacy_fixer(self, source):
+        legacy_fixer.LegacyIdsFixer(source)
 
     def start_livereload(self):
         from livereload import Server
