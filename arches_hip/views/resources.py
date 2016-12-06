@@ -54,15 +54,17 @@ def report(request, resourceid):
     GeoCrypt = Crypter(settings.ENCODING_KEY)
     iv, encrypted = GeoCrypt.encrypt(geometry, GeoCrypt.KEY)
     ciphertext = binascii.b2a_base64(encrypted).rstrip()
-    result = {
-      'editor': 'true' if 'edit' in request.user.user_groups else 'false',
-      'key': GeoCrypt.KEY,
-      'iv': iv,
-      'ciphertext': ciphertext
-      
-    }
+    if geometry !='null':
+        result = {
+          'editor': 'true' if 'edit' in request.user.user_groups else 'false',
+          'key': GeoCrypt.KEY,
+          'iv': iv,
+          'ciphertext': ciphertext
+          
+        }
+    else:
+        result = None
 
-	
     if report_info['type'] == "INFORMATION_RESOURCE.E73": # These clauses produce subtypes for Imagery, Shared Dataset and Cartography Info Resources, with the aim of producing different Report pages for each of these Resource Types
         report_info['subtype'] = ''
         if 'ACQUISITION_ASSIGNMENT_E17' in report_info['source']['graph'] or 'CATALOGUE_E42' in report_info['source']['graph']:
@@ -251,7 +253,7 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
-        
+
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
@@ -261,6 +263,6 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(JSONSerializer().serialize(report_info['source']['geometry']['geometries'][0])) # Retrieving the dates of Bing Imagery
+            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
         },
         context_instance=RequestContext(request))        

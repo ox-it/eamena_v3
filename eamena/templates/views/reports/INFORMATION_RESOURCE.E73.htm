@@ -108,7 +108,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                 <!-- Section Header -->
                 <div class="">
-                    <i class="center-icon rounded-x fa fa-folder-open"></i>
+                         {% if geometry != 'null' %}<i class="center-icon rounded-x fa fa-folder-open"></i>{% endif %}
                     <div class="">
                         <h2 class="arches-report-section-header">
                         {% if 'Imagery' in report_info.subtype %}
