@@ -113,7 +113,7 @@ define(['jquery', 'backbone', 'knockout', 'underscore', 'plugins/knockout-select
             validationAlert.show(300);
             setTimeout(function() {
                 validationAlert.fadeOut();
-                }, 6500);
+                }, 60000);
         },
 
         /**
