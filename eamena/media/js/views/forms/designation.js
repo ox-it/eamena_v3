@@ -12,9 +12,10 @@ define(['jquery', 'underscore', 'knockout-mapping', 'views/forms/base', 'views/f
                 el: this.$el.find('#designation-section')[0],
                 data: this.data,
                 dataKey: 'PROTECTION_EVENT.E65',
-                validateBranch: function (nodes) {
-                    return this.validateHasValues(nodes);
-                }
+                 validateBranch: function (nodes) {
+                      return true;
+                      return this.validateHasValues(nodes);
+                 }
             }));
         }
     });
