@@ -31,14 +31,45 @@
 		    </div>
 		</div>
 		<!-- End Data Source -->
-
+		<!-- Data Source Affiliation/Copyright -->
+		<div class="row">
+		     <div class="col-xs-12">
+		        <dl>
+		            <dt>
+		                <h5 id="" class="arches-report-subsection-title">{% trans "Affiliation/Copyright holder" %}</h5>
+		            </dt>
+		
+		            {% if 'RESOURCE_CREATION_EVENT_E65' not in report_info.source.graph %}
+		                <dd class="arches-report-subsection-item">
+		                    {% trans "No Affiliation/Copyright recorded" %}
+		                </dd>
+		            {% else %}
+		                {% for RESOURCE_CREATION_EVENT_E65 in report_info.source.graph.RESOURCE_CREATION_EVENT_E65 %}
+		                    {% if 'SHARED_DATA_SOURCE_SHARER_E39' in RESOURCE_CREATION_EVENT_E65 %}
+		                	{% for SHARED_DATA_SOURCE_SHARER_E39 in RESOURCE_CREATION_EVENT_E65.SHARED_DATA_SOURCE_SHARER_E39 %}
+			                	{% if 'SHARED_DATA_SOURCE_AFFILIATION_E82' in SHARED_DATA_SOURCE_SHARER_E39 %}
+					                {% for SHARED_DATA_SOURCE_AFFILIATION_E82 in SHARED_DATA_SOURCE_SHARER_E39.SHARED_DATA_SOURCE_AFFILIATION_E82 %}
+					                    <dd class="arches-report-subsection-item">
+					                        {{ SHARED_DATA_SOURCE_AFFILIATION_E82.SHARED_DATA_SOURCE_AFFILIATION_E82__value }}
+					                    </dd>
+						         {% endfor %}           
+					         {% endif %}
+				         {% endfor %}
+			             {% endif %}
+		                {% endfor %}            
+		            {% endif %}
+		
+		        </dl>
+		    </div>
+		</div>
+		<!-- End Data Source Affiliation/Copyright  -->
 
 		<!-- Data Source Project -->
 		<div class="row">
 		     <div class="col-xs-12">
 		        <dl>
 		            <dt>
-		                <h5 id="" class="arches-report-subsection-title">{% trans "Data Source Project/Affiliation" %}</h5>
+		                <h5 id="" class="arches-report-subsection-title">{% trans "Data Source Project" %}</h5>
 		            </dt>
 		
 		            {% if 'RESOURCE_CREATION_EVENT_E65' not in report_info.source.graph %}
@@ -67,6 +98,7 @@
 		<!-- End Data Source Project -->
 
 
+		
 		<!-- Dataset Acquisition date -->
 		<div class="row">
 		     <div class="col-xs-12">

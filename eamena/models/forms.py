@@ -1085,6 +1085,7 @@ class SharedDataForm(ResourceForm):
 
     def update(self, data, files):
         self.update_nodes('SHARED_DATA_SOURCE_APPELLATION.E82', data)
+        self.update_nodes('SHARED_DATA_SOURCE_AFFILIATION.E82', data)
         self.update_nodes('SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82', data)
         self.update_nodes('SHARED_DATA_SOURCE_DATE_OF_CREATION.E50', data)
         return
@@ -1097,7 +1098,11 @@ class SharedDataForm(ResourceForm):
                 'domains': {
                 }
             }
-            
+            self.data['SHARED_DATA_SOURCE_AFFILIATION.E82'] = {
+                'branch_lists': self.get_nodes('SHARED_DATA_SOURCE_AFFILIATION.E82'),
+                'domains': {
+                }
+            }            
             self.data['SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82'] = {
                 'branch_lists': self.get_nodes('SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82'),
                 'domains': {

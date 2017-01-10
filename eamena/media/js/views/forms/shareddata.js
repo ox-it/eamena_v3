@@ -24,6 +24,15 @@ define(['jquery',
                         return this.validateHasValues(nodes);
                     }
                 }));
+
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#shared-affiliation-section')[0],
+                    data: this.data,
+                    dataKey: 'SHARED_DATA_SOURCE_AFFILIATION.E82',
+                    validateBranch: function (nodes) {
+                        return this.validateHasValues(nodes);
+                    }
+                }));
                                
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#shared-project-section')[0],

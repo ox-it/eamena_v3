@@ -168,6 +168,7 @@ def report(request, resourceid):
     for related_resource in related_resource_info['related_resources']:
         VirtualGlobeName = []
         OtherImageryName = []
+        SharedDataset = []
         VirtualGlobe = False
         OtherImagery = True
         information_resource_type = 'DOCUMENT'
@@ -213,8 +214,8 @@ def report(request, resourceid):
                 if entity['entitytypeid'] == 'TILE_SQUARE_DETAILS.E44': #If this node is populated, the Info resource is assumed to be a Map and its default name is set to Sheet Name
                     related_resource['primaryname'] = entity['label']
                     information_resource_type = 'MAP'                      
-                elif entity['entitytypeid'] == 'SHARED_DATA_SOURCE_APPELLATION.E82': #If this node is populated, the Info resource is assumed to be a Shared Dataset and its default name is set to Shared Dated Source
-                    related_resource['primaryname'] = entity['label']
+                elif entity['entitytypeid'] == 'SHARED_DATA_SOURCE_APPELLATION.E82' or entity['entitytypeid'] == 'SHARED_DATA_SOURCE_AFFILIATION.E82' or entity['entitytypeid'] == 'SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82': #If this node is populated, the Info resource is assumed to be a Shared Dataset and its default name is set to Shared Dated Source
+                    SharedDataset.append(entity['label'])
                     information_resource_type = 'SHARED'        
                 elif entity['entitytypeid'] == 'CATALOGUE_ID.E42': #If this node is populated, the Info resource is assumed to be Imagery other than VirtualGlobe type
                     OtherImageryName.append(entity['label'])
@@ -241,7 +242,8 @@ def report(request, resourceid):
                     if entity['entitytypeid'] == 'DATE_OF_ACQUISITION.E50':
                         OtherImageryName.append(entity['label'])
                 related_resource['primaryname'] = " - ".join(OtherImageryName)
-                    
+            if  information_resource_type == 'SHARED':  #This routine creates the concatenated primary name for a Shared dataset
+                related_resource['primaryname'] = " - ".join(SharedDataset)
         # get the relationship between the two entities as well as the notes and dates, if the exist
         for relationship in related_resource_info['resource_relationships']:
             if relationship['entityid1'] == related_resource['entityid'] or relationship['entityid2'] == related_resource['entityid']: 
