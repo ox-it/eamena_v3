@@ -282,15 +282,15 @@
 /*Brand*/
 .header .navbar-brand { 
     z-index: 1;
-    top: -10px;
+    top: -50px;
     position: relative;
-    padding: 0 10px 10px;
+    padding: 0 10px 0px;
 }
 
 @media (max-width: 992px) {
     .header .navbar-brand { 
         top: 0;
-        height: 40px;
+        height: 80px;
     }
 }
 
@@ -2529,7 +2529,7 @@ ul.labels-demo li {
 }
 
 .arches-logo {
-    height: 28px;
+    height: 70px;
     margin-top: 13px;
 }
 
