@@ -7,6 +7,7 @@ from django.db.models import Count
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
+import arches.app.utils.index_database as index_database
 import csv
 import uuid
 
@@ -58,4 +59,5 @@ def truncate_resources():
     """Deletes ALL resources in your database. Use with caution!"""
     cursor = connection.cursor()
     cursor.execute("""TRUNCATE data.entities CASCADE;""" )
+    index_database.index_db()
     print 'Resources Truncated'

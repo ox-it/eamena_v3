@@ -36,7 +36,7 @@ from arches.app.models import models
 import csv
 import arches.app.utils.backlogids as create_backlog
 import arches.app.utils.legacyidsfixer as legacy_fixer
-from arches.app.utils.load_relations import LoadRelations
+from arches.app.utils.load_relations import LoadRelations,UnloadRelations
 
 class Command(BaseCommand):
     """
@@ -46,7 +46,7 @@ class Command(BaseCommand):
     
     option_list = BaseCommand.option_list + (
         make_option('-o', '--operation', action='store', dest='operation', default='setup',
-            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog', 'remove_resources_from_csv', 'legacy_fixer', 'load_relations'],
+            type='choice', choices=['setup', 'install', 'setup_db', 'start_elasticsearch', 'setup_elasticsearch', 'build_permissions', 'livereload', 'load_resources', 'remove_resources', 'load_concept_scheme', 'index_database','export_resource_graphs','export_resources','create_backlog', 'remove_resources_from_csv', 'legacy_fixer', 'load_relations', 'unload_relations'],
             help='Operation Type; ' +
             '\'setup\'=Sets up Elasticsearch and core database schema and code' + 
             '\'setup_db\'=Truncate the entire arches based db and re-installs the base schema' + 
@@ -117,6 +117,8 @@ class Command(BaseCommand):
             self.legacy_fixer(options['source'])
         if options['operation'] == 'load_relations':
             self.load_relations(options['source'])
+        if options['operation'] == 'unload_relations':
+            self.unload_relations(options['source'])
             
     def setup(self, package_name):
         """
@@ -319,12 +321,15 @@ class Command(BaseCommand):
         load = getattr(module, 'load_resources')
         load(data_source) 
 
-    def remove_resources(self, load_id):
+    def remove_resources(self, load_id = None):
         """
         Runs the resource_remover command found in package_utils
 
         """
-        resource_remover.delete_resources(load_id)
+        if load_id == None:
+            resource_remover.truncate_resources()
+        else: 
+            resource_remover.delete_resources(load_id)
           
     def remove_resources_from_csv(self, data_source):
       
@@ -372,7 +377,10 @@ class Command(BaseCommand):
 
     def load_relations(self, source):
         LoadRelations(source)
-
+        
+    def unload_relations(self, source):
+        UnloadRelations(source)
+        
     def start_livereload(self):
         from livereload import Server
         server = Server()
