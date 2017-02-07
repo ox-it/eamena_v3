@@ -122,7 +122,6 @@ def build_search_results_dsl(request):
     query = Query(se, start=limit*int(page-1), limit=limit)
     boolquery = Bool()
     boolfilter = Bool()
-    
     if term_filter != '':
         for term in JSONDeserializer().deserialize(term_filter):
             if term['type'] == 'term':
@@ -146,7 +145,7 @@ def build_search_results_dsl(request):
                 else:
                     boolfilter.must(nested)
             elif term['type'] == 'string':
-
+                boolquery2 = Bool() #This bool contains the subset of nested string queries on both domains and child_entities paths
                 boolfilter_folded = Bool() #This bool searches by string in child_entities, where free text strings get indexed
                 boolfilter_folded2 = Bool() #This bool searches by string in the domains path,where controlled vocabulary concepts get indexed
                 boolfilter_folded.should(Match(field='child_entities.value', query=term['value'], type='phrase_prefix'))
@@ -154,13 +153,13 @@ def build_search_results_dsl(request):
                 nested = Nested(path='child_entities', query=boolfilter_folded)
                 boolfilter_folded2.should(Match(field='domains.label', query=term['value'], type='phrase_prefix'))
                 boolfilter_folded2.should(Match(field='domains.label.folded', query=term['value'], type='phrase_prefix'))
-                nested2 = Nested(path='domains', query=boolfilter_folded2)                
+                nested2 = Nested(path='domains', query=boolfilter_folded2)
+                boolquery2.should(nested)
+                boolquery2.should(nested2)
                 if term['inverted']:
-                    boolquery.must_not(nested)
-                    boolquery.must_not(nested2)
+                    boolquery.must_not(boolquery2)
                 else:    
-                    boolquery.should(nested)
-                    boolquery.should(nested2)
+                    boolquery.must(boolquery2)
                     
 
     if 'geometry' in spatial_filter and 'type' in spatial_filter['geometry'] and spatial_filter['geometry']['type'] != '':
@@ -209,7 +208,7 @@ def build_search_results_dsl(request):
     
 #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
-    
+    print query
     return query
 
 def buffer(request):
