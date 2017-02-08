@@ -55,7 +55,6 @@ def search_results(request):
     elif request.GET.get('no_filters', '') == '':
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
-
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
 def build_search_results_dsl(request):
@@ -77,25 +76,24 @@ def build_search_results_dsl(request):
                 else:
                     date_type = node['value']
 
-            terms = Terms(field='date_groups.conceptid', terms=date_type)
-            boolfilter.must(terms)
 
             date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
 
             if date_operator == '1': # equals query
-                range = Range(field='date_groups.value', gte=date_value, lte=date_value)
+                range = Range(field='dates.value', gte=date_value, lte=date_value)
             elif date_operator == '0': # greater than query 
-                range = Range(field='date_groups.value', lt=date_value)
+                range = Range(field='dates.value', lt=date_value)
             elif date_operator == '2': # less than query
-                range = Range(field='date_groups.value', gt=date_value)
-
+                range = Range(field='dates.value', gt=date_value)
+            
+            nested = Nested(path='dates', query=range)
             if 'inverted' not in temporal_filters:
                 temporal_filters['inverted'] = False
 
             if temporal_filters['inverted']:
-                boolfilter.must_not(range)
+                boolfilter.must_not(nested)
             else:
-                boolfilter.must(range)
+                boolfilter.must(nested)
 
             query.add_filter(boolfilter)
 

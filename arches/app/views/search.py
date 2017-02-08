@@ -90,7 +90,6 @@ def search_results(request):
     elif request.GET.get('no_filters', '') == '':
         full_results = dsl.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
-
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
 def build_search_results_dsl(request):
@@ -208,7 +207,7 @@ def build_search_results_dsl(request):
     
 #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
-    print query
+
     return query
 
 def buffer(request):

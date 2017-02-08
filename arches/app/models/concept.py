@@ -170,9 +170,9 @@ class Concept(object):
         return self
             
     def save(self):
+        
         self.id = self.id if (self.id != '' and self.id != None) else str(uuid.uuid4())
         concept, created = models.Concepts.objects.get_or_create(pk=self.id, defaults={'legacyoid': self.legacyoid if self.legacyoid != '' else self.id, 'nodetype_id': self.nodetype})
-
         for value in self.values:
             if not isinstance(value, ConceptValue): 
                 value = ConceptValue(value)
@@ -657,6 +657,7 @@ class Concept(object):
         rows = cursor.fetchall()
 
 
+
         class Val(object):
             def __init__(self, conceptid):
                 self.text = ''
@@ -727,14 +728,14 @@ class Concept(object):
     def get_time_filter_data():
         important_dates = []
         lang = translation.get_language()
-        for date_search_entity_type in settings.DATE_SEARCH_ENTITY_TYPES:
-            important_dates = important_dates + Concept().get_e55_domain(date_search_entity_type)
+#         for date_search_entity_type in settings.DATE_SEARCH_ENTITY_TYPES:
+#             important_dates = important_dates + Concept().get_e55_domain(date_search_entity_type)
 
         return {
-            'important_dates': {
+            'date_operators': {
                 'branch_lists': [],
                 'domains': {
-                    'important_dates' : important_dates,
+#                     'important_dates' : important_dates,
                     'date_operators' : [{
                         "conceptid": "0",
                         "entitytypeid": "DATE_COMPARISON_OPERATOR.E55",
@@ -795,6 +796,7 @@ class ConceptValue(object):
         return self
 
     def save(self):
+        print "Save method", self.id, self.conceptid, self.type, self.category, self.value, self.language
         if self.value.strip() != '':
             self.id = self.id if (self.id != '' and self.id != None) else str(uuid.uuid4())
             value = models.Values()
