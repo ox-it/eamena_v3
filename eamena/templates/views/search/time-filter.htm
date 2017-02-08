@@ -52,10 +52,10 @@
                 
                             <div class="form-group margin-top-5 padding-bottom-10" style="width: 100%">
                                 
-                                <div class="col-sm-4" style="padding-right: 5px;">
-                                    <div style="height: 36px; padding-top: 2px; width:100%" class="select2 arches-select2-crud-form" id="date-type" placeholder="{% trans 'Type of date' %}" data-bind="select2: {value: getEditedNode('BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55', 'value'), dataKey: 'important_dates'}">
+<!--                                 <div class="col-sm-4" style="padding-right: 5px;">
+                                    <div style="height: 36px; padding-top: 2px; width:100%" class="select2 arches-select2-crud-form" id="date-type" placeholder="{% trans 'Type of date' %}" data-bind="select2: {value: getEditedNode('BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55,DISTURBANCE_DATE_TYPE_E55', 'value'), dataKey: 'important_dates'}">
                                     </div>
-                                </div>
+                                </div> -->
                                 
                                 <!-- Date comparison -->
                                 <div class="col-sm-3" style="padding-right: 5px;">
@@ -98,7 +98,11 @@
                                     <div data-bind='foreach: getBranchLists()'>
                                         <div class="arches-crud-record">
                                             <a href="javascript:void(0)" class="arches-CRUD-child" title="Remove this filter"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
-                                            <a href="javascript:void(0)" class="text-muted arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this date" %}"><span data-bind='text: nodes.get("BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55", "label").charAt(0).toUpperCase() + nodes.get("BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55", "label").slice(1).toLowerCase() +" " + nodes.get("DATE_COMPARISON_OPERATOR.E55", "label") + " " + nodes.get("date", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier"></span>
+                                            <a href="javascript:void(0)" class="text-muted arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this date" %}">
+                                            <span data-bind='text:nodes.get("DATE_COMPARISON_OPERATOR.E55", "label") + " " + nodes.get("date", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier"></span>
+<!--                                             nodes.get("BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55,DISTURBANCE_DATE_TYPE_E55", "label").charAt(0).toUpperCase() + nodes.get("BEGINNING_OF_EXISTENCE_TYPE.E55,END_OF_EXISTENCE_TYPE.E55,DISTURBANCE_DATE_TYPE_E55", "label").slice(1).toLowerCase() +" " +  -->
+                                            
+
                                             </a>
                                         </div>
                                     </div>

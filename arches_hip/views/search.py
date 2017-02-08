@@ -106,5 +106,5 @@ def build_search_results_dsl(request):
             query.add_filter(boolfilter)
     #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
-    print query
+
     return query
