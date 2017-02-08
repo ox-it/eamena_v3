@@ -59,7 +59,15 @@ def search_results(request):
 
 def build_search_results_dsl(request):
     temporal_filters = JSONDeserializer().deserialize(request.GET.get('temporalFilter', None))
-
+    sorting = {
+		"child_entities.label":  {
+			"order" : "asc",
+			"nested_path": "child_entities",
+			"nested_filter": {
+				"term": {"child_entities.entitytypeid" : "EAMENA_ID.E42"}
+			}			
+		}
+	}
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
 
@@ -96,5 +104,7 @@ def build_search_results_dsl(request):
                 boolfilter.must(nested)
 
             query.add_filter(boolfilter)
-
+    #  Sorting criterion added to query (AZ 08/02/17)
+    query.dsl.update({'sort': sorting})
+    print query
     return query
