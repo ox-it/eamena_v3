@@ -21,14 +21,19 @@ define(['jquery',
             // detect if dropzone is attached, and if not init
             if (!dropzoneEl.hasClass('dz-clickable')) {
                 this.dropzoneInstance = new dropzone(dropzoneEl[0], {
-                    url: 'we dont submit via dropzone',
-                    maxFiles: 1,
+                    url: arches.urls.dropzone_files,
                     acceptedFiles: 'image/*, application/pdf, text/*, .doc, .docx',
+                    uploadMultiple: false,
                     addRemoveLinks: true,
-                    autoProcessQueue: false
+                    autoProcessQueue: false,
+                    ignoreHiddenFiles: true,
+                    maxFiles: 1,
+                    parallelUploads: 1
                 });
 
                 this.dropzoneInstance.on("addedfile", function(file) {
+                    $('#cancel-workflow').removeClass('disabled');
+                    $('#end-workflow').removeClass('disabled');      
                     if (this.files.length === 1){
                         var id = 0;//_.uniqueId('file_');
                         filetoupload = file;
@@ -44,12 +49,20 @@ define(['jquery',
                 });
 
                 this.dropzoneInstance.on("removedfile", function(filetoremove) {
+                    $('#cancel-workflow').addClass('disabled');
+                    $('#end-workflow').addClass('disabled');   
                     if ('id' in filetoremove){
                         self.el.removeChild(filetoupload.hiddenFileInput);
                         filetoupload = undefined;
                     }
                 });
-
+                this.dropzoneInstance.on("sending", function(file, xhr, formData){
+                    var formValues = $('#formdata').val();
+                    formData.append('formdata', formValues);
+                });
+                this.dropzoneInstance.on('complete', function(){
+                    location.reload();
+                });
             }
 
             this.inforesourcebranch = this.addBranchList(new BranchList({
@@ -64,8 +77,10 @@ define(['jquery',
                     modaldialog.modal().show();
                 },
                 deleteItem: function(branchlist, e) {
+                    $('#confirm_delete_modal').hide();
                     this.removefilepathnode();
                     self.submit(e);
+                    
                 },
                 removefilepathnode: function(){
                     var nodetoremove;
@@ -80,8 +95,20 @@ define(['jquery',
                     if (filetoupload !== undefined){
                         self.el.removeChild(filetoupload.hiddenFileInput);
                     }
-                }
+                },
+                                      
             }));
+        },
+        submit: function(evt){
+            if (this.validate()){
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (this.dropzoneInstance.files.length !== 0) {
+                    this.dropzoneInstance.processQueue();
+                }else{
+                    this.form.submit(); 
+                }
+            }
         }
     });
 });

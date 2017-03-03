@@ -10,6 +10,8 @@ define(['jquery',
     'blueimp-gallery',
     'blueimp-jquery',
     ], function ($, _, ko, koMapping, WizardBase, BranchList, arches, dropzone, summernote, Gallery) {
+        
+
 
     return WizardBase.extend({
 
@@ -25,17 +27,23 @@ define(['jquery',
 
             // detect if dropzone is attached, and if not init
             if (!dropzoneEl.hasClass('dz-clickable')) {
+                $('#cancel-workflow').removeClass('disabled');
                 this.dropzoneInstance = new dropzone(dropzoneEl[0], {
-                    url: arches.urls.concept,
+                    url: arches.urls.dropzone_files,
                     acceptedFiles: 'image/*, application/pdf, text/*, .doc, .docx',
+                    uploadMultiple: false,
                     addRemoveLinks: true,
-                    autoProcessQueue: false
+                    autoProcessQueue: false,
+                    ignoreHiddenFiles: true,
+                    maxFiles: 10,
+                    parallelUploads: 10
                 });
 
                 this.dropzoneInstance.on("addedfile", function(file) {
                     var el = self.el.appendChild(this.hiddenFileInput);
                     var id = file.name;
                     
+                    $('#end-workflow').removeClass('disabled');      
                     if(self.count === undefined){
                         self.count = this.hiddenFileInput.files.length;
                     }
@@ -55,7 +63,6 @@ define(['jquery',
                         title: ko.observable(file.name.split('.')[0]),
                         title_type: ko.observable(),
                         description: ko.observable(),
-                        description_type: ko.observable(),
                         relationshiptype: ko.observable(),
                         thumbnail: ko.observable(),
                         domains: self.data['current-files'].domains
@@ -72,6 +79,11 @@ define(['jquery',
 
                     self.el.removeChild(self.newfiles()[index].el);
                     self.newfiles.splice(index, 1);
+                    if(self.newfiles.count() === 0){
+                        $('#cancel-workflow').addClass('disabled');
+                        $('#end-workflow').addClass('disabled');                              
+                    }
+                    
                 });
 
                 this.dropzoneInstance.on("thumbnail", function(addedfile, thumbnaildata) {
@@ -80,6 +92,14 @@ define(['jquery',
                             file.thumbnail(thumbnaildata);
                         }
                     }, this);
+                });
+                
+                this.dropzoneInstance.on("sending", function(file, xhr, formData){
+                    var formValues = $('#formdata').val();
+                    formData.append('formdata', formValues);
+                });
+                this.dropzoneInstance.on('complete', function(){
+                    location.reload();
                 });
             }
 
@@ -93,19 +113,31 @@ define(['jquery',
                 editItem: function(branch){
                     var self = this;
                     BranchList.prototype.editItem.call(this, branch);
-
+                    $('#title_box').show();
+                    $('#title_h5').show();
+                    $('#catalogue_box').show();
+                    $('#catalogue_h5').show();                    
+                    _.each(branch.nodes(), function(node){
+                            if (node.entitytypeid() === 'TITLE.E41'){
+                                $('#catalogue_box').hide();
+                                $('#catalogue_h5').hide();
+                            }else if (node.entitytypeid() === 'CATALOGUE_ID.E42') {
+                                $('#title_box').hide();
+                                $('#title_h5').hide();
+                            }
+                    }, this);
                     $('#deletewarning').slideUp();
                     $('#editform').slideDown();
                     $('#savebtn').show();
                     $('#deletebtn').hide();
-
+                    
                     var modaldialog = $('#edit_file_resource_modal');
                     modaldialog.modal().show();              
                 },
                 updateItem: function(branchlist, evt){
                     var data = koMapping.toJS(this.getEditedBranch());
                     evt.preventDefault();
-
+                    $('.form-load-mask').show();
                     self.form.find('#formdata').val(JSON.stringify({'current-files': data}));
                     self.form.submit();
                 },
@@ -137,12 +169,10 @@ define(['jquery',
                 validate: function(){
                     var valid = true;
                     _.each(self.newfiles(), function(item){
-                        if (item.title() == undefined || item.title() == '' || item.title_type() == undefined || item.title_type() == '' || item.relationshiptype() == undefined || item.relationshiptype() == ''){
+                        if (item.title() == undefined || item.title() == '' || item.relationshiptype() == undefined || item.relationshiptype() == ''){
                             valid = false;
                         }
-                        if(item.description() !== undefined && item.description() !== '' &&  (item.description_type() == undefined || item.description_type() == '')){
-                            valid = false;
-                        }
+
                     }, this); 
                     return valid;
                 },
@@ -154,12 +184,29 @@ define(['jquery',
                         delete item.thumbnail;
                         delete item.domains;
                         data.push(item);
+                        
                     }, this); 
                     return data
                 }
             }));
 
-        }
+        },
+        submit: function(evt){
+            var validationAlert = this.$el.find('.branch-invalid-alert');
 
+            if (this.validate()){
+                this.$el.find('.form-load-mask').show();
+                this.form.find('#formdata').val(this.getData());
+                evt.preventDefault();
+                evt.stopPropagation();
+                this.dropzoneInstance.processQueue();
+                
+            }else {
+                validationAlert.show(300);
+                setTimeout(function() {
+                    validationAlert.fadeOut();
+                }, 5000);
+            }
+        }        
     });
 });

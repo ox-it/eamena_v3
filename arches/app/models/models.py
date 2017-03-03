@@ -334,7 +334,7 @@ class FileValues(models.Model):
     valueid = models.TextField(primary_key=True) # This field type is a guess.
     conceptid = models.ForeignKey('Concepts', db_column='conceptid')
     valuetype = models.ForeignKey('ValueTypes', db_column='valuetype')
-    value = models.FileField(upload_to='concepts')
+    value = models.FileField(upload_to='concepts/')
     languageid = models.ForeignKey('DLanguages', db_column='languageid')
     class Meta:
         db_table = u'values'
@@ -433,7 +433,7 @@ class Numbers(models.Model):
         
 class Files(models.Model):
     entityid = models.ForeignKey('Entities', primary_key=True, db_column='entityid')
-    val = models.FileField(upload_to='files')
+    val = models.FileField(upload_to='files/')
     class Meta:
         db_table = u'files'
 
