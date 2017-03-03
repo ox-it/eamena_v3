@@ -670,8 +670,6 @@ class RelatedFilesForm(ResourceForm):
                 resource.set_entity_value('THUMBNAIL.E62', thumbnail)
             resource.save()
             resource.index()
-            print "we are past indexing"
-
             if self.resource.entityid == '':
                 self.resource.save()
             relationship = self.resource.create_resource_relationship(resource.entityid, relationship_type_id=newfile['relationshiptype']['value'])
@@ -767,18 +765,18 @@ class FileUploadForm(ResourceForm):
         if self.resource:
             self.data['INFORMATION_RESOURCE.E73'] = {
                 'branch_lists': self.get_nodes('INFORMATION_RESOURCE.E73'),
-                'is_image': is_image(self.resource)
+#                 'is_image': is_image(self.resource)
             }
 
         return   
 
-def is_image(resource):
-    for format_type in resource.find_entities_by_type_id('INFORMATION_CARRIER_FORMAT_TYPE.E55'):
-        concept = Concept().get(id=format_type['conceptid'], include=['undefined'])
-        for value in concept.values:
-            if value.value == 'Y' and value.type == 'ViewableInBrowser':
-                return True
-    return False
+# def is_image(resource): # Deprecated method AZ Mar 2017
+#     for format_type in resource.find_entities_by_type_id('INFORMATION_CARRIER_FORMAT_TYPE.E55'):
+#         concept = Concept().get(id=format_type['conceptid'], include=['undefined'])
+#         for value in concept.values:
+#             if value.value == 'Y' and value.type == 'ViewableInBrowser':
+#                 return True
+#     return False
 
 
 class DesignationForm(ResourceForm):
