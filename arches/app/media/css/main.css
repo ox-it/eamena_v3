@@ -1816,6 +1816,7 @@ ul.labels-demo li {
     border-bottom: solid 1px #eee;
 }
 
+
 .gm-style-iw {
     /*overflow: inherit !important;*/
 }
@@ -2858,6 +2859,25 @@ ul.labels-demo li {
     border-width: 1px 1px 1px 1px; 
     border-color: #cfcfcf; 
     border-style: solid;
+}
+
+/*Map to full screen
+------------------------------------*/
+.map:-moz-full-screen {
+height: 100%;
+}
+.map:-webkit-full-screen {
+height: 100%;
+}
+.map:-ms-fullscreen {
+height: 100%;
+}
+.map:fullscreen {
+height: 100%;
+}
+
+.ol-full-screen {
+z-index:1000;   
 }
 
 .arches-map-info-panel {

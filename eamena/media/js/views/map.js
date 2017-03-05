@@ -63,6 +63,9 @@ define([
             });
 
             this.map = new ol.Map({
+                controls: ol.control.defaults().extend([
+                    new ol.control.FullScreen()
+                ]),
                 layers: layers,
                 interactions: ol.interaction.defaults({
                     altShiftDragRotate: false,
@@ -79,7 +82,7 @@ define([
                     maxZoom: arches.mapDefaults.maxZoom
                 })
             });
-            
+
             if (this.enableSelection) {
                 this.select = new ol.interaction.Select({
                     condition: ol.events.condition.click,
@@ -149,6 +152,11 @@ define([
             coords = point.transform("EPSG:3857", "EPSG:4326").getCoordinates();
             if (coords.length > 0) {
                 this.trigger('mousePositionChanged', format(coords), pixels, overFeature);
+                if ($('#tooltip').length) {
+                    $("#tooltip").show();
+                    $("#tooltip").html("<label>" + coords[1].toFixed(4) + "° N</label>&nbsp;<label>" + coords[0].toFixed(4) + " ° E</label>");
+            	    $("#tooltip").css({position:"absolute", left:xpos+15,top:ypos});
+                }
             } else {
                 this.trigger('mousePositionChanged', '');
             }
@@ -157,6 +165,9 @@ define([
 
         handleMouseOut: function () {
             this.trigger('mousePositionChanged', '');
+            if ($('#tooltip').length) {
+                 $("#tooltip").hide();
+            }
         }
     });
 });

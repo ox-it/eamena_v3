@@ -6,11 +6,11 @@
 {% if resourcetypeid != 'ACTOR.E39' %}
 
 
-    <div id="geom-list-section" >
+    <div id="geom-list-section">
 
         <!-- Map -->
         <div class="row margin-bottom-10">
-            <div class="col-xs-12">
+            <div class="col-xs-12" >
 
                 <!-- Resource Mapped Locations -->
                 <div class="margin-bottom-10 padding-left-10">
@@ -23,14 +23,16 @@
 
                         <!-- Map -->
                         
-                        <div id="map" class="map arches-report-map margin-left-0 margin-top-10"></div>
+                        <div id="map" class="map arches-report-map margin-left-0 margin-top-10"><div id="tooltip" style="z-index: 1000 !important; font-weight:700;"></div></div>
                         
                         <!-- Geometry Type -->
                         <div id="geometry-type" class="geometry-type" style="margin-top: -490px; margin-bottom: 500px; padding-right: 10px; ">
 
                             <div class="row">
                                 <div class="col-xs-6 col-xs-offset-6" data-bind="attr: { 'style': getEditedNode('SPATIAL_COORDINATES_GEOMETRY.E47', 'value')() === '' ? 'opacity:0;' : '' }">
-
+<!--                                 <div class="form-group" style="width:100%;">       
+                                    <input class="geometry-selection" id="geometry-selection" name="" style="width:100%" data-bind="select2: {value: getEditedNode('GEOMETRY_QUALIFIER.E55', 'value'), placeholder: 'Type', dataKey: 'GEOMETRY_QUALIFIER.E55'}"> 
+                                </div> -->  <!-- Currently disabled, but to be reintroduced once graph changes have been implemented (AZ 4/03/17) -->
                                 </div>
                             </div>
                             
@@ -42,7 +44,7 @@
                 <!-- Map: Date of Bing Imagery--->
                 <div class="row">
                     <div class="col-xs-12" style="margin-left:-10px;">
-                        <div id = "datescontainer" style= "float: right; margin-top: -500px;  z-index: 30000;color:#fff; display:hidden;"> <span id="imagery-tag">{% trans "Date of imagery: " %}</span><div id="imagery-date" ></div></div>
+                        <div id = "datescontainer" style= "float: right; margin-top: -470px;  z-index: 900 !important;color:#fff; display:hidden;"> <span id="imagery-tag">{% trans "Date of imagery: " %}</span><div id="imagery-date" ></div></div>
                     </div>
                 </div>
                 <!-- Map Tools Panel -->
@@ -175,7 +177,7 @@
                 <!-- Map Tools -->
                 <div class="row" style="height:0px;">
 
-                    <div class="btn-group" style="top:-100px;left:{% if LANGUAGE_BIDI %}-{% endif %}86px;">
+                    <div class="btn-group" style="top:-80px;left:{% if LANGUAGE_BIDI %}-{% endif %}86px;">
 
                         <button id="inventory-home" type="button" class="btn btn-primary arches-map-tools-pressed hidden" style="width: 50px; border: 1px solid rgba(206,217,233,.95);"><i class="fa fa-caret-down"></i>
                         </button>
@@ -211,6 +213,7 @@
                             <div class="arches-crud-record">
                                 <a href="#" class="arches-CRUD-child" title="{% trans "Remove this geometry" %}"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
                                 <a href="#" class="arches-CRUD-child" data-bind="click: $parent.editItem.bind($parent), text: nodes.get('SPATIAL_COORDINATES_GEOMETRY.E47', 'value').split('(')[0].toLowerCase(), attr: { 'style': editing() ? 'font-weight:bold;' : '' }" title="{% trans "Edit this geometry" %}"></a>
+                                <!--                             <span class="text-muted arches-crud-type-identifier" data-bind="text: nodes.get('GEOMETRY_QUALIFIER.E55', 'label')"></span> --> <!-- Currently disabled, but to be reintroduced once graph changes have been implemented (AZ 4/03/17) -->
                             </div>
                         </dd>
 
