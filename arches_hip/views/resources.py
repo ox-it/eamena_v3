@@ -36,9 +36,9 @@ from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
 
 
-
 def report(request, resourceid):
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    page = request.GET.get('page', 1)
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
     primaryname = se.search(index='entity', id = resourceid)
@@ -67,7 +67,9 @@ def report(request, resourceid):
 
     if report_info['type'] == "INFORMATION_RESOURCE.E73": # These clauses produce subtypes for Imagery, Shared Dataset and Cartography Info Resources, with the aim of producing different Report pages for each of these Resource Types
         report_info['subtype'] = ''
-        if 'ACQUISITION_ASSIGNMENT_E17' in report_info['source']['graph'] or 'CATALOGUE_E42' in report_info['source']['graph']:
+        report_info['filepath'] =''
+        report_info['has_image'] =''
+        if 'ACQUISITION_ASSIGNMENT_E17' in report_info['source']['graph'] or 'CATALOGUE_ID_E42' in report_info['source']['graph']:
             report_info['subtype'] = 'Imagery'
         if 'RESOURCE_CREATION_EVENT_E65' in report_info['source']['graph']:
             for value in report_info['source']['graph']['RESOURCE_CREATION_EVENT_E65']:
@@ -87,8 +89,10 @@ def report(request, resourceid):
                             report_info['subtype'] = 'Cartography'
                         elif 'IMAGERY_SOURCE_TYPE_E55' in subvalue:
                             report_info['subtype'] = 'Imagery'
-
-
+        if 'FILE_PATH_E62' in report_info['source']['graph']:
+            report_info['filepath'] = report_info['source']['graph']['FILE_PATH_E62'][0]
+        if 'THUMBNAIL_E62' in report_info['source']['graph']:
+            report_info['has_image'] = report_info['source']['graph']['THUMBNAIL_E62'][0]
     def get_evaluation_path(valueid):
         value = models.Values.objects.get(pk=valueid)
         concept_graph = Concept().get(id=value.conceptid_id, include_subconcepts=False, 
@@ -163,7 +167,7 @@ def report(request, resourceid):
         'INFORMATION_RESOURCE_SHARED': []
     }
 
-    related_resource_info = get_related_resources(resourceid, lang)
+    related_resource_info = get_related_resources(resourceid, lang) 
     # parse the related entities into a dictionary by resource type
     for related_resource in related_resource_info['related_resources']:
         VirtualGlobeName = []
@@ -182,7 +186,7 @@ def report(request, resourceid):
                     related_resource['relationship'].append(get_preflabel_from_valueid(entity['value'], lang)['value'])
         elif related_resource['entitytypeid'] == 'HERITAGE_RESOURCE_GROUP.E27':
             for entity in related_resource['domains']:
-                if entity['entitytypeid'] == 'RESOURCE_TYPE_CLASSIFICATION.E55':
+                if entity['entitytypeid'] == 'SITE_FUNCTION_TYPE.E55':
                     related_resource['relationship'].append(get_preflabel_from_valueid(entity['value'], lang)['value'])
         elif related_resource['entitytypeid'] == 'ACTIVITY.E7':
             for entity in related_resource['domains']:
@@ -204,7 +208,7 @@ def report(request, resourceid):
             for entity in related_resource['domains']:
                 if entity['entitytypeid'] == 'INFORMATION_RESOURCE_TYPE.E55':                            
                     related_resource['relationship'].append(get_preflabel_from_valueid(entity['value'], lang)['value'])
-                
+  
             for entity in related_resource['child_entities']:
                 if entity['entitytypeid'] == 'FILE_PATH.E62':
                     related_resource['file_path'] = settings.MEDIA_URL + entity['label']
@@ -227,7 +231,7 @@ def report(request, resourceid):
                     information_resource_type = 'SATELLITE'
                 elif entity['entitytypeid'] == 'TITLE.E41':
                     related_resource['primaryname'] = entity['value']
-                  
+   
             
             if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
                 for entity in related_resource['domains']:
@@ -255,6 +259,10 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
+
+
+    print report_info
+    
 
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
