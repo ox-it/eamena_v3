@@ -261,7 +261,6 @@ def report(request, resourceid):
         related_resource_dict[entitytypeidkey].append(related_resource)
 
 
-    print report_info
     
 
     return render_to_response('resource-report.htm', {
