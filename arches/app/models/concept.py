@@ -30,7 +30,7 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializ
 from django.utils.translation import ugettext as _
 from django.utils import translation
 import logging
-
+from arches.app.models import models as archesmodels
 
 logger = logging.getLogger(__name__)
 
@@ -451,8 +451,7 @@ class Concept(object):
         for subconcept in self.subconcepts:
             subconcept.index(scheme=subconcept.get_context())
 
-    def delete_index(self, delete_self=False):
-        
+    def delete_index(self, delete_self=False, top_label =False):
         def deleteconcepts(concepts_to_delete):
             for key, concept in concepts_to_delete.iteritems():
                 for conceptvalue in concept.values:
@@ -461,7 +460,9 @@ class Concept(object):
         if delete_self:
             concepts_to_delete = Concept.gather_concepts_to_delete(self)
             deleteconcepts(concepts_to_delete)
-
+        elif len(self.subconcepts) == 0 and len(self.values) == 1: #Introduced to delete index of a top concept label, which was not otherwise getting deleted.
+            label_to_delete = ConceptValue(self.values[0].id)
+            label_to_delete.delete_index()
         else:
             for subconcept in self.subconcepts:
                 concepts_to_delete = Concept.gather_concepts_to_delete(subconcept)
@@ -796,7 +797,6 @@ class ConceptValue(object):
         return self
 
     def save(self):
-        print "Save method", self.id, self.conceptid, self.type, self.category, self.value, self.language
         if self.value.strip() != '':
             self.id = self.id if (self.id != '' and self.id != None) else str(uuid.uuid4())
             value = models.Values()
@@ -844,14 +844,17 @@ class ConceptValue(object):
 
             se.create_mapping('concept_labels', scheme.id, fieldname='conceptid', fieldtype='string', fieldindex='not_analyzed')
             se.index_data('concept_labels', scheme.id, data, 'id')
+            #Looks up whether the label is actually a dropdown label or an entity label and, if so, excludes them from the term search index.
+            entity_or_dropdown= archesmodels.ConceptRelations.objects.filter(Q(relationtype ='hasCollection') | Q(relationtype ='hasEntity'),conceptidto = scheme.id)
+            is_entity_or_dropdown = False if entity_or_dropdown.count() == 0 else True
             # don't create terms for entity type concepts
-            if not(scheme.id == '00000000-0000-0000-0000-000000000003' or scheme.id == '00000000-0000-0000-0000-000000000004'):
+            if not(scheme.id == '00000000-0000-0000-0000-000000000003' or scheme.id == '00000000-0000-0000-0000-000000000004') and is_entity_or_dropdown ==False:
                 se.index_term(self.value, self.id, scheme.id, {'conceptid': self.conceptid})
     
-    def delete_index(self):   
+    def delete_index(self):
         se = SearchEngineFactory().create() 
         query = Query(se, start=0, limit=10000)
-        phrase = Match(field='conceptid', query=self.conceptid, type='phrase')
+        phrase = Match(field='id', query=self.id, type='phrase')
         query.add_query(phrase)
         query.delete(index='concept_labels')  
         se.delete_terms(self.id)
