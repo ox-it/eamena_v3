@@ -62,6 +62,8 @@ class Command(BaseCommand):
             help='Text string identifying the resources in the data load you want to delete.'),
         make_option('-d', '--dest_dir', action='store', dest='dest_dir',
             help='Directory where you want to save exported files.'),
+        make_option('-a', '--append', action='store_true', dest='appending',
+            help='Select this option to append data at the end of a resource'),
     )
 
     def handle(self, *args, **options):
@@ -91,7 +93,7 @@ class Command(BaseCommand):
             self.build_permissions()
 
         if options['operation'] == 'load_resources':
-            self.load_resources(package_name, options['source'])
+            self.load_resources(package_name, options['source'], options['appending'])
             
         if options['operation'] == 'remove_resources':     
             self.remove_resources(options['load_id'])
@@ -311,7 +313,7 @@ class Command(BaseCommand):
                 Permission.objects.create(codename='read_%s' % entitytype, name='%s - read' % entitytype , content_type=content_type[0])
                 Permission.objects.create(codename='delete_%s' % entitytype, name='%s - delete' % entitytype , content_type=content_type[0])
 
-    def load_resources(self, package_name, data_source=None):
+    def load_resources(self, package_name, data_source=None, appending = False):
         """
         Runs the setup.py file found in the package root
 
@@ -319,7 +321,7 @@ class Command(BaseCommand):
         data_source = None if data_source == '' else data_source
         module = import_module('%s.setup' % package_name)
         load = getattr(module, 'load_resources')
-        load(data_source) 
+        ResourceLoader().load(data_source, appending) 
 
     def remove_resources(self, load_id = None):
         """
