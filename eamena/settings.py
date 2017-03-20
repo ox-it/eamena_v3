@@ -2,7 +2,6 @@ import os
 import inspect
 from arches_hip.settings import *
 from django.utils.translation import ugettext as _
-from boto.s3.connection import S3Connection
 
 PACKAGE_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 PACKAGE_NAME = PACKAGE_ROOT.split(os.sep)[-1]
@@ -31,19 +30,19 @@ RESOURCE_MODEL = {'default': 'eamena.models.resource.Resource'}
 BING_KEY=''
 
 
+
+
 #Below are the Amazon S3 Bitbucket credentials
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_STORAGE_BUCKET_NAME = 'eamena-media'
-AWS_S3_FILE_OVERWRITE = False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = ''
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 S3_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_REGION_NAME = 'eu-west-2'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
 MEDIA_URL = S3_URL
-os.environ['S3_USE_SIGV4'] = 'True'
-conn = S3Connection(AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY, host='s3.amazonaws.com')
-bucket1 = conn.lookup(AWS_STORAGE_BUCKET_NAME)
-
-
 
 DEFAULT_MAP_X = 3000000
 DEFAULT_MAP_Y = 2200000
