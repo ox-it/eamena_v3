@@ -176,6 +176,7 @@ define(['jquery', 'backbone', 'knockout', 'underscore', 'plugins/knockout-select
             var rules = this.checkForRules();
             this.validationMethod = rules ? this.validateForm : this.validate; //the branchlists of some forms may not have rules. In those cases we use the default validate method
             if (this.validationMethod()){
+                this.$el.find('.form-load-mask').show();
                 this.form.find('#formdata').val(this.getData());
                 this.form.submit(); 
             }
