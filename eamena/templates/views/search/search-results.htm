@@ -26,7 +26,7 @@
 
                     <!-- Item Header -->
                     <h4>
-                        <a class="arches-search-title" style="" data-bind="text: primaryname, attr: { href: 'reports/' + resourceid }" target="_blank"></a> 
+                        <a class="arches-search-title" style="" data-bind="text: primaryname, {% if 'edit' in user.user_groups %} attr: { href: 'reports/' + resourceid }{% endif %}" target="_blank"></a> 
 
                         &nbsp;
                         <span class="">

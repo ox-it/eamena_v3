@@ -110,7 +110,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         <!-- Map: Project Info Panel -->
         <div class="container">
             
-            <!-- Map Tools Panel -->
+            <!-- Basemap Panel -->
             <div class="row">
                 <div class="col-xs-4 col-xs-offset-1" style="">
 
@@ -149,11 +149,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             
                         </div>
                         <!-- End Body Content -->
-
+                    
                     </div>
                 </div>
             </div>
-            <!-- End Map Tools Panel -->
+            <!-- End Basemap Panel -->
 
             <!-- Overlays Panel -->
             <div class="row">
@@ -240,7 +240,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </div>
             <!-- End Overlays Panel -->
-
             <!-- Map Tools -->
             <div class="row hidden-xs">
                 <div class="col-xs-12 col-sm-7 col-md-5 col-lg-4" style="margin-top: -121px;margin-left: -1px;">
@@ -273,7 +272,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             </button>
 
                             <h4 class="modal-title">
-                                <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() ? selectedResource().reportLink : 'javascript:void(0);'}">
+                                <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="{% if 'edit' in user.user_groups %}attr:{ href: selectedResource() ? selectedResource().reportLink : 'javascript:void(0);'}{% endif %}">
                                     <i class="fa fa-trophy text-primary" data-bind="attr: { class: selectedResource() ? selectedResource().typeIcon + ' text-primary': '' }"></i> 
                                     <span data-bind="text:selectedResource() ? selectedResource().primaryname : ''"></span>
 
@@ -304,12 +303,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             <button type="button" class="btn btn-default resource-info-closer">
                                 {% trans 'Close' %}
                             </button>
+                            {% if 'edit' in user.user_groups %}
                             <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() ? selectedResource().reportLink : 'javascript:void(0);'}">
                                 <button type="button" class="btn btn-primary">
                                     {% trans 'View Report' %}
                                 </button>
                             </a>
-                            {% if 'edit' in user.user_groups %}
+                            
                             <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() ? 'resources/' +  selectedResource().entitytypeid + '/default/' + selectedResource().id : 'javascript:void(0);'}">
                                 <button type="button" class="btn btn-primary">
                                     {% trans 'Edit' %}
