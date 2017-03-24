@@ -21,20 +21,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <div data-bind="if: selectedResource()['entitytypeid'] === 'HERITAGE_RESOURCE.E18'">
         <dt class="txt-color-blue">{% trans 'Archaeological certainty' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().certainty_type : ''"></dd>
-        <dt class="txt-color-blue">{% trans 'Location certainty' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().location_certainty : ''"></dd>        
-        
         <dt class="txt-color-blue">{% trans 'Site function(s)' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().site_function : ''"></dd>
+        <dt class="txt-color-blue">{% trans 'Disturbance(s)' %}</dt>
+        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().disturbance_type : ''"></dd>        
     </div>
     <div data-bind="if: selectedResource()['entitytypeid'] === 'HERITAGE_RESOURCE_GROUP.E27'">
         <dt class="txt-color-blue">{% trans 'Archaeological certainty' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().certainty_type: ''"></dd>
-        <dt class="txt-color-blue">{% trans 'Location certainty' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().location_certainty : ''"></dd>
-
         <dt class="txt-color-blue">{% trans 'Site function(s)' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().site_function : ''"></dd>
+        <dt class="txt-color-blue">{% trans 'Disturbance(s)' %}</dt>
+        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().disturbance_type : ''"></dd>        
     </div>
     <div data-bind="if: selectedResource()['entitytypeid'] === 'ACTIVITY.E7'">
         <dt class="txt-color-blue">{% trans 'Activity Type' %}</dt>
@@ -57,21 +55,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <div data-bind="if: selectedResource()['entitytypeid'] === 'ACTOR.E39'">
         <dt class="txt-color-blue">{% trans 'Person/Organization Name' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().resource_type : ''"></dd>
-
-        <dt class="txt-color-blue">{% trans 'Birth Date/Start of Existence' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().start_date : ''"></dd>
-
-        <dt class="txt-color-blue">{% trans 'Death Date/End of Existence' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().end_date : ''"></dd>
     </div>
     <div data-bind="if: selectedResource()['entitytypeid'] === 'INFORMATION_RESOURCE.E73'">
         <dt class="txt-color-blue">{% trans 'Information Resource Type' %}</dt>
         <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().resource_type : ''"></dd>
+        <dt class="txt-color-blue">{% trans 'Format' %}</dt>
+        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().format : ''"></dd>
 
-        <dt class="txt-color-blue">{% trans 'Date of Creation' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().creation_date : ''"></dd>
-
-        <dt class="txt-color-blue">{% trans 'Date of Publication' %}</dt>
-        <dd class="txt-color-blue arches-map-panel-list" data-bind="text:selectedResource() ? selectedResource().publication_date : ''"></dd>
     </div>
 </dl>

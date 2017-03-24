@@ -154,21 +154,18 @@
                         defaultColor: '{{ map_info.resource_marker_color }}'
                     },
                     bingKey: "{{ map_info.bing_key }}",
-                    bingLayers: [{
-                        id: 'Road',
-                        name: "{% trans ' Bing Streets' %}",
-                        icon: "{% static 'img/map/Bing_Streets.png' %}"
-                    },
+                    bingLayers: [
                     {
                         id: 'Aerial',
                         name: "{% trans 'Bing Imagery' %}",
                         icon: "{% static 'img/map/Bing_Sat.png' %}"
                     },
                     {
-                        id: 'AerialWithLabels',
-                        name: "{% trans 'Bing Streets & Imagery' %}",
-                        icon: "{% static 'img/map/Bing_StreetsSat.png' %}"
+                        id: 'Road',
+                        name: "{% trans ' Bing Streets' %}",
+                        icon: "{% static 'img/map/Bing_Streets.png' %}"
                     }],
+                    editor:  {% if 'edit' in user.user_groups %} true {% else %} false {% endif %},
                 };
             });
 

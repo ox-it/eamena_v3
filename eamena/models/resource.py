@@ -124,7 +124,6 @@ class Resource(ArchesResource):
             
 
     def get_primary_name(self):
-
         displayname = super(Resource, self).get_primary_name()
         names = self.get_names()
         if len(names) > 0:
@@ -167,7 +166,12 @@ class Resource(ArchesResource):
                     'conceptid': nodes['END_OF_EXISTENCE_TYPE_E55__value'],
                     'value': nodes['END_DATE_OF_EXISTENCE_E49__value']
                 })
-
+            for nodes in self.get_nodes('DISTURBANCE_STATE.E3', keys=['value']):
+                document['date_groups'].append({
+                    'conceptid': nodes['DISTURBANCE_DATE_TYPE_E55__value'],
+                    'value': nodes['DISTURBANCE_DATE_START_E49__value']            
+                })
+                
         return documents
 
     def prepare_documents_for_map_index(self, geom_entities=[]):
@@ -186,6 +190,7 @@ class Resource(ArchesResource):
                 entity_data = []
                 for node in entity_nodes:
                     if get_label:
+
                         entity_data.append(node.label)
                     else:
                         entity_data.append(node.value)
@@ -194,8 +199,8 @@ class Resource(ArchesResource):
 
         document_data = {}
         
-        if self.entitytypeid == 'HERITAGE_RESOURCE.E18':
-            document_data['certainty_type'] = get_entity_data('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', get_label=True)
+#         if self.entitytypeid == 'HERITAGE_RESOURCE.E18':
+#             document_data['certainty_type'] = get_entity_data('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', get_label=True)
 
 #             document_data['address'] = _('None specified')
 #             address_nodes = self.find_entities_by_type_id('PLACE_ADDRESS.E45')
@@ -203,8 +208,8 @@ class Resource(ArchesResource):
 #                 if node.find_entities_by_type_id('ADDRESS_TYPE.E55')[0].label == 'Primary':
 #                     document_data['address'] = node.value
 
-        if self.entitytypeid == 'HERITAGE_RESOURCE_GROUP.E27':
-            document_data['certainty_type'] = get_entity_data('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', get_label=True)
+#         if self.entitytypeid == 'HERITAGE_RESOURCE_GROUP.E27':
+#             document_data['certainty_type'] = get_entity_data('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', get_label=True)
                     
         if self.entitytypeid == 'ACTIVITY.E7':
             document_data['resource_type'] = get_entity_data('ACTIVITY_TYPE.E55', get_label=True)
@@ -217,6 +222,7 @@ class Resource(ArchesResource):
 
         if self.entitytypeid == 'INFORMATION_RESOURCE.E73':
             document_data['resource_type'] = get_entity_data('INFORMATION_RESOURCE_TYPE.E55', get_label=True)
+            document_data['format'] = get_entity_data('INFORMATION_CARRIER_FORMAT_TYPE.E55',  get_label=True)
 #           Fields for Information_Resource.E73 map pop-up yet to be decided. AZ(10/08/16)
 #             document_data['creation_date'] = get_entity_data('DATE_OF_CREATION.E50')
 #             document_data['publication_date'] = get_entity_data('DATE_OF_PUBLICATION.E50')
@@ -226,8 +232,9 @@ class Resource(ArchesResource):
             document_data['end_date'] = get_entity_data('END_OF_EXISTENCE.E64')
 
         if self.entitytypeid == 'HERITAGE_RESOURCE.E18' or self.entitytypeid == 'HERITAGE_RESOURCE_GROUP.E27':
+            document_data['certainty_type'] = get_entity_data('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', get_label=True)
             document_data['site_function'] = get_entity_data('SITE_FUNCTION_TYPE.E55', get_label=True)
-            document_data['location_certainty'] = get_entity_data('SITE_LOCATION_CERTAINTY_TYPE.E55', get_label=True)
+            document_data['disturbance_type'] = get_entity_data('DISTURBANCE_TYPE.E55', get_label=True)
 
         for document in documents:
             for key in document_data:
