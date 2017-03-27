@@ -145,34 +145,6 @@ class Resource(ArchesResource):
 
         return names
 
-    def prepare_documents_for_search_index(self):
-        """
-        Generates a list of specialized resource based documents to support resource search
-
-        """
-
-        documents = super(Resource, self).prepare_documents_for_search_index()
-
-        for document in documents:
-            document['date_groups'] = []
-            for nodes in self.get_nodes('BEGINNING_OF_EXISTENCE.E63', keys=['value']):
-                document['date_groups'].append({
-                    'conceptid': nodes['BEGINNING_OF_EXISTENCE_TYPE_E55__value'],
-                    'value': nodes['START_DATE_OF_EXISTENCE_E49__value']
-                })
-
-            for nodes in self.get_nodes('END_OF_EXISTENCE.E64', keys=['value']):
-                document['date_groups'].append({
-                    'conceptid': nodes['END_OF_EXISTENCE_TYPE_E55__value'],
-                    'value': nodes['END_DATE_OF_EXISTENCE_E49__value']
-                })
-            for nodes in self.get_nodes('DISTURBANCE_STATE.E3', keys=['value']):
-                document['date_groups'].append({
-                    'conceptid': nodes['DISTURBANCE_DATE_TYPE_E55__value'],
-                    'value': nodes['DISTURBANCE_DATE_START_E49__value']            
-                })
-                
-        return documents
 
     def prepare_documents_for_map_index(self, geom_entities=[]):
         """
