@@ -93,6 +93,15 @@ def report(request, resourceid):
             report_info['filepath'] = report_info['source']['graph']['FILE_PATH_E62'][0]
         if 'THUMBNAIL_E62' in report_info['source']['graph']:
             report_info['has_image'] = report_info['source']['graph']['THUMBNAIL_E62'][0]
+        if 'URL_E51' in report_info['source']['graph']: #If the resource has a URL, it verifies that it is an APAAME json string, in which case it retrieves the url of the photo from the json string and passes it to the report
+            flickr_feed = report_info['source']['graph']['URL_E51'][0]['URL_E51__value'][:-1] if report_info['source']['graph']['URL_E51'][0]['URL_E51__value'].endswith('/') else report_info['source']['graph']['URL_E51'][0]['URL_E51__value']
+            try:
+                response = urllib.urlopen('https://www.flickr.com/services/oembed?url='+flickr_feed+'&format=json')          
+                data = response.read().decode("utf-8")
+                flickr_feed = json.loads(data)
+                report_info['filepath'], report_info['has_image'] = flickr_feed['url'], True
+            except:
+                pass
     def get_evaluation_path(valueid):
         value = models.Values.objects.get(pk=valueid)
         concept_graph = Concept().get(id=value.conceptid_id, include_subconcepts=False, 
@@ -231,7 +240,7 @@ def report(request, resourceid):
                     information_resource_type = 'SATELLITE'
                 elif entity['entitytypeid'] == 'TITLE.E41':
                     related_resource['primaryname'] = entity['value']
-   
+
             
             if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
                 for entity in related_resource['domains']:

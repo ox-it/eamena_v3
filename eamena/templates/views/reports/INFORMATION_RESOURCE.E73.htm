@@ -107,7 +107,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                   <div class="row">
                         <div class="pagination-centered" style="">
-                                        <img src="{{report_info.filepath.FILE_PATH_E62__value}}" style="max-width: 1200px !important; top: -20px; " />
+                                        <img src="{{report_info.filepath.FILE_PATH_E62__value|default:report_info.filepath}}" style="max-width: 1200px !important; top: -20px; " />
                         </div>
                   </div>
               </div>
