@@ -1,6 +1,11 @@
 /*put package specific styles here...*/
 
-
+.pagination-centered img {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;	
+	
+}
 
 
 .arches-report-section-header {
