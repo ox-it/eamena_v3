@@ -48,10 +48,11 @@ Create a superuser
 Now make your user part of the 'edit' group via the django admin dashboard at ```http://docker.default:800/admin```
 
 # 7. Configure eamena/settings.py
-Some settings need to be taken from the archive dump:
-* BING_KEY
+Some settings need to be modified:
+* BING_KEY = '<take from settings.py in the archive dump>'
+* GDAL_LIBRARY_PATH = '/usr/lib/libgdal.so'
 
-# 7. Start using the app
+# 8. Start using the app
 navigate to ```http://docker.default:8000``` (substitute your own hostname, or the ip address of your docker machine)
 
 Elasticsearch can be browsed at ```http://docker.default:9200/_plugin/head```
