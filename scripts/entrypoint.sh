@@ -133,10 +133,11 @@ run_django_server() {
 # Run first commands from ${ARCHES_ROOT}
 cd_arches_root
 activate_virtualenv
-init_arches
+init_archesd
 
 # Install the eamena requirements
-pip install -r ${PROJECT_ROOT}/requirements.txt
+# cat ${PROJECT_ROOT}/requirements.txt
+# pip install -r ${PROJECT_ROOT}/requirements.txt
 
 # Overwrite the arches package with eamena changes
 # cp -r /custom-arches/* /web_root/ENV/lib/python2.7/site-packages/arches
@@ -144,6 +145,7 @@ pip install -r ${PROJECT_ROOT}/requirements.txt
 if [[ "${DJANGO_MODE}" == "DEV" ]]; then
 	set_dev_mode
 	install_dev_requirements
+	${WEB_ROOT}/ENV/bin/python manage.py createsuperuser --username eamena --email mobileoxford@gmail.com
 fi
 
 # run_tests

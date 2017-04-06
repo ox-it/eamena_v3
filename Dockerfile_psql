@@ -1,5 +1,5 @@
 FROM mdillon/postgis:9.3
 
-ADD ./data/sql/3Mar2017.sql /eamena-data/dump.sql
+# ADD ./sql/3Mar2017.sql /eamena-data/dump.sql
 
-ADD ./load_eamena_dump.sh /docker-entrypoint-initdb.d/load_eamena_dump.sh
+ADD ./scripts/load_eamena_dump.sh /docker-entrypoint-initdb.d/load_eamena_dump.sh
