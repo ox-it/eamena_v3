@@ -133,7 +133,7 @@ run_django_server() {
 # Run first commands from ${ARCHES_ROOT}
 cd_arches_root
 activate_virtualenv
-init_archesd
+init_arches
 
 # Install the eamena requirements
 # cat ${PROJECT_ROOT}/requirements.txt
@@ -145,7 +145,7 @@ init_archesd
 if [[ "${DJANGO_MODE}" == "DEV" ]]; then
 	set_dev_mode
 	install_dev_requirements
-	${WEB_ROOT}/ENV/bin/python manage.py createsuperuser --username eamena --email mobileoxford@gmail.com
+	# ${WEB_ROOT}/ENV/bin/python manage.py createsuperuser --username eamena --email mobileoxford@gmail.com
 fi
 
 # run_tests

@@ -12,7 +12,7 @@ INSTALLED_APPS = INSTALLED_APPS + (PACKAGE_NAME, 'south', 'storages')
 STATICFILES_DIRS = (os.path.join(PACKAGE_ROOT, 'media'),) + STATICFILES_DIRS
 TEMPLATE_DIRS = (os.path.join(PACKAGE_ROOT, 'templates'),os.path.join(PACKAGE_ROOT, 'templatetags')) + TEMPLATE_DIRS
 LOCALE_PATHS = (os.path.join(PACKAGE_ROOT, '../locale'),)
-GDAL_LIBRARY_PATH = '/Library/Frameworks/GDAL.framework/GDAL' 
+GDAL_LIBRARY_PATH = '/usr/lib/libgdal.so' 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # MEDIA_ROOT =  os.path.join(PACKAGE_ROOT, 'uploadedfiles')
 

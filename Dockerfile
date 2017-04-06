@@ -11,7 +11,7 @@ ADD ./eamena /web_root/arches/eamena/eamena
 
 
 # Use our own modified entrypoint script
-COPY  ./entrypoint.sh /docker/entrypoint.sh
+COPY  ./scripts/entrypoint.sh /docker/entrypoint.sh
 RUN chown root:root /docker/entrypoint.sh
 RUN chmod 700 /docker/entrypoint.sh
 
