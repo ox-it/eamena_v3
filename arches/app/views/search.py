@@ -131,6 +131,9 @@ def build_search_results_dsl(request):
                 boolfilter_nested.must(Terms(field='child_entities.entitytypeid', terms=[entitytype.pk]))
                 boolfilter_nested.must(Match(field='child_entities.value', query=term['value'], type='phrase'))
                 nested = Nested(path='child_entities', query=boolfilter_nested)
+                if boolean_search == 'or':
+                    boolfilter.should(nested)
+                else:
                 if term['inverted']:
                     boolfilter.must_not(nested)
                 else:    
@@ -159,6 +162,9 @@ def build_search_results_dsl(request):
                 nested2 = Nested(path='domains', query=boolfilter_folded2)
                 boolquery2.should(nested)
                 boolquery2.should(nested2)
+                if boolean_search == 'or':
+                    boolquery.should(boolquery2)
+                else:
                 if term['inverted']:
                     boolquery.must_not(boolquery2)
                 else:    
@@ -180,6 +186,9 @@ def build_search_results_dsl(request):
         if 'inverted' not in spatial_filter:
             spatial_filter['inverted'] = False
 
+        if boolean_search == 'or':
+            boolfilter.should(nested)
+        else:
         if spatial_filter['inverted']:
             boolfilter.must_not(nested)
         else:
@@ -198,6 +207,9 @@ def build_search_results_dsl(request):
         if 'inverted' not in temporal_filter:
             temporal_filter['inverted'] = False
 
+        if boolean_search == 'or':
+            boolfilter.should(nested)
+        else:
         if temporal_filter['inverted']:
             boolfilter.must_not(nested)
         else:
