@@ -163,7 +163,7 @@ def build_search_results_dsl(request):
                 boolquery2.should(nested)
                 boolquery2.should(nested2)
                 if boolean_search == 'or':
-                    boolquery.should(boolquery2)
+                    boolfilter.should(boolquery2)
                 else:
                 if term['inverted']:
                     boolquery.must_not(boolquery2)
