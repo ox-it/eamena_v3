@@ -110,6 +110,7 @@ def build_search_results_dsl(request):
     export = request.GET.get('export', None)
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
     temporal_filter = JSONDeserializer().deserialize(request.GET.get('temporalFilter', None))
+    boolean_search = request.GET.get('booleanSearch', '')
     
     se = SearchEngineFactory().create()
 
@@ -139,6 +140,9 @@ def build_search_results_dsl(request):
                 concept_ids = _get_child_concepts(term['value'])
                 terms = Terms(field='domains.conceptid', terms=concept_ids)
                 nested = Nested(path='domains', query=terms)
+                if boolean_search == 'or':
+                        boolfilter.should(nested)
+                else:
                 if term['inverted']:
                     boolfilter.must_not(nested)
                 else:
