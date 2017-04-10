@@ -104979,11 +104979,12 @@ goog.inherits(ol.source.Cluster, ol.source.Vector);
  */
 ol.source.Cluster.prototype.loadFeatures = function(extent, resolution,
     projection) {
-  if (resolution !== this.resolution_) {
+  // if (resolution !== this.resolution_) {
+  if (true) {
     this.clear();
     this.resolution_ = resolution;
     this.source_.loadFeatures(extent, resolution, projection);
-    this.cluster_();
+    this.cluster_(extent);
     this.addFeatures(this.features_);
   }
 };
@@ -104993,9 +104994,9 @@ ol.source.Cluster.prototype.loadFeatures = function(extent, resolution,
  * handle the source changing
  * @private
  */
-ol.source.Cluster.prototype.onSourceChange_ = function() {
+ol.source.Cluster.prototype.onSourceChange_ = function(extent) {
   this.clear();
-  this.cluster_();
+  this.cluster_(extent);
   this.addFeatures(this.features_);
   this.changed();
 };
@@ -105004,19 +105005,25 @@ ol.source.Cluster.prototype.onSourceChange_ = function() {
 /**
  * @private
  */
-ol.source.Cluster.prototype.cluster_ = function() {
+ol.source.Cluster.prototype.cluster_ = function(viewextent) {
   if (!goog.isDef(this.resolution_)) {
     return;
   }
   goog.array.clear(this.features_);
   var extent = ol.extent.createEmpty();
   var mapDistance = this.distance_ * this.resolution_;
-  var features = this.source_.getFeatures();
+  // if(typeof(viewextent) == 'array' && viewextent) {
+  if(viewextent.length == 4) {
+      var features = this.source_.getFeaturesInExtent(viewextent)
+  } else {
+      var features = this.source_.getFeatures();
+  }
 
   /**
    * @type {Object.<string, boolean>}
    */
   var clustered = {};
+
 
   for (var i = 0, ii = features.length; i < ii; i++) {
     var feature = features[i];
@@ -105041,8 +105048,8 @@ ol.source.Cluster.prototype.cluster_ = function() {
       this.features_.push(this.createCluster_(neighbors));
     }
   }
-  goog.asserts.assert(
-      goog.object.getCount(clustered) == this.source_.getFeatures().length);
+  // goog.asserts.assert(
+  //     goog.object.getCount(clustered) == this.source_.getFeatures().length);
 };
 
 
