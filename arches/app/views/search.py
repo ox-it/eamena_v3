@@ -134,10 +134,11 @@ def build_search_results_dsl(request):
                 if boolean_search == 'or':
                     boolfilter.should(nested)
                 else:
-                if term['inverted']:
-                    boolfilter.must_not(nested)
-                else:    
-                    boolfilter.must(nested)
+                    if term['inverted']:
+                        boolfilter.must_not(nested)
+                    else:    
+                        boolfilter.must(nested)
+                        
             elif term['type'] == 'concept':
 
                 concept_ids = _get_child_concepts(term['value'])
@@ -146,10 +147,11 @@ def build_search_results_dsl(request):
                 if boolean_search == 'or':
                         boolfilter.should(nested)
                 else:
-                if term['inverted']:
-                    boolfilter.must_not(nested)
-                else:
-                    boolfilter.must(nested)
+                    if term['inverted']:
+                        boolfilter.must_not(nested)
+                    else:
+                        boolfilter.must(nested)
+                        
             elif term['type'] == 'string':
                 boolquery2 = Bool() #This bool contains the subset of nested string queries on both domains and child_entities paths
                 boolfilter_folded = Bool() #This bool searches by string in child_entities, where free text strings get indexed
@@ -167,10 +169,10 @@ def build_search_results_dsl(request):
                     # can't be combined with other boolfilters using boolean OR
                     boolfilter.should(boolquery2)
                 else:
-                if term['inverted']:
-                    boolquery.must_not(boolquery2)
-                else:    
-                    boolquery.must(boolquery2)
+                    if term['inverted']:
+                        boolquery.must_not(boolquery2)
+                    else:    
+                        boolquery.must(boolquery2)
                     
 
     if 'geometry' in spatial_filter and 'type' in spatial_filter['geometry'] and spatial_filter['geometry']['type'] != '':
@@ -191,10 +193,10 @@ def build_search_results_dsl(request):
         if boolean_search == 'or':
             boolfilter.should(nested)
         else:
-        if spatial_filter['inverted']:
-            boolfilter.must_not(nested)
-        else:
-            boolfilter.must(nested)
+            if spatial_filter['inverted']:
+                boolfilter.must_not(nested)
+            else:
+                boolfilter.must(nested)
 
     if 'year_min_max' in temporal_filter and len(temporal_filter['year_min_max']) == 2:
         start_date = date(temporal_filter['year_min_max'][0], 1, 1)
@@ -212,10 +214,10 @@ def build_search_results_dsl(request):
         if boolean_search == 'or':
             boolfilter.should(nested)
         else:
-        if temporal_filter['inverted']:
-            boolfilter.must_not(nested)
-        else:
-            boolfilter.must(nested)
+            if temporal_filter['inverted']:
+                boolfilter.must_not(nested)
+            else:
+                boolfilter.must(nested)
         
     if not boolquery.empty:
         query.add_query(boolquery)
