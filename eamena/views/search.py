@@ -50,10 +50,10 @@ def search_results(request):
     results = query.search(index='entity', doc_type='') 
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
-
+    group_search = request.GET.get('groupSearch', '')
 
     term_filter = request.GET.get('termFilter', '')
-    if term_filter != '':
+    if term_filter != '' and group_search == 'group':
         terms_list = []
         delete_results = []
         for term in JSONDeserializer().deserialize(term_filter):
