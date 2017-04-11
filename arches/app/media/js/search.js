@@ -29,7 +29,8 @@ require(['jquery',
                 'click #map-filter-button': 'toggleMapFilter',
                 'click #time-filter-button': 'toggleTimeFilter',
                 'click a.dataexport': 'exportSearch',
-                'click a.search-and-or': 'onChangeAndOr'
+                'click a.search-and-or': 'onChangeAndOr',
+                'click a.search-grouped': 'onChangeGroup'
             },
 
             initialize: function(options) { 
@@ -85,6 +86,7 @@ require(['jquery',
                     }
                 }, this);
                 this.booleanSearch = "and";
+                this.groupSearch = "group";
 
                 this.searchResults = new SearchResults({
                     el: $('#search-results-container')[0]
@@ -133,6 +135,7 @@ require(['jquery',
                             mapExpanded: self.mapFilter.expanded(),
                             timeExpanded: self.timeFilter.expanded(),
                             booleanSearch: self.booleanSearch,
+                            groupSearch: self.groupSearch,
                         };
                         if (self.termFilter.query.filter.terms().length === 0 &&
                             self.timeFilter.query.filter.year_min_max().length === 0 &&
@@ -306,7 +309,24 @@ require(['jquery',
                         this.doQuery();
                     }
                 }
+            },
+            
+            onChangeGroup: function (e) {
+                if ($(e.target).hasClass("search-normal")) {
+                    if (this.groupSearch != "normal") {
+                        $(".group-value").html("Normal");
+                        this.groupSearch = "normal";
+                        this.doQuery();
+                    }
+                } else if ($(e.target).hasClass("search-grouped")) {
+                    if (this.groupSearch != "group") {
+                        $(".group-value").html("In group");
+                        this.groupSearch = "group";
+                        this.doQuery();
+                    }
+                }
             }
+
         });
         new SearchView();
     });
