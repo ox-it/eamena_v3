@@ -133,8 +133,6 @@ define(['openlayers'], function (ol) {
           this.features_.push(this.createCluster_(neighbors));
         }
       }
-      goog.asserts.assert(
-          goog.object.getCount(clustered) == this.source_.getFeatures().length);
     };
 
 
