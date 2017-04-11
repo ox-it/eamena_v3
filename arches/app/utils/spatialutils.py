@@ -10,10 +10,13 @@ def getdates(geometry):
     to the centre point of the geometry passed as argument to the method.
     """
     if geometry is not None:
-        geometry = JSONSerializer().serialize(geometry['geometries'][0])
+        geometry = JSONSerializer().serialize(geometry)
         BingDates = {}
         dates = []
-        geom = GEOSGeometry(geometry)
+        try: 
+            geom = GEOSGeometry(geometry)
+        except:
+            geom = GEOSGeometry(geometry[1:-1]) # This is to account for the different formats of coordinates as present in the search index and in forms.py. The former is in GeoJSON, the latter in WKT.
         centroid = geom.centroid
         url = 'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial/' + str(centroid.coords[1]) + ',' + str(centroid.coords[0]) + '?zl=19&key=' + settings.BING_KEY
         response = urllib.urlopen(url)
