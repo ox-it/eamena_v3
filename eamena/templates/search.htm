@@ -17,10 +17,10 @@
             <!-- Search Widget -->
             
             <div class="col-xs-12 col-md-6 col-lg-6">
-                <div class="form-group">
-                {% if 'edit' in user.user_groups %}
-                    <input class="select2 resource_search_widget0 arches-select2" name="" style="width:100%" placeholder="{% trans "Search for a resource..." %}" value="">
-                    <input class="select2 resource_search_widget1 arches-select2" name="" style="width:100%" placeholder="{% trans "Search for a resource..." %}" value="">
+                <input id="term-select-template" class="select2 arches-select2 hidden" name="" style="width:100%" placeholder="{% trans "Search for a resource..." %}" value="">
+                <div class="form-group term-search-boxes">
+                    {% if 'edit' in user.user_groups %}
+                    <input class="select2 resource_search_widget0 select-location-time arches-select2" name="" style="width:100%" placeholder="{% trans "!!time-location filters!!" %}" value="">
                     {% endif %}
                 </div>
             </div>

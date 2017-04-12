@@ -36,36 +36,17 @@ require(['jquery',
             initialize: function(options) { 
                 var mapFilterText, timeFilterText;
                 var self = this;
-                this.s = 2
-                this.termFilter = [];
-                for (var i = 0; i < this.s; i++) {
-                    this.termFilter[i] = new TermFilter({
-                        el: $.find('input.resource_search_widget' + i)[0],
-                        index: i
-                    });
-                    this.termFilter[i].on('change', function(){
-                        if($('#saved-searches').is(":visible")){
-                            this.hideSavedSearches();
-                        }
-                    }, this);
-                    this.termFilter[i].on('filter-removed', function(item){
-                        if(item.text === mapFilterText){
-                            this.mapFilter.clear();
-                        }
-                        if(item.text === timeFilterText){
-                            this.timeFilter.clear();
-                        }
-                    }, this);
-                    this.termFilter[i].on('filter-inverted', function(item){
-                        if(item.text === mapFilterText){
-                            this.mapFilter.query.filter.inverted(item.inverted);
-                        }
-                        if(item.text === timeFilterText){
-                            this.timeFilter.query.filter.inverted(item.inverted);
-                        }
-                    }, this);
+                var query = this.getQueryFromUrl();
+                if('termFilter' in query){
+                    query.termFilter = JSON.parse(query.termFilter);
+                    this.searchBoxes = query.termFilter.length;
+                    // number of term search boxes should be at least one
+                    if (this.searchBoxes == 0) {
+                        this.searchBoxes = 1;
+                    }
                 }
-
+                console.log("query", query);
+                console.log("this.searchBoxes", this.searchBoxes);
 
                 this.mapFilter = new MapFilter({
                     el: $('#map-filter-container')[0]
@@ -169,8 +150,8 @@ require(['jquery',
                         return ret;
                     }, this).extend({ rateLimit: 200 })
                 };
+                this.initializeSearchBoxes();
                 this.getSearchQuery();
-
                 this.searchResults.page.subscribe(function(){
                     self.doQuery();
                 });
@@ -180,6 +161,47 @@ require(['jquery',
                     self.searchResults.page(1);
                     self.doQuery();
                 });
+            },
+            
+            initializeSearchBoxes: function () {
+                this.termFilter = [];
+                this.termFilter[0] = new TermFilter({
+                    el: $.find('input.resource_search_widget' + i)[0],
+                    index: 0
+                });
+                for (var i = 1; i <= this.searchBoxes; i++) {
+                    var cloneInput = $("#term-select-template").clone()
+                        .insertAfter(".term-search-boxes .select2")
+                        .removeAttr('id','term-select-template')
+                        .removeClass('hidden')
+                        .addClass('resource_search_widget' + i);
+                    this.termFilter[i] = new TermFilter({
+                        el: $.find('input.resource_search_widget' + i)[0],
+                        index: i
+                    });
+                    this.termFilter[i].on('change', function(){
+                        if($('#saved-searches').is(":visible")){
+                            this.hideSavedSearches();
+                        }
+                    }, this);
+                    this.termFilter[i].on('filter-removed', function(item){
+                        if(item.text === mapFilterText){
+                            this.mapFilter.clear();
+                        }
+                        if(item.text === timeFilterText){
+                            this.timeFilter.clear();
+                        }
+                    }, this);
+                    this.termFilter[i].on('filter-inverted', function(item){
+                        if(item.text === mapFilterText){
+                            this.mapFilter.query.filter.inverted(item.inverted);
+                        }
+                        if(item.text === timeFilterText){
+                            this.timeFilter.query.filter.inverted(item.inverted);
+                        }
+                    }, this);
+                }
+                
             },
 
             doQuery: function () {
@@ -238,9 +260,8 @@ require(['jquery',
                 window.history.pushState({}, '', '?'+this.searchQuery.queryString());
             },
 
-            getSearchQuery: function(){
-                var doQuery = false;
-                var query = _.chain(decodeURIComponent(location.search).slice(1).split('&') )
+            getQueryFromUrl: function () {
+                return _.chain(decodeURIComponent(location.search).slice(1).split('&') )
                     // Split each array item into [key, value]
                     // ignore empty string if search is empty
                     .map(function(item) { if (item) return item.split('='); })
@@ -250,6 +271,21 @@ require(['jquery',
                     .object()
                     // Return the value of the chain operation
                     .value();
+            },
+
+            getSearchQuery: function(){
+                var doQuery = false;
+                var query = this.getQueryFromUrl();
+                //  _.chain(decodeURIComponent(location.search).slice(1).split('&') )
+                //     // Split each array item into [key, value]
+                //     // ignore empty string if search is empty
+                //     .map(function(item) { if (item) return item.split('='); })
+                //     // Remove undefined in the case the search is empty
+                //     .compact()
+                //     // Turn [key, value] arrays into object parameters
+                //     .object()
+                //     // Return the value of the chain operation
+                //     .value();
 
                 if('page' in query){
                     query.page = JSON.parse(query.page);
@@ -262,7 +298,7 @@ require(['jquery',
                     query.termFilter = JSON.parse(query.termFilter);
                     doQuery = true;
                 }
-                for (var i = 0; i < this.s; i++) {
+                for (var i = 0; i < this.searchBoxes; i++) {
                     this.termFilter[i].restoreState(query.termFilter[i]);
                 }
 
@@ -298,7 +334,7 @@ require(['jquery',
             clear: function(){
                 this.mapFilter.clear();
                 this.timeFilter.clear();
-                for (var i = 0; i < this.s; i++) {
+                for (var i = 0; i < this.searchBoxes; i++) {
                     this.termFilter[i].clear();
                 }
             },
