@@ -246,6 +246,10 @@ require(['jquery',
                 }
                 this.termFilter.restoreState(query.termFilter);
 
+                if('booleanSearch' in query){
+                    this.onChangeAndOr(query.booleanSearch);
+                    doQuery = true;
+                }
 
                 if('temporalFilter' in query){
                     query.temporalFilter = JSON.parse(query.temporalFilter);
@@ -293,16 +297,29 @@ require(['jquery',
             },
             
             onChangeAndOr: function (e) {
-                if ($(e.target).hasClass("search-and")) {
+                var targetClass;
+                if (e.target) {
+                    if ($(e.target).hasClass("search-and")) {
+                        targetClass = "and";
+                    }
+                    if ($(e.target).hasClass("search-or")) {
+                        targetClass = "or";
+                    }
+                } else {
+                    targetClass = e;
+                }
+                if (targetClass == 'and') {
                     if (this.booleanSearch != "and") {
                         $(".and-or-value").html("And");
                         this.booleanSearch = "and";
+                        $(".select2-choices").removeClass("or-search");
                         this.doQuery();
                     }
-                } else if ($(e.target).hasClass("search-or")) {
+                } else if (targetClass == 'or') {
                     if (this.booleanSearch != "or") {
                         $(".and-or-value").html("Or");
                         this.booleanSearch = "or";
+                        $(".select2-choices").addClass("or-search");
                         this.doQuery();
                     }
                 }
