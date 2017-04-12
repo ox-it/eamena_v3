@@ -132,4 +132,6 @@
 	overflow-y: scroll; 
 }
 
-/* Report page section end */
+ul.select2-choices.or-search .select2-search-choice {
+	background-color: #3276b1 !important;
+}
