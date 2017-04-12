@@ -132,7 +132,8 @@ def build_search_results_dsl(request):
                 boolfilter_nested.must(Match(field='child_entities.value', query=term['value'], type='phrase'))
                 nested = Nested(path='child_entities', query=boolfilter_nested)
                 if boolean_search == 'or':
-                    boolfilter.should(nested)
+                    if not term['inverted']:
+                        boolfilter.should(nested)
                 else:
                     if term['inverted']:
                         boolfilter.must_not(nested)
@@ -145,7 +146,8 @@ def build_search_results_dsl(request):
                 terms = Terms(field='domains.conceptid', terms=concept_ids)
                 nested = Nested(path='domains', query=terms)
                 if boolean_search == 'or':
-                        boolfilter.should(nested)
+                    if not term['inverted']:
+                            boolfilter.should(nested)
                 else:
                     if term['inverted']:
                         boolfilter.must_not(nested)
@@ -165,9 +167,10 @@ def build_search_results_dsl(request):
                 boolquery2.should(nested)
                 boolquery2.should(nested2)
                 if boolean_search == 'or':
-                    # use boolfilter here instead of boolquery because boolquery
-                    # can't be combined with other boolfilters using boolean OR
-                    boolfilter.should(boolquery2)
+                    if not term['inverted']:
+                        # use boolfilter here instead of boolquery because boolquery
+                        # can't be combined with other boolfilters using boolean OR
+                        boolfilter.should(boolquery2)
                 else:
                     if term['inverted']:
                         boolquery.must_not(boolquery2)
@@ -191,7 +194,8 @@ def build_search_results_dsl(request):
             spatial_filter['inverted'] = False
 
         if boolean_search == 'or':
-            boolfilter.should(nested)
+            if not spatial_filter['inverted']:
+                boolfilter.should(nested)
         else:
             if spatial_filter['inverted']:
                 boolfilter.must_not(nested)
@@ -212,7 +216,8 @@ def build_search_results_dsl(request):
             temporal_filter['inverted'] = False
 
         if boolean_search == 'or':
-            boolfilter.should(nested)
+            if not temporal_filter['inverted']:
+                boolfilter.should(nested)
         else:
             if temporal_filter['inverted']:
                 boolfilter.must_not(nested)
