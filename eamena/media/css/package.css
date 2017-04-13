@@ -98,3 +98,7 @@ ul.select2-choices.or-search .select2-search-choice.inverted {
 	color: white;
 	border-color: grey !important;
 }
+
+button.btn.btn-default.dropdown-toggle.select-groupping {
+    margin-top: 2px;
+}

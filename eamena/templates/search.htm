@@ -18,16 +18,16 @@
             
             <div class="col-xs-12 col-md-6 col-lg-6">
                 <div id="term-select-template" class="search-box-container hidden">
-                    <input class="select2 arches-select2" name="" style="width:100%" placeholder="{% trans "Search for a resource..." %}" value="">
-                    <span class="dropdown pull-left">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <input class="select2 arches-select2 term-search" name="" style="width:82%" placeholder="{% trans "Search for a resource..." %}" value="">
+                    <span class="dropdown pull-right">
+                        <button class="btn btn-default dropdown-toggle select-groupping" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <span class="group-value">And</span>
                             <i class="fa fa-chevron-down"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdown-grouped">
                                 <li><a href="#" class="search-grouped search-and">And</a></li>
                                 <li><a href="#" class="search-grouped search-or">Or</a></li>
-                                <li><a href="#" class="search-grouped search-group">In group</a></li>
+                                <li><a href="#" class="search-grouped search-group">Group</a></li>
                             </ul>
                     </span>
                 </div>
@@ -35,7 +35,7 @@
                     {% if 'edit' in user.user_groups %}
                     <span class="dropdown pull-left">
                             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <span class="and-or-value">And</span>
+                                <span>Global </span><span class="and-or-value">And</span>
                                 <i class="fa fa-chevron-down"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdown-and-or">
