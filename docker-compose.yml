@@ -1,0 +1,56 @@
+version: '2'
+
+services:
+    arches:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: eamena_arches
+        environment: 
+            - DJANGO_MODE=DEV
+            - DJANGO_DEBUG=True
+            - PGDBNAME=arches_eamena
+            - PGPASSWORD=3m4n4!
+            - PGHOST=psql
+            - PGPORT=5432
+            - ESHOST=elasticsearch
+            - ESPORT=9200
+            - MAPBOX_API_KEY=foo
+            - DOMAIN_NAMES=foo
+            - ARCHES_PROJECT=eamena
+            - PROJECT_ROOT=/web_root/arches
+        links:
+            - psql
+            - elasticsearch
+        ports:
+            - "8000:8000"
+        volumes:
+            # - ./arches:/arches_eamena
+            - ./eamena:/web_root/arches/eamena
+            - ./arches:/web_root/ENV/lib/python2.7/site-packages/arches
+            
+    psql:
+        # image: mdillon/postgis:9.3
+        build:
+            context: .
+            dockerfile: Dockerfile_psql
+        container_name: eamena_psql
+        environment:
+            - POSTGRES_PASSWORD:3m4n4!
+            - POSTGRES_DB:arches_eamana
+        volumes:
+            - ./data/sql:/eamena-data
+    
+    elasticsearch:
+        image: elasticsearch:1
+        # build:
+        #     context: .
+        #     dockerfile: Dockerfile_elasticsearch
+        container_name: eamena_es
+        # command: bash /eamena-scripts/init_es_data.sh
+        ports:
+            - "9200:9200"
+        volumes:
+            # - ./data/elasticsearch/elasticsearch-1.4.1:/usr/share/elasticsearch
+            - ./data/elasticsearch/elasticsearch-1.4.1:/eamena-data
+            - ./scripts:/eamena-scripts
