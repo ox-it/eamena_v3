@@ -74,7 +74,7 @@ require(['jquery',
                     }
                 }, this);
                 this.booleanSearch = "and";
-                this.groupSearch = "normal";
+                // this.groupSearch = "normal";
 
                 this.searchResults = new SearchResults({
                     el: $('#search-results-container')[0]
@@ -112,8 +112,9 @@ require(['jquery',
                 this.searchQuery = {
                     queryString: function(){
                         var termFilters = [];
+                        var termFilterGrouping = [];
                         var termFiltersLen = 0;
-                        _.each(self.termFilter,function (term) {
+                        _.each(self.termFilter,function (term, i) {
                             termFiltersLen += term.query.filter.terms().length;
                             termFilters.push(term.query.filter.terms());
                         })
@@ -129,7 +130,7 @@ require(['jquery',
                             mapExpanded: self.mapFilter.expanded(),
                             timeExpanded: self.timeFilter.expanded(),
                             booleanSearch: self.booleanSearch,
-                            groupSearch: self.groupSearch,
+                            termFilterGrouping: ko.toJSON(self.termFilterGrouping),
                         };
                         
                         if (termFiltersLen === 0 &&
@@ -254,6 +255,18 @@ require(['jquery',
                         this.termFilter[i].restoreState(query.termFilter[i]);
                     }
                 }
+                
+                if('termFilterGrouping' in query){
+                    _.each(JSON.parse(query.termFilterGrouping), function (groupingValue ,i) {
+                        
+                        $(".select2-container.resource_search_widget"+i)
+                            .closest(".search-box-container").find(".group-value").
+                            html(groupingValue.charAt(0).toUpperCase() + groupingValue.slice(1));
+                        this.termFilterGrouping[i] = groupingValue;
+                    }.bind(this));
+                    doQuery = true;
+                }
+                
                 if('booleanSearch' in query){
                     this.onChangeAndOr(query.booleanSearch);
                     doQuery = true;
@@ -336,16 +349,23 @@ require(['jquery',
             },
             
             onChangeGroup: function (e) {
-                if ($(e.target).hasClass("search-normal")) {
-                    if (this.groupSearch != "normal") {
-                        $(".group-value").html("Normal");
-                        this.groupSearch = "normal";
+                var i = $(e.target.closest("div")).data("index");
+                if ($(e.target).hasClass("search-and")) {
+                    if (this.termFilterGrouping[i] != "and") {
+                        $(e.target).closest(".dropdown").find(".group-value").html("And");
+                        this.termFilterGrouping[i] = "and";
                         this.doQuery();
                     }
-                } else if ($(e.target).hasClass("search-grouped")) {
-                    if (this.groupSearch != "group") {
-                        $(".group-value").html("In group");
-                        this.groupSearch = "group";
+                } else if ($(e.target).hasClass("search-or")) {
+                    if (this.termFilterGrouping[i] != "or") {
+                        $(e.target).closest(".dropdown").find(".group-value").html("Or");
+                        this.termFilterGrouping[i] = "or";
+                        this.doQuery();
+                    }
+                } else if ($(e.target).hasClass("search-group")) {
+                    if (this.termFilterGrouping[i] != "group") {
+                        $(e.target).closest(".dropdown").find(".group-value").html("Group");
+                        this.termFilterGrouping[i] = "group";
                         this.doQuery();
                     }
                 }
@@ -353,10 +373,12 @@ require(['jquery',
 
             initializeSearchBoxes: function () {
                 this.termFilter = [];
+                this.termFilterGrouping = [];
                 for (var i = 0; i <= this.searchBoxes; i++) {
                     if (i > 0) {
                         this.cloneSearchBox(i);
                     }
+                    this.termFilterGrouping[i] = "and";
                     this.addSearchBox(i);
                 }
                 $('.resource_search_widget0 input').attr({'disabled': true});
@@ -399,7 +421,8 @@ require(['jquery',
                 var cloneInput = $("#term-select-template").clone()
                     .removeAttr('id','term-select-template')
                     .removeClass('hidden')
-                    .addClass('resource_search_widget' + i);
+                    .attr('data-index', i);
+                cloneInput.find(".arches-select2").addClass('resource_search_widget' + i);
                 $(".term-search-boxes").append(cloneInput);
             },
 
