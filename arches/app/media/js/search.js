@@ -36,7 +36,6 @@ require(['jquery',
             },
 
             initialize: function(options) { 
-                var mapFilterText, timeFilterText;
                 var self = this;
                 var query = this.getQueryFromUrl();
                 if('termFilter' in query){
@@ -50,15 +49,16 @@ require(['jquery',
                 } else {
                     this.searchBoxes = 1;
                 }
+                this.initializeSearchBoxes();
 
                 this.mapFilter = new MapFilter({
                     el: $('#map-filter-container')[0]
                 });
                 this.mapFilter.on('enabled', function(enabled, inverted){
                     if(enabled){
-                        this.termFilter[0].addTag(mapFilterText, inverted);
+                        this.termFilter[0].addTag(this.mapFilterText, inverted);
                     }else{
-                        this.termFilter[0].removeTag(mapFilterText);
+                        this.termFilter[0].removeTag(this.mapFilterText);
                     }
                 }, this);
 
@@ -68,9 +68,9 @@ require(['jquery',
                 });
                 this.timeFilter.on('enabled', function(enabled, inverted){
                     if(enabled){
-                        this.termFilter[0].addTag(timeFilterText, inverted);
+                        this.termFilter[0].addTag(this.timeFilterText, inverted);
                     }else{
-                        this.termFilter[0].removeTag(timeFilterText);
+                        this.termFilter[0].removeTag(this.timeFilterText);
                     }
                 }, this);
                 this.booleanSearch = "and";
@@ -105,8 +105,8 @@ require(['jquery',
                 }, this);
 
 
-                mapFilterText = this.mapFilter.$el.data().filtertext;
-                timeFilterText = this.timeFilter.$el.data().filtertext;
+                this.mapFilterText = this.mapFilter.$el.data().filtertext;
+                this.timeFilterText = this.timeFilter.$el.data().filtertext;
 
                 self.isNewQuery = true;
                 this.searchQuery = {
@@ -143,27 +143,21 @@ require(['jquery',
                         return $.param(params).split('+').join('%20');
                     },
                     changed: ko.pureComputed(function(){
-                        var termFilterChanged = "";
-                        _.each(this.termFilter,function (term) {
-                            termFilterChanged += ko.toJSON(term.query.changed())
-                        })
-                        var ret = termFilterChanged +
-                            ko.toJSON(this.timeFilter.query.changed()) +
+                        var ret = ko.toJSON(this.timeFilter.query.changed()) +
                             ko.toJSON(this.mapFilter.query.changed());
                         return ret;
                     }, this).extend({ rateLimit: 200 })
                 };
-                this.initializeSearchBoxes();
                 this.getSearchQuery();
                 this.searchResults.page.subscribe(function(){
                     self.doQuery();
                 });
 
-                // this.searchQuery.changed.subscribe(function(){
-                //     self.isNewQuery = true;
-                //     self.searchResults.page(1);
-                //     self.doQuery();
-                // });
+                this.searchQuery.changed.subscribe(function(){
+                    self.isNewQuery = true;
+                    self.searchResults.page(1);
+                    self.doQuery();
+                });
             },
             
 
@@ -342,28 +336,16 @@ require(['jquery',
 
             initializeSearchBoxes: function () {
                 this.termFilter = [];
-                this.termFilter[0] = new TermFilter({
-                    el: $.find('input.resource_search_widget' + i)[0],
-                    index: 0
-                });
-                this.termFilter[0].on('change', function(){
-                    if($('#saved-searches').is(":visible")){
-                        this.hideSavedSearches();
+                for (var i = 0; i <= this.searchBoxes; i++) {
+                    if (i > 0) {
+                        this.cloneSearchBox(i);
                     }
-                }, this);
-
-                for (var i = 1; i <= this.searchBoxes; i++) {
                     this.addSearchBox(i);
                 }
-                
+                $('.resource_search_widget0 input').attr({'disabled': true});
             },
             
             addSearchBox: function (i) {
-                var cloneInput = $("#term-select-template").clone()
-                    .removeAttr('id','term-select-template')
-                    .removeClass('hidden')
-                    .addClass('resource_search_widget' + i);
-                $(".term-search-boxes").append(cloneInput);
                 this.termFilter[i] = new TermFilter({
                     el: $.find('input.resource_search_widget' + i)[0],
                     index: i
@@ -379,22 +361,31 @@ require(['jquery',
                     }
                 }, this);
                 this.termFilter[i].on('filter-removed', function(item){
-                    if(item.text === mapFilterText){
+                    if(item.text === this.mapFilterText){
                         this.mapFilter.clear();
                     }
-                    if(item.text === timeFilterText){
+                    if(item.text === this.timeFilterText){
                         this.timeFilter.clear();
                     }
                 }, this);
                 this.termFilter[i].on('filter-inverted', function(item){
-                    if(item.text === mapFilterText){
+                    if(item.text === this.mapFilterText){
                         this.mapFilter.query.filter.inverted(item.inverted);
                     }
-                    if(item.text === timeFilterText){
+                    if(item.text === this.timeFilterText){
                         this.timeFilter.query.filter.inverted(item.inverted);
                     }
                 }, this);
             },
+            
+            cloneSearchBox: function (i) {
+                var cloneInput = $("#term-select-template").clone()
+                    .removeAttr('id','term-select-template')
+                    .removeClass('hidden')
+                    .addClass('resource_search_widget' + i);
+                $(".term-search-boxes").append(cloneInput);
+            },
+
 
             removeSearchBox: function (i) {
                 $('.resource_search_widget' + i).remove();
@@ -406,6 +397,7 @@ require(['jquery',
             
             onAddSearchBox: function (e) {
                 this.searchBoxes++;
+                this.cloneSearchBox(this.searchBoxes);
                 this.addSearchBox(this.searchBoxes);
             },
 
