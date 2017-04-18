@@ -443,6 +443,7 @@ require(['jquery',
 
             onRemoveSearchBox: function (e) {
                 this.removeSearchBox(this.searchBoxes);
+                $(".search-box-container[data-index="+ this.searchBoxes +"]").remove();
                 this.searchBoxes--;
             },
 
