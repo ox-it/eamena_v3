@@ -17,7 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 {% extends "base.htm" %}
 {% load staticfiles %}
-
+{% load i18n %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'plugins/layer_slider/css/layerslider.css' %}" type="text/css">
 {{ block.super }}
@@ -27,95 +27,150 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <!--=== Slider ===-->
 <div class="layer_slider">
     <div id="layerslider-container-fw">        
-        <div id="layerslider" style="width: 100%; height: 500px; margin: 0px auto; ">
-            
-            <!--First Slide-->
+        <div id="layerslider" style="width: 100%; height: 700px; margin: 0px auto; background-color: #585f69">
+          <!--First Slide-->
             <div class="ls-layer" style="">
                 
                 <!-- Background -->
-                <img src="{% static 'img/arches_splash/slide9.jpg' %}" class="ls-s1" style="top: 0px; left: 0px; durationin: 0;" alt="Slide background">
+                <img src="{% static 'img/BahlaFort_Oman_2015_JB.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
                     
                     <!-- Text -->
-                    <span class="ls-s-1" style="line-height: 42px; font-size:22px; font-weight: 200; color:#fff; top:100px; left: 10px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
-                        EAMENA
-                    </span>
-                    
-                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:140px; left: 10px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
-                        Endangered Archaeology <br />
-                        in the Middle East and North Africa
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
+
                     </span>
                     
                     <!-- Photo Credit -->
-                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:470px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
-                        Photo: Umm Qeis, Gadara
-                            </span>
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: The Bahla fort (Oman) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Jennie Bradbury' %}</a>
+                    </span>
                     
                     </div>
             <!--End First Slide-->
+          <!--Second Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/Libya_Sabratha_Temple_of_Isis.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
+
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: The temple of Isis (Sabratha, Libya) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Nichole Sheldrick' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Second Slide-->
             
-   
+          <!--Third Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/Persepolis_ApadanaPalace_AZ.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px;left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
 
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: Reliefs from the Apādana palace (Persepolis, Iran) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Andrea Zerbini' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Third Slide-->
+            
+          <!--Fourth Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/TempleofObelisks_Byblos_Lebanon_2016_JB.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
 
-<!--=== HIP Title Block ===-->
-<div class="purchase">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-9 animated fadeInLeft">
-                <span>Documenting Archaeological heritage in the Middle East and North Africa</span>
-                <p>Eamena works with heritage partners across this region to record archaeological sites that are at risk from a range of disturbances and threats.These are compiled in a special designed cultural heritage database</p>
-            </div>            
-            <div class="col-md-3 btn-buy animated fadeInRight">
-                <a href="http://eamena.org" class="btn-u btn-u-lg"><i class="fa fa-plus-square"></i> Learn More   </a>
-            </div>
-        </div>
-    </div>
-</div><!--/row-->
-<!-- End HIP Title Block -->
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: Temple of the Obelisks (Byblos, Lebanon) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Jennie Bradbury' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Fourth Slide-->
 
+          <!--Fifth Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/Tunisia_Dougga_Capitolium_NS.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
 
-<!--=== Content Part ===-->
-<div class="block-description">
-    <div class="container content padding-top-20">
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: The Capitolium (Dougga, Tunisia) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Nichole Sheldrick' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Fifth Slide-->
+            
+          <!--Sixth Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/Petra_AZ.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: -70px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
 
-        <!--Title Box-->        
-        <div class="title-box no-border margin-top-minus-10" style="border-bottom-color: #dcdcdc;">
-            <div class="title-box-text"><span class="color-green">Featured Heritage</span></div>
-            <p>Sites at risk in the Middle East and North Africa</p>
-        </div>
-        <!-- End Title Box -->    
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: A view of Petra (Jordan) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Andrea Zerbini' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Sixth Slide-->
+            
+          <!--Sixth Slide-->
+            <div class="ls-layer" style="">
+                
+                <!-- Background -->
+                <img src="{% static 'img/Umm_Qais_Nymphaeum_AZ.jpg' %}" class="ls-s3" style="max-width: 2000px !important; top: -50px; left: -550px; durationin: 0;" alt="Slide background">
+                    
+                    <!-- Text -->
+                    <span class="ls-s-1" style="line-height: 42px; font-size:42px; font-weight: 200; color:#fff; top:50px; left: 10px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;">
+                        {% trans 'Endangered Archaeology in the Middle East and North Africa' %} </br>
+                     الآثار المهددة في الشرق الأوسط و شمال إفريقيا  
 
-        <!-- Promo Box -->    
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="servive-block servive-block-default" style="background: #ffffff;">
-                    <i class="icon-custom rounded-x icon-bg-dark fa fa-trophy"></i>
-                    <a class="" href="javascript:void(0);"><h2 class="txt-color-blue">Egypt</h2></a>
-                    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium qui officia deserunt mollitia anim</p>                        
-                </div>
-            </div>
-
-            <div class="col-sm-4">
-                <div class="servive-block servive-block-default" style="background: #ffffff;">
-                    <i class="icon-custom rounded-x icon-bg-dark fa fa-trophy"></i>
-                    <a class="" href="javascript:void(0);"><h2 class="txt-color-blue">Syria</h2></a>
-                    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium qui officia deserunt mollitia anim</p>                        
-                </div>
-            </div>
-
-            <div class="col-sm-4">
-                <div class="servive-block servive-block-default" style="background: #ffffff;">
-                    <i class="icon-custom rounded-x icon-bg-dark fa fa-camera"></i>
-                    <a class="" href="javascript:void(0);"><h2 class="txt-color-blue">Yemen</h2></a>
-                    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium qui officia deserunt mollitia anim</p>                        
-                </div>
-            </div>
-        </div>
-        <!-- End Promo Box -->
-
-
-
-
-    </div>
-</div>
-<!-- End Content Part -->
+                    </span>
+                    
+                    <!-- Photo Credit -->
+                    <span class="ls-s-1" style="line-height: 16px; font-size:12px; color:#fff; top:670px; left: 750px; slidedirection: top; slideoutdirection: bottom; durationin: 0; durationout: 3500;background-color: #585f69;">
+                        {% trans 'Photo: Nymphaeum (Gadara/Umm Qais, Jordan) ' %}<a href="javascript:void(0);" style='color:#fff;'>{% trans '(c) Andrea Zerbini' %}</a>
+                    </span>
+                    
+                    </div>
+            <!--End Sixth Slide-->
 {% endblock %}
