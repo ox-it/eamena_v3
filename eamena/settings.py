@@ -238,7 +238,11 @@ LOGGING = {
     },
 }
 
-
+#Dictionary of nodes to sort data in the report sections. Keys of dict are the top nodes to which the nodes used for sorting are attached
+ORDER_REPORT_SECTIONS_BY= {
+    'CONDITION_ASSESSMENT.E14': ['DISTURBANCE_DATE_END.E49', 'THREAT_CAUSE_TYPE.E55'],
+    'PRODUCTION.E12': ['FEATURE_EVIDENCE_INTERPRETATION_TYPE.E55', 'FEATURE_EVIDENCE_TYPE.E55']
+}
 
 EXPORT_CONFIG = os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'resource_export_mappings.json'))
 

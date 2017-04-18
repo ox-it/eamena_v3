@@ -34,6 +34,7 @@ from django.contrib.gis.geos import GEOSGeometry
 import binascii
 from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
+from datetime import datetime
 
 
 def report(request, resourceid):
@@ -178,6 +179,7 @@ def report(request, resourceid):
 
     related_resource_info = get_related_resources(resourceid, lang) 
     # parse the related entities into a dictionary by resource type
+
     for related_resource in related_resource_info['related_resources']:
         VirtualGlobeName = []
         OtherImageryName = []
@@ -189,6 +191,7 @@ def report(request, resourceid):
         related_resource['datefrom'] = []
         related_resource['dateto'] = []
         related_resource['notes'] = []
+        related_resource['date'] = []
         if related_resource['entitytypeid'] == 'HERITAGE_RESOURCE.E18':
             for entity in related_resource['domains']:
                 if entity['entitytypeid'] == 'RESOURCE_TYPE_CLASSIFICATION.E55':
@@ -241,7 +244,14 @@ def report(request, resourceid):
                 elif entity['entitytypeid'] == 'TITLE.E41':
                     related_resource['primaryname'] = entity['value']
 
-            
+            for entity in related_resource['dates']:
+                if entity['entitytypeid'] == 'DATE_OF_ACQUISITION.E50':
+                    try:
+                        d = datetime.strptime(entity['label'], '%Y-%m-%dT%H:%M:%S') #Checks for format  YYYY-MM-DD hh:mm:ss
+                        date = d.strftime('%Y-%m-%d')
+                    except:
+                        raise ValueError("The value %s inserted is not a date" % entity['label'])                        
+                    related_resource['date'] = date                                
             if VirtualGlobe == True and OtherImagery == True: #This routine creates the concatenated primary name for a Virtual Globe related resource
                 for entity in related_resource['domains']:
                     if entity['entitytypeid'] == 'IMAGERY_SOURCE_TYPE.E55':
@@ -258,6 +268,7 @@ def report(request, resourceid):
             if  information_resource_type == 'SHARED':  #This routine creates the concatenated primary name for a Shared dataset
                 related_resource['primaryname'] = " - ".join(SharedDataset)
         # get the relationship between the two entities as well as the notes and dates, if the exist
+        
         for relationship in related_resource_info['resource_relationships']:
             if relationship['entityid1'] == related_resource['entityid'] or relationship['entityid2'] == related_resource['entityid']: 
                 related_resource['relationship'].append(get_preflabel_from_valueid(relationship['relationshiptype'], lang)['value'])
@@ -268,9 +279,6 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
-
-
-    
 
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),

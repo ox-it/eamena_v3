@@ -4,7 +4,7 @@
             <dt>
                 <h5 id="" class="arches-report-subsection-title">{% trans "Feature intepretations within Heritage Resource" %}</h5>
             </dt>
-     {% for PRODUCTION_E12 in report_info.source.graph.PRODUCTION_E12 %}
+     {% for PRODUCTION_E12 in report_info.source.graph.PRODUCTION_E12|dictsort:"orderby" %}
      {% for PHASE_TYPE_ASSIGNMENT_E17 in PRODUCTION_E12.PHASE_TYPE_ASSIGNMENT_E17 %}
      {% if 'FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT_E17' in PHASE_TYPE_ASSIGNMENT_E17 %}
      {% for FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT_E17 in PHASE_TYPE_ASSIGNMENT_E17.FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT_E17 %}

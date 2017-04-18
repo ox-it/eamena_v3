@@ -58,7 +58,7 @@
                                     <div class="col-xs-12">
                                         <dl>                               
                                             
-                                            {% for related_resource in related_resource_dict.HERITAGE_RESOURCE_GROUP %}
+                                            {% for related_resource in related_resource_dict.HERITAGE_RESOURCE_GROUP|dictsort:"primaryname" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" class="" title="{% trans "View Report" %}">
                                                     {% if 'edit' in user.user_groups %}
@@ -206,7 +206,7 @@
                                                 </h5>
                                             </dt>
 
-                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SHARED %}
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SHARED|dictsort:"primaryname" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <span class="arches-report-subsection-item-type">
                                                         {% trans "Data contributed by: " %}
@@ -242,7 +242,7 @@
                                                 </h5>
                                             </dt>
 
-                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_DOCUMENT %}
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_DOCUMENT|dictsort:"primaryname" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
                                                         {{related_resource.primaryname|cut:"T00:00:00"}}
@@ -280,7 +280,7 @@
                                                 </h5>
                                             </dt>
 
-                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_MAP %}
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_MAP|dictsort:"primaryname" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
                                                         {{related_resource.primaryname|cut:"T00:00:00"}}
@@ -310,7 +310,8 @@
                                 </div>
                                {% endif %}
                                <!-- End List of Related Resources (Maps)--> 
-                               {% if 'INFORMATION_RESOURCE_SATELLITE' in related_resource_dict %} 
+                               {% if 'INFORMATION_RESOURCE_SATELLITE' in related_resource_dict %}
+
                                 <div class="row">
                                
                                     <div class="col-xs-12">
@@ -321,7 +322,7 @@
                                                 </h5>
                                             </dt>
 
-                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SATELLITE %}
+                                            {% for related_resource in related_resource_dict.INFORMATION_RESOURCE_SATELLITE|dictsort:"date" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" title="{% trans "View Report" %}">
                                                         {{related_resource.primaryname|cut:"T00:00:00"}}
