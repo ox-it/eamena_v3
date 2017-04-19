@@ -1,18 +1,14 @@
 require([
     'jquery',
-    'views/crypto/components/core',
     'underscore',
     'arches',
     'bootstrap',
     'views/map',
     'openlayers', 
-    'views/crypto/components/cipher-core',
     'knockout',
-    'utils',
-    'views/crypto/components/enc-base64',
-    'views/crypto/rollups/aes',
-    'views/crypto/components/mode-cfb',
-], function($,crypto, _, arches, bootstrap, MapView, ol, ciphercore, ko, utils, encbase, aes, cfb) {
+    'utils'
+], function($, _, arches, bootstrap, MapView, ol, ko, utils) {
+
     var ReportView = Backbone.View.extend({
 
         initialize: function(options) { 

@@ -71,6 +71,12 @@
 
 	{% block javascript %}
     <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+    <script src="{{ STATIC_URL }}js/views/crypto/components/core-min.js"></script>
+    <script src="{{ STATIC_URL }}js/views/crypto/components/cipher-core.js"></script>
+    <script src="{{ STATIC_URL }}js/views/crypto/components/enc-base64.js"></script>
+    <script src="{{ STATIC_URL }}js/views/crypto/components/mode-cfb.js"></script>
+    <script src="{{ STATIC_URL }}js/views/crypto/rollups/aes.js"></script>
+
     {% block pre_require_js %}
     {% endblock pre_require_js %}
     <script>
