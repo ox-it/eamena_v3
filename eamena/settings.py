@@ -66,35 +66,16 @@ ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag
 
 def RESOURCE_TYPE_CONFIGS():
     return {
-#         'HERITAGE_RESOURCE.E18': {
-#             'resourcetypeid': 'HERITAGE_RESOURCE.E18',
-#             'name': _('Heritage Resource E18 Feature'),
-#             'icon_class': 'fa fa-university',
-#             'default_page': 'summary',
-#             'default_description': _('No name available'),
-#             'description_node': _('NAME.E41'),
-#             'categories': [_('Resource')],
-#             'has_layer': True,
-#             'on_map': False,
-#             'marker_color': '#fa6003',
-#             'stroke_color': '#fb8c49',
-#             'fill_color': '#ffc29e',
-#             'primary_name_lookup': {
-#                 'entity_type': 'SITE_ID.E42',
-#                 'lookup_value': 'Primary'
-#             },
-#             'sort_order': 2
-#         },
         'HERITAGE_RESOURCE_GROUP.E27': {
             'resourcetypeid': 'HERITAGE_RESOURCE_GROUP.E27',
             'name': _('Heritage Resource E27'),
-            'icon_class': 'fa fa-th',
+            'icon_class': 'fa fa-university',
             'default_page': 'summary',
             'default_description': _('No name available'),
             'description_node': _('NAME.E41'),
             'categories': [_('Resource')],
             'has_layer': True,
-            'on_map': False,
+            'on_map': True,
             'marker_color': '#FFC53D',
             'stroke_color': '#d9b562',
             'fill_color': '#eedbad',
@@ -104,44 +85,6 @@ def RESOURCE_TYPE_CONFIGS():
             },
             'sort_order': 1
         },
-#         'ACTIVITY.E7': {
-#             'resourcetypeid': 'ACTIVITY.E7',
-#             'name': _('Activity'),
-#             'icon_class': 'fa fa-tasks',
-#             'default_page': 'activity-summary',
-#             'default_description': _('No description available'),
-#             'description_node': _('INSERT RESOURCE DESCRIPTION NODE HERE'),
-#             'categories': [_('Resource')],
-#             'has_layer': True,
-#             'on_map': False,
-#             'marker_color': '#6DC3FC',
-#             'stroke_color': '#88bde0',
-#             'fill_color': '#afcce1',
-#             'primary_name_lookup': {
-#                 'entity_type': 'NAME.E41',
-#                 'lookup_value': 'Primary'
-#             },
-#             'sort_order': 3
-#         },
-#         'HISTORICAL_EVENT.E5':{
-#             'resourcetypeid': 'HISTORICAL_EVENT.E5',
-#             'name': _('Historic Event'),
-#             'icon_class': 'fa fa-calendar',
-#             'default_page': 'historical-event-summary',
-#             'default_description': _('No description available'),
-#             'description_node': _('INSERT RESOURCE DESCRIPTION NODE HERE'),
-#             'categories': [_('Resource')],
-#             'has_layer': True,
-#             'on_map': False,
-#             'marker_color': '#4EBF41',
-#             'stroke_color': '#61a659',
-#             'fill_color': '#c2d8bf',
-#             'primary_name_lookup': {
-#                 'entity_type': 'NAME.E41',
-#                 'lookup_value': 'Primary'
-#             },
-#             'sort_order': 4
-#         },
         'ACTOR.E39': {
             'resourcetypeid': 'ACTOR.E39',
             'name': _('Person/Organization'),
@@ -170,7 +113,7 @@ def RESOURCE_TYPE_CONFIGS():
             'description_node': _('TITLE.E41,CATALOGUE_ID.E42,IMAGERY_CREATOR_APPELLATION.E82,TILE_SQUARE_DETAILS.E44,CONTRIBUTOR_APPELLATION.E82,SHARED_DATA_SOURCE_APPELLATION.E82,SHARED_DATA_SOURCE_AFFILIATION.E82,SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82'),
             'categories': [_('Resource')],
             'has_layer': True,
-            'on_map': False,
+            'on_map': True,
             'marker_color': '#8D45F8',
             'stroke_color': '#9367d5',
             'fill_color': '#c3b5d8',
