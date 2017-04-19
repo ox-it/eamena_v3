@@ -1,4 +1,9 @@
 /*put package specific styles here...*/
+.wrapper {
+	height: 100%;
+	margin: 0px auto;
+	overflow: hidden;
+}
 
 .pagination-centered img {
 	margin-left: auto;
