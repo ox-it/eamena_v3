@@ -253,7 +253,6 @@ class Entity(object):
         if delete_root is False prevent the root node from deleted
 
         """
-
         nodes_to_delete = []
 
         # gather together a list of all entities that includes self and all its children
@@ -512,9 +511,9 @@ class Entity(object):
         """
 
         entities = self.find_entities_by_type_id(entitytypeid)
-
         if append or len(entities) == 0:
             schema = Entity.get_mapping_schema(self.entitytypeid)
+
             entity = Entity()
             entity.create_from_mapping(self.entitytypeid, schema[entitytypeid]['steps'], entitytypeid, value)
             self.merge_at(entity, schema[entitytypeid]['mergenodeid'])
@@ -814,7 +813,7 @@ class Entity(object):
             ]
 
         """
-
+        order = settings.ORDER_REPORT_SECTIONS_BY
         data = {}
         for child_entity in self.child_entities:
             if child_entity.businesstablename != '':
@@ -823,7 +822,13 @@ class Entity(object):
                 if child_entity.undotify() not in data:
                     data[child_entity.undotify()] = []
                 data[child_entity.undotify()].append(child_entity.dictify(keys=keys))
-
+                data[child_entity.undotify()][len(data[child_entity.undotify()])-1]['orderby'] = ''
+                for key, values in order.iteritems():
+                   for value in values:
+                        order_value = child_entity.find_entities_by_type_id(value)
+                        if order_value:
+                            if child_entity.entitytypeid == key:
+                                data[child_entity.undotify()][len(data[child_entity.undotify()])-1]['orderby'] = order_value[0].label
         return data
 
     def get_nodes(self, entitytypeid, keys=[]):
@@ -851,7 +856,8 @@ class Entity(object):
                 
             ret.append(data)
         return ret
-
+        
+                
     def encode(self, keys=[]):
         """
         Encodes an Entity into a dictionary of keys derived by the entitytypeid of the Entity concatonated wtih property name 

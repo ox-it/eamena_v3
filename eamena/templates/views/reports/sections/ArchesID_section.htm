@@ -21,22 +21,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <div class="row">
      <div class="col-xs-12">
         <dl>
-
-            {% if 'edit' in user.user_groups %}
             <dt>
                 <h5 id="" class="arches-report-subsection-title">{% trans "Resource ID" %}</h5>
             </dt>
                     <dd class="arches-report-subsection-item">
                               {{ report_info.source.primaryname }}
                     </dd>
-            {% else %}
             <dt>
-                <h5 id="" class="arches-report-subsection-title">{% trans "Arches ID" %}</h5>
-            </dt>
-                    <dd class="arches-report-subsection-item">
-                              {{ report_info.source.entityid }}
-                    </dd>
-            {% endif %}
         </dl>
     </div>
 </div>
