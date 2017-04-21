@@ -333,8 +333,9 @@ class Entity(object):
         Merge an entity graph into this instance at the lowest common node
 
         """        
-
+        
         if self.can_merge(entitytomerge):
+            
             # update self.entityid if it makes sense to do so  
             if self.entityid == '' and entitytomerge.entityid != '':
                 self.entityid = entitytomerge.entityid
@@ -352,7 +353,6 @@ class Entity(object):
                     if child_entity.can_merge(child_entitytomerge):
                         entities_to_merge.append(entities_to_append.pop())
                         break
-
             for entity in entities_to_append:
                 self.append_child(entity)   
 
@@ -375,7 +375,6 @@ class Entity(object):
             # if the value of each node is not blank and they are not equal, then the nodes can't be merged
             if self.value != '' and entitytomerge.value != '' and self.value != entitytomerge.value:
                 return False
-
             return True
         else:
             return False
@@ -468,7 +467,6 @@ class Entity(object):
         Return a value from the function to prematurely end the traversal
 
         """
-
         for child_entity in self.child_entities:
             ret = child_entity.traverse(func, scope) 
             if ret != None: 
@@ -690,31 +688,37 @@ class Entity(object):
         """
         #somelist[:] = [tup for tup in somelist if determine(tup)]
 
-        # def func(entity):
-        #     try:
-        #         parent = entity.get_parent()
-        #         print '-'*10
-        #         print entity
-        #         print len(parent.child_entities)
-        #         if len(entity.child_entities) == 0 and entity.value == '':
-        #             print JSONSerializer().serialize(entity, indent=4)
-        #             parent.child_entities.remove(entity)
-        #             print len(parent.child_entities)
-        #     except:
-        #         pass
+#         def func(entity):
+#             try:
+#                 parent = entity.get_parent()
+#                 print '-'*10
+#                 print entity
+#                 print len(parent.child_entities)
+#                 if len(entity.child_entities) == 0 and entity.value == '':
+#                     print JSONSerializer().serialize(entity, indent=4)
+#                     parent.child_entities.remove(entity)
+#                     print len(parent.child_entities)
+#             except:
+#                 pass
+        
+#         def func(entity):
+#             try:
+#                 parent = entity.get_parent()
+#                 parent.child_entities[:] = [child_entity for child_entity in parent.child_entities if (len(child_entity.child_entities) != 0 or child_entity.value != '')]
+#             except:
+#                 pass
+# 
+#         self.traverse(func)
+        self.filter((lambda entity: len(entity.child_entities) != 0 or entity.value !=''))
+# (len(entity.child_entities) != 0 and entity.entityid == '') or (len(entity.child_entities) == 0) and entity.value != '')
 
-        # def func(entity):
-        #     try:
-        #         # http://stackoverflow.com/questions/1207406/remove-items-from-a-list-while-iterating-in-python
-        #         parent = entity.get_parent()
-        #         parent.child_entities[:] = [child_entity for child_entity in parent.child_entities if (len(child_entity.child_entities) != 0 or child_entity.value != '')]
-        #     except:
-        #         pass
-
-        #self.traverse(func)
-
-        self.filter((lambda entity: len(entity.child_entities) != 0 or entity.value != ''))
-
+    def trim_again(self,child):
+        if child.entityid != '' and child.value =='':
+            if len(child.child_entities) == 0:
+                self.child_entities.remove(child)
+            else:     
+                for entity in child.child_entities:
+                    child.trim_again(entity)
 
 
     def filter(self, lambda_expression):
@@ -722,16 +726,17 @@ class Entity(object):
         Only allows the nodes defined in the lambda_expression to populate the entity graph
         (eg: filters out of the entity graph any entity that doesn't return true from the lambda_expression)
 
-        """
+        """               
 
         def func(entity):
             if hasattr(entity, 'get_parent'):
                 parent = entity.get_parent()
                 parent.child_entities[:] = filter(lambda_expression, parent.child_entities)
-            # else:
-            #     entity.child_entities[:] = filter(lambda_expression, entity.child_entities)
-
+            else:
+                for child in entity.child_entities:
+                    entity.trim_again(child)
         self.traverse(func)
+
 
     def clear(self):
         """
