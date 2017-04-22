@@ -1,17 +1,31 @@
-/*put package specific styles here...*/
+/*App wide CSS*/
 .wrapper {
 	height: 100%;
 	margin: 0px auto;
 	overflow: auto;
 }
-
 .pagination-centered img {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;	
 	
 }
+/*Landing page*/
 
+.layer_slider {
+	background-color: #585f69;
+	height:100%;
+}
+
+#layerslider {
+	width: 100%; 
+	height: 700px; 
+	margin: 0px auto;
+}
+
+/*Landing page end*/
+
+/* Report page CSS */
 
 .arches-report-section-header {
 	text-align: center;
@@ -97,3 +111,5 @@
 .report-body {
 	overflow-y: scroll; 
 }
+
+/* Report page section end */
