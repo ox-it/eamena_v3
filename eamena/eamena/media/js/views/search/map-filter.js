@@ -95,7 +95,10 @@ define(['jquery',
                 });
 
 
-                this.bufferFeatureOverlay = new ol.FeatureOverlay({
+                this.bufferFeatureOverlay = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        features: new ol.Collection()
+                    }),
                     style: new ol.style.Style({
                         fill: new ol.style.Fill({
                             color: 'rgba(123, 123, 255, 0.5)'
@@ -425,9 +428,9 @@ define(['jquery',
                 var highlightStyle = styleFactory('#4CAE4C', 9999999);
 
                 this.currentPageLayer = new ol.layer.Vector({
-                    source: new ol.source.Vector(
+                    source: new ol.source.Vector({
                         format: new ol.format.GeoJSON()
-                    ),
+                    }),
                     style: function(feature) {
                         if(feature.get('highlight')) {
                             return highlightStyle;
@@ -659,10 +662,10 @@ define(['jquery',
 
             clearDrawingFeatures: function(){
                 if (this.bufferFeatureOverlay){
-                    this.bufferFeatureOverlay.getFeatures().clear();                 
+                    this.bufferFeatureOverlay.getSource().clear();                 
                 }
                 if (this.drawingFeatureOverlay){
-                    this.drawingFeatureOverlay.getFeatures().clear();
+                    this.drawingFeatureOverlay.getSource().clear();
                 }
             },
 
@@ -683,13 +686,13 @@ define(['jquery',
                             var feature = source.getFeatures()[0];
                             
                             feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-                            self.bufferFeatureOverlay.getFeatures().clear();  
-                            self.bufferFeatureOverlay.addFeature(feature);
+                            self.bufferFeatureOverlay.getSource().clear();  
+                            self.bufferFeatureOverlay.getSource().addFeature(feature);
                         },
                         error: function(){}
                     });                    
                 }else{
-                    this.bufferFeatureOverlay.getFeatures().clear();  
+                    this.bufferFeatureOverlay.getSource().clear();  
                 }
             },
 
