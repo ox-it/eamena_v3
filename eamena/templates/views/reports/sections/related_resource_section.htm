@@ -61,11 +61,7 @@
                                             {% for related_resource in related_resource_dict.HERITAGE_RESOURCE_GROUP|dictsort:"primaryname" %}
                                                 <dd class="arches-report-subsection-item">
                                                     <a href="{% url 'report' related_resource.entityid %}" class="" title="{% trans "View Report" %}">
-                                                    {% if 'edit' in user.user_groups %}
                                                         {{related_resource.primaryname}}
-                                                    {% else %}
-                                                       {{ report_info.source.entityid }}
-                                                    {% endif %}
                                                     </a>
                                                     <span class="arches-report-subsection-item-type">
                                                         {% if related_resource.relationship|length > 0 %}

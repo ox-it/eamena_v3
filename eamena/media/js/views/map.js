@@ -10,7 +10,7 @@ define([
     return Backbone.View.extend({
         events: {
             'mousemove': 'handleMouseMove',
-            'mouseout': 'handleMouseOut'
+            'mouseout': 'handleMouseOut',
         },
 
         overlays: [],
@@ -64,7 +64,8 @@ define([
 
             this.map = new ol.Map({
                 controls: ol.control.defaults().extend([
-                    new ol.control.FullScreen()
+                    new ol.control.FullScreen(),
+                    new ol.control.ScaleLine()
                 ]),
                 layers: layers,
                 interactions: ol.interaction.defaults({
@@ -120,6 +121,7 @@ define([
                 var extent = view.calculateExtent(self.map.getSize());
                 self.trigger('viewChanged', view.getZoom(), extent);
             });
+
 
 
             this.map.on('click', function(e) {

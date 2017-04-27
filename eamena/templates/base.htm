@@ -166,11 +166,11 @@
                         name: "{% trans 'Bing Imagery' %}",
                         icon: "{% static 'img/map/Bing_Sat.png' %}"
                     },
-                    {
+                    {% if 'edit' in user.user_groups %}{
                         id: 'Road',
                         name: "{% trans ' Bing Streets' %}",
                         icon: "{% static 'img/map/Bing_Streets.png' %}"
-                    }],
+                    }{% endif %}],
                     editor:  {% if 'edit' in user.user_groups %} true {% else %} false {% endif %},
                 };
             });

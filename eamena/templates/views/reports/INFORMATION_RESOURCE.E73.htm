@@ -126,7 +126,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                 <!-- Section Header -->
                 <div class="">
-                         {% if geometry or report_info.has_image != '' %}<i class="center-icon rounded-x fa fa-folder-open"></i>{% endif %}
+                         {% if geometry != 'null' or report_info.has_image != ''  %}<i class="center-icon rounded-x fa fa-folder-open"></i>{% endif %}
                     <div class="">
                         <h2 class="arches-report-section-header">
                         {% if 'Imagery' in report_info.subtype %}
@@ -337,8 +337,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
     {% include "views/reports/sections/related_resource_section.htm" %}
 
-    {% include 'footer.htm' %}
 
-    {% include 'copyright.htm' %}
 
 </div>
