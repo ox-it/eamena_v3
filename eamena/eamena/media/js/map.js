@@ -68,7 +68,10 @@ require([
                 overlays: mapLayers.reverse()
             });
 
-            var selectFeatureOverlay = new ol.FeatureOverlay({
+            var selectFeatureOverlay = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: new ol.Collection()
+                }),
                 style: function(feature, resolution) {
                     var isSelectFeature = _.contains(feature.getKeys(), 'select_feature');
                     var fillOpacity = isSelectFeature ? 0.3 : 0;
@@ -118,8 +121,8 @@ require([
                     var geom = geoJSON.readGeometry(feature.get('geometry_collection'));
                     geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
                     map.map.getView().fitExtent(geom.getExtent(), map.map.getSize());
-                    selectFeatureOverlay.getFeatures().clear();
-                    selectFeatureOverlay.getFeatures().push(feature);
+                    selectFeatureOverlay.getSource().clear();
+                    selectFeatureOverlay.getSource().addFeature(feature);
                     selectedResourceId = null;
                 }
             };
@@ -267,7 +270,7 @@ require([
 
             $('.resource-info-closer').click(function() {
                 $('#resource-info').hide();
-                selectFeatureOverlay.getFeatures().clear();
+                selectFeatureOverlay.getSource().clear();
                 $('.resource-info-closer')[0].blur();
             });
 
@@ -291,8 +294,8 @@ require([
                     resourceData[key] = feature.get(key);
                 });
                 
-                selectFeatureOverlay.getFeatures().clear();
-                selectFeatureOverlay.getFeatures().push(feature);
+                selectFeatureOverlay.getSource().clear();
+                selectFeatureOverlay.getSource().addFeature(feature);
                 self.viewModel.selectedResource(resourceData);
                 $('#resource-info').show();
             };
@@ -325,7 +328,7 @@ require([
             };
 
             map.on('mapClicked', function(e, clickFeature) {
-                selectFeatureOverlay.getFeatures().clear();
+                selectFeatureOverlay.getSource().clear();
                 $('#resource-info').hide();
                 if (clickFeature) {
                     var keys = clickFeature.getKeys();
