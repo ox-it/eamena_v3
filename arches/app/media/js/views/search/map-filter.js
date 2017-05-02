@@ -9,8 +9,9 @@ define(['jquery',
     'knockout',
     'map/resource-layer-model',
     'utils',
-    'resource-types',], 
-    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes) {
+    'resource-types',
+    'plugins/kdbush/src/kdbush'], 
+    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, kdbush) {
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -79,6 +80,10 @@ define(['jquery',
 
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
+                    //create a backbone model to quickly index features by id
+                    var FeatureModel = Backbone.Model.extend({ idAttribute: 'id_'});
+                    self.resourceFeaturesCollection = new Backbone.Collection(features, {model:FeatureModel});
+                    
                     if (self.highlightOnLoad) {
                         _.defer(function () { self.highlightFeatures(self.highlightOnLoad.resultsarray, self.highlightOnLoad.entityIdArray) });
                     }
@@ -94,6 +99,11 @@ define(['jquery',
                     overlays: [this.vectorLayer]
                 });
 
+                //create and add a layer to show the results clusters
+                this.resultsClustersLayer = new ol.VectorLayer({
+                    source: new ol.source.Vector()
+                });
+                this.map.addLayer(this.resultsClustersLayer);
 
                 this.bufferFeatureOverlay = new ol.FeatureOverlay({
                     style: new ol.style.Style({
@@ -464,7 +474,49 @@ define(['jquery',
                 );
             },
 
-            highlightFeatures: function(resultsarray, entityIdArray){
+            highlightFeatures: function (resultsarray, entityIdArray) {
+                // this.resultsLayer.updateIndex(resultsarray, entityIdArray);
+                if (this.resourceFeatures) {
+                    var allResultsPoints = _.map(entityIdArray, function (id) {
+                        var feature = this.resourceFeaturesCollection.get(id);
+                        // console.log(feature);
+                        return feature;
+                    }.bind(this));
+                
+                    this.resultsIndex = kdbush(
+                        allResultsPoints,
+                        function (f) {
+                            //get x
+                            return f.attributes.values_.geometry.flatCoordinates[0];
+                        },
+                        function (f) {
+                            //get y
+                            return f.attributes.values_.geometry.flatCoordinates[1];
+                        }
+                    );
+                    
+                    console.log('rebuilt index');
+                }
+            },
+            
+            onViewChanged: function (extent) {
+                //clear the clusters layer
+                //TODO
+                this.resultsClustersLayer.getSource().clear();
+                
+                //get the points which are within the view extents
+                console.log('view extents', viewExtents);
+                // var resultsInView = this.resultsIndex.range(viewExtents)
+                
+                //calculate clusters
+                
+                
+                //add features to the clusters layer
+                
+                //create individual markers layer (for current page of results)
+            }
+
+            highlightFeatures_: function(resultsarray, entityIdArray){
                 var resultFeatures = [];
                 var currentPageFeatures = [];
                 var nonResultFeatures = [];
