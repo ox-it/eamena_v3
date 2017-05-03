@@ -88,11 +88,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
                     <!-- Map Metadata -->
                     <div class="col-xs-12 col-sm-8">
-                        <div class="info-blocks">
-                            <div class="info-blocks-in margin-bottom-0">
+                        <div class="info-blocks" style="float:right;">
+                            <div class="info-blocks-in margin-bottom-0" >
                                 <p class="margin-top-5">
-                                    <span class="arches-map-inventory-footer-text">
-                                        {% trans 'Map Zoom' %}: <span data-bind="text:zoom"></span> &nbsp; &nbsp;
+                                    <span class="arches-map-inventory-footer-text" >
                                        {% if 'edit' in user.user_groups %} {% trans 'Cursor' %}: <span data-bind="text:mousePosition"></span> <span class="hidden-xs">({% trans 'long,lat' %})</span>{% endif %}
                                     </span>
                                 </p>
@@ -102,6 +101,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                     <!-- End Map Metadata -->
 
                 </div>
+                <!-- Map: Scaleline--->
+                 <div class="row">
+                    <div class="col-xs-12" style="">
+                        <div id="scale-line" style = "float: left !important;margin-top:{% if 'edit' in user.user_groups %} -50px;{%else%} -30px;{%endif%}"></div>        
+                    </div>
+                </div>                             
             </div>   
         </div>    
         <!--=== End Map Footer ===--> 
