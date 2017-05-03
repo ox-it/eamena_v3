@@ -26,7 +26,8 @@ require(['jquery',
             events: {
                 'click #view-saved-searches': 'showSavedSearches',
                 'click #clear-search': 'clear',
-                'click #map-filter-button': 'toggleMapFilter',
+                'click #map-filter-button': 'clickMapFilter',
+                'click #map-filter-button .close-btn': 'closeMapFilter',
                 'click #time-filter-button': 'toggleTimeFilter',
                 'click a.dataexport': 'exportSearch',
                 'click a.search-and-or': 'onChangeAndOr',
@@ -56,9 +57,18 @@ require(['jquery',
                 });
                 this.mapFilter.on('enabled', function(enabled, inverted){
                     if(enabled){
-                        this.termFilter[0].addTag(this.mapFilterText, inverted);
+                        // this.termFilter[0].addTag(this.mapFilterText, inverted);
+                        $("#map-filter-button").addClass("enabled");
                     }else{
-                        this.termFilter[0].removeTag(this.mapFilterText);
+                        // this.termFilter[0].removeTag(this.mapFilterText);
+                        $("#map-filter-button").removeClass("enabled");
+                        // this.mapFilter.clear();
+                    }
+                    this.mapFilter.inverted = inverted;
+                    if(inverted){
+                        $("#map-filter-button").addClass("inverted");
+                    }else{
+                        $("#map-filter-button").removeClass("inverted");
                     }
                 }, this);
 
@@ -200,13 +210,51 @@ require(['jquery',
                 $('#search-results').slideDown('slow');
             },
 
-            toggleMapFilter: function(){
+            testMapFilter: function(){
                 if($('#saved-searches').is(":visible")){
                     this.doQuery();
                     this.hideSavedSearches();
                 }
                 this.mapFilter.expanded(!this.mapFilter.expanded());
+            },
+            
+            // clickMapFilter opens map filter if closed, toggles the invert map filter if open
+            clickMapFilter: function () {
+                if($('#saved-searches').is(":visible")){
+                    this.doQuery();
+                    this.hideSavedSearches();
+                }
+                if(this.mapFilter.expanded()){
+                    if (this.mapFilter.inverted) {
+                        this.mapFilter.inverted = false;
+                        $("#map-filter-button").removeClass("inverted");
+                    } else {
+                        if (this.mapFilter.query.filter.geometry.coordinates().length > 0) {
+                            this.mapFilter.inverted = true;
+                            $("#map-filter-button").addClass("inverted");
+                        } else {
+                            this.closeMapFilter();
+                        }
+                    }
+                    this.mapFilter.query.filter.inverted(this.mapFilter.inverted);
+                } else {
+                    this.mapFilter.expanded(true);
+                    $("#map-filter-button").addClass("enabled");
+                }
                 window.history.pushState({}, '', '?'+this.searchQuery.queryString());
+            },
+
+            closeMapFilter: function (ev) {
+                if($('#saved-searches').is(":visible")){
+                    this.doQuery();
+                    this.hideSavedSearches();
+                }
+                this.mapFilter.expanded(false);
+                this.mapFilter.clear();
+                
+                $("#map-filter-button").removeClass("enabled");
+                window.history.pushState({}, '', '?'+this.searchQuery.queryString());
+                return false;
             },
 
             toggleTimeFilter: function(){

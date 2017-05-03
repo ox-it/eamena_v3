@@ -67,7 +67,9 @@
 
                 {% if 'edit' in user.user_groups %}
                 <button class="btn btn-success btn" id="map-filter-button" style=""> 
+                    <i class="fa fa-minus invert-btn" style="margin-right: 7px;"></i>
                     <i class="fa fa-map-marker" style="padding-right:8px;"></i>{% trans "Location Filter" %}
+                    <i class="fa fa-close close-btn" style="margin-right: 7px;"></i>
                 </button>
                 <button class="btn btn-success btn" id="time-filter-button" style=""> 
                     <i class="fa fa-clock-o" style="padding-right:8px;"></i>{% trans "Time Filter" %}
@@ -76,7 +78,9 @@
                 
                 {% else %}
                 <button class="btn btn-success btn" id="map-filter-button" style=""> 
+                    <i class="fa fa-minus invert-btn" style="margin-right: 7px;"></i>
                     <i class="fa fa-map-marker" style="padding-right:8px;"></i>{% trans "Location Filter" %}
+                    <i class="fa fa-close close-btn" style="margin-right: 7px;"></i>
                 </button>
                 {% endif %}
 
