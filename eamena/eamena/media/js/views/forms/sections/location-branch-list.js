@@ -117,14 +117,17 @@ define([
                     })
                 })];
             }
-
-            var featureOverlay = new ol.FeatureOverlay({
+            var features = new ol.Collection();
+            var featureOverlay = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: features
+                }),
                 style: style
             });
 
             var zoomToFeatureOverlay = function () {
                 var extent = null;
-                _.each(featureOverlay.getFeatures().getArray(), function(feature) {
+                _.each(featureOverlay.getSource().getFeatures(), function(feature) {
                     var featureExtent = feature.getGeometry().getExtent();
                     if (!extent) {
                         extent = featureExtent;
@@ -134,12 +137,12 @@ define([
                 });
 
                 if (extent) {
-                    map.map.getView().fitExtent(extent, (map.map.getSize()));
+                    map.map.getView().fit(extent, (map.map.getSize()));
                 }
             }
 
             var refreshFreatureOverlay = function () {
-                featureOverlay.getFeatures().clear();
+                featureOverlay.getSource().clear();
                 _.each(self.getBranchLists(), function(branch) {
                     var geom = wkt.readGeometry(getGeomNode(branch).value());
                     geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
@@ -165,7 +168,7 @@ define([
                         self.trigger('geometrychange', feature, wkt.writeGeometry(geom));
                     });
                     try { 
-                        featureOverlay.addFeature(feature);
+                        featureOverlay.getSource().addFeature(feature);
                         }
                     catch(err) {
                         console.log(err.message);
@@ -189,7 +192,7 @@ define([
                     map.map.removeInteraction(draw);
                 }
                 draw = new ol.interaction.Draw({
-                    features: featureOverlay.getFeatures(),
+                    features: featureOverlay.getSource().getFeatures(),
                     type: geometryType
                 });
                 draw.on('drawend', function(e) {
@@ -311,7 +314,7 @@ define([
             featureOverlay.setMap(map.map);
 
             var modify = new ol.interaction.Modify({
-              features: featureOverlay.getFeatures(),
+              features: features,
               deleteCondition: function(event) {
                 return ol.events.condition.shiftKeyOnly(event) &&
                     ol.events.condition.singleClick(event);
