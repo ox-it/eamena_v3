@@ -34,9 +34,10 @@ require(['jquery',
                 'click a.search-grouped': 'onChangeGroup',
                 'click .add-search-box': 'onAddSearchBox',
                 'click .remove-search-box': 'onRemoveSearchBox',
+                'click .advanced-search': 'onToggleAdvancedSearch',
             },
 
-            initialize: function(options) { 
+            initialize: function(options) {
                 var self = this;
                 var query = this.getQueryFromUrl();
                 if('termFilter' in query){
@@ -84,6 +85,10 @@ require(['jquery',
                     }
                 }, this);
                 this.booleanSearch = "and";
+                this.advancedSearch = false
+                // console.log("query", query);
+                // this.simpleQueryString
+                // this.advancedQueryString
                 // this.groupSearch = "normal";
 
                 this.searchResults = new SearchResults({
@@ -121,37 +126,47 @@ require(['jquery',
                 self.isNewQuery = true;
                 this.searchQuery = {
                     queryString: function(){
-                        var termFilters = [];
-                        var termFilterGrouping = [];
-                        var termFiltersLen = 0;
-                        _.each(self.termFilter,function (term, i) {
-                            termFiltersLen += term.query.filter.terms().length;
-                            termFilters.push(term.query.filter.terms());
-                        })
-                        var params = {
-                            page: self.searchResults.page(),
-                            termFilter: ko.toJSON(termFilters),
-                            temporalFilter: ko.toJSON({
-                                year_min_max: self.timeFilter.query.filter.year_min_max(),
-                                filters: self.timeFilter.query.filter.filters(),
-                                inverted: self.timeFilter.query.filter.inverted()
-                            }),
-                            spatialFilter: ko.toJSON(self.mapFilter.query.filter),
-                            mapExpanded: self.mapFilter.expanded(),
-                            timeExpanded: self.timeFilter.expanded(),
-                            booleanSearch: self.booleanSearch,
-                            termFilterGrouping: ko.toJSON(self.termFilterGrouping),
-                        };
-                        
-                        if (termFiltersLen === 0 &&
-                            self.timeFilter.query.filter.year_min_max().length === 0 &&
-                            self.timeFilter.query.filter.filters().length === 0 &&
-                            self.mapFilter.query.filter.geometry.coordinates().length === 0) {
-                            params.no_filters = true;
-                        }
+                        // if (true) {
+                        if (self.advancedSearch) {
+                            var termFilters = [];
+                            var termFilterGrouping = [];
+                            var termFiltersLen = 0;
+                            _.each(self.termFilter,function (term, i) {
+                                termFiltersLen += term.query.filter.terms().length;
+                                termFilters.push(term.query.filter.terms());
+                            })
+                            var params = {
+                                page: self.searchResults.page(),
+                                termFilter: ko.toJSON(termFilters),
+                                temporalFilter: ko.toJSON({
+                                    year_min_max: self.timeFilter.query.filter.year_min_max(),
+                                    filters: self.timeFilter.query.filter.filters(),
+                                    inverted: self.timeFilter.query.filter.inverted()
+                                }),
+                                spatialFilter: ko.toJSON(self.mapFilter.query.filter),
+                                mapExpanded: self.mapFilter.expanded(),
+                                timeExpanded: self.timeFilter.expanded(),
+                                booleanSearch: self.booleanSearch,
+                                termFilterGrouping: ko.toJSON(self.termFilterGrouping),
+                                advancedSearch: self.advancedSearch ? "true" : "false",
+                            };
+                            
+                            if (termFiltersLen === 0 &&
+                                self.timeFilter.query.filter.year_min_max().length === 0 &&
+                                self.timeFilter.query.filter.filters().length === 0 &&
+                                self.mapFilter.query.filter.geometry.coordinates().length === 0) {
+                                params.no_filters = true;
+                            }
 
-                        params.include_ids = self.isNewQuery;
-                        return $.param(params).split('+').join('%20');
+                            params.include_ids = self.isNewQuery;
+                            console.log("adv queryString", $.param(params));
+                            return $.param(params).split('+').join('%20');
+                        } else {
+                            console.log("queryString no");
+                            
+                            return "";
+                            
+                        }
                     },
                     changed: ko.pureComputed(function(){
                         var ret = ko.toJSON(this.timeFilter.query.changed()) +
@@ -175,6 +190,7 @@ require(['jquery',
             doQuery: function () {
                 var self = this;
                 var queryString = this.searchQuery.queryString();
+                console.log("doQuery queryString", queryString);
                 if (this.updateRequest) {
                     this.updateRequest.abort();
                 }
@@ -289,7 +305,12 @@ require(['jquery',
                 }
                 this.searchResults.restoreState(query.page);
 
-
+                if('advancedSearch' in query){
+                    console.log("advancedSearch", query.advancedSearch);
+                    this.onToggleAdvancedSearch();
+                    doQuery = true;
+                }
+                console.log("getSearchQuery: this.advancedSearch", this.advancedSearch);
                 if('termFilter' in query){
                     query.termFilter = JSON.parse(query.termFilter);
                     // remove termfilters if they are empty
@@ -396,6 +417,46 @@ require(['jquery',
                 }
             },
             
+            onToggleAdvancedSearch: function () {
+                if (this.advancedSearch) {
+                    this.advancedSearch = false;
+                    $(".btn.advanced-search").removeClass("btn-primary");
+                    
+                } else {
+                    this.advancedSearch = true;
+                    $(".btn.advanced-search").addClass("btn-primary");
+                }
+                
+                console.log("new this.advancedSearch", this.advancedSearch);
+                this.doQuery();
+                // var targetClass;
+                // if (e.target) {
+                //     if ($(e.target).hasClass("search-and")) {
+                //         targetClass = "and";
+                //     }
+                //     if ($(e.target).hasClass("search-or")) {
+                //         targetClass = "or";
+                //     }
+                // } else {
+                //     targetClass = e;
+                // }
+                // if (targetClass == 'and') {
+                //     if (this.booleanSearch != "and") {
+                //         $(".and-or-value").html("And");
+                //         this.booleanSearch = "and";
+                //         $(".select2-choices").removeClass("or-search");
+                //         this.doQuery();
+                //     }
+                // } else if (targetClass == 'or') {
+                //     if (this.booleanSearch != "or") {
+                //         $(".and-or-value").html("Or");
+                //         this.booleanSearch = "or";
+                //         $(".select2-choices").addClass("or-search");
+                //         this.doQuery();
+                //     }
+                // }
+            },
+
             onChangeGroup: function (e) {
                 var i = $(e.target.closest("div")).data("index");
                 if ($(e.target).hasClass("search-and")) {
@@ -422,28 +483,39 @@ require(['jquery',
             initializeSearchBoxes: function () {
                 this.termFilter = [];
                 this.termFilterGrouping = [];
+                this.cloneSearchBox("_simple");
+                this.termFilterGroupingSimple = "and";
+                this.termFilterSimple = this.addSearchBox("_simple");
+                this.addSearchBoxEvents(this.termFilterSimple, "_simple");
+                $(".search-box-container[data-index='_simple'] .select-groupping").hide();
+
                 for (var i = 0; i <= this.searchBoxes; i++) {
                     if (i > 0) {
                         this.cloneSearchBox(i);
                     }
                     this.termFilterGrouping[i] = "and";
-                    this.addSearchBox(i);
+                    this.termFilter[i] = this.addSearchBox(i);
+                    this.addSearchBoxEvents(this.termFilter[i], i);
+                    $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
                 }
                 $('.resource_search_widget0 input').attr({'disabled': true});
             },
             
             addSearchBox: function (i) {
-                this.termFilter[i] = new TermFilter({
+                var newTermFilter = new TermFilter({
                     el: $.find('input.resource_search_widget' + i)[0],
                     index: i
                 });
-                $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
-                this.termFilter[i].on('change', function(){
+                return newTermFilter;
+            },
+            
+            addSearchBoxEvents: function (termFilter, i) {
+                termFilter.on('change', function(){
                     this.isNewQuery = true;
                     this.searchResults.page(1);
                     _.defer(function () {
                         this.doQuery();
-                        if (this.termFilter[i].query.filter.terms().length < 2) {
+                        if (termFilter.query.filter.terms().length < 2) {
                             $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
                         } else {
                             $(".search-box-container[data-index='"+i+"'] .select-groupping").show();
@@ -453,7 +525,7 @@ require(['jquery',
                         this.hideSavedSearches();
                     }
                 }, this);
-                this.termFilter[i].on('filter-removed', function(item){
+                termFilter.on('filter-removed', function(item){
                     if(item.text === this.mapFilterText){
                         this.mapFilter.clear();
                     }
@@ -461,7 +533,7 @@ require(['jquery',
                         this.timeFilter.clear();
                     }
                 }, this);
-                this.termFilter[i].on('filter-inverted', function(item){
+                termFilter.on('filter-inverted', function(item){
                     if(item.text === this.mapFilterText){
                         this.mapFilter.query.filter.inverted(item.inverted);
                     }
