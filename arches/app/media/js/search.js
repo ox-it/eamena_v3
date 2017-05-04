@@ -128,62 +128,42 @@ require(['jquery',
                     queryString: function(){
                         if (self.advancedSearch) {
                             var termFilters = [];
-                            var termFilterGrouping = [];
                             var termFiltersLen = 0;
+                            var termFilterGrouping = self.termFilterGrouping;
                             _.each(self.termFilter,function (term, i) {
                                 termFiltersLen += term.query.filter.terms().length;
                                 termFilters.push(term.query.filter.terms());
                             })
-                            var params = {
-                                page: self.searchResults.page(),
-                                termFilter: ko.toJSON(termFilters),
-                                temporalFilter: ko.toJSON({
-                                    year_min_max: self.timeFilter.query.filter.year_min_max(),
-                                    filters: self.timeFilter.query.filter.filters(),
-                                    inverted: self.timeFilter.query.filter.inverted()
-                                }),
-                                spatialFilter: ko.toJSON(self.mapFilter.query.filter),
-                                mapExpanded: self.mapFilter.expanded(),
-                                timeExpanded: self.timeFilter.expanded(),
-                                booleanSearch: self.booleanSearch,
-                                termFilterGrouping: ko.toJSON(self.termFilterGrouping),
-                                advancedSearch: self.advancedSearch ? "true" : "false",
-                            };
-                            
-                            if (termFiltersLen === 0 &&
-                                self.timeFilter.query.filter.year_min_max().length === 0 &&
-                                self.timeFilter.query.filter.filters().length === 0 &&
-                                self.mapFilter.query.filter.geometry.coordinates().length === 0) {
-                                params.no_filters = true;
-                            }
-
-                            params.include_ids = self.isNewQuery;
-                            return $.param(params).split('+').join('%20');
                         } else {
-                            var params = {
-                                page: self.searchResults.page(),
-                                termFilter: ko.toJSON([self.termFilterSimple.query.filter.terms()]),
-                                temporalFilter: ko.toJSON({
-                                    year_min_max: self.timeFilter.query.filter.year_min_max(),
-                                    filters: self.timeFilter.query.filter.filters(),
-                                    inverted: self.timeFilter.query.filter.inverted()
-                                }),
-                                spatialFilter: ko.toJSON(self.mapFilter.query.filter),
-                                mapExpanded: self.mapFilter.expanded(),
-                                timeExpanded: self.timeFilter.expanded(),
-                                booleanSearch: self.booleanSearch,
-                                termFilterGrouping: ko.toJSON(self.termFilterGrouping),
-                                advancedSearch: self.advancedSearch ? "true" : "false",
-                            };
-                            if (self.termFilterSimple.query.filter.terms().length === 0 &&
-                                self.timeFilter.query.filter.year_min_max().length === 0 &&
-                                self.timeFilter.query.filter.filters().length === 0 &&
-                                self.mapFilter.query.filter.geometry.coordinates().length === 0) {
-                                params.no_filters = true;
-                            }
-                            params.include_ids = self.isNewQuery;
-                            return $.param(params).split('+').join('%20');
+                            var termFilters = [self.termFilterSimple.query.filter.terms()];
+                            var termFiltersLen = self.termFilterSimple.query.filter.terms().length;
+                            var termFilterGrouping = [self.termFilterGroupingSimple];
                         }
+                        var params = {
+                            page: self.searchResults.page(),
+                            termFilter: ko.toJSON(termFilters),
+                            temporalFilter: ko.toJSON({
+                                year_min_max: self.timeFilter.query.filter.year_min_max(),
+                                filters: self.timeFilter.query.filter.filters(),
+                                inverted: self.timeFilter.query.filter.inverted()
+                            }),
+                            spatialFilter: ko.toJSON(self.mapFilter.query.filter),
+                            mapExpanded: self.mapFilter.expanded(),
+                            timeExpanded: self.timeFilter.expanded(),
+                            booleanSearch: self.booleanSearch,
+                            termFilterGrouping: ko.toJSON(termFilterGrouping),
+                            advancedSearch: self.advancedSearch ? "true" : "false",
+                        };
+                        
+                        if (termFiltersLen === 0 &&
+                            self.timeFilter.query.filter.year_min_max().length === 0 &&
+                            self.timeFilter.query.filter.filters().length === 0 &&
+                            self.mapFilter.query.filter.geometry.coordinates().length === 0) {
+                            params.no_filters = true;
+                        }
+
+                        params.include_ids = self.isNewQuery;
+                        return $.param(params).split('+').join('%20');
                     },
                     changed: ko.pureComputed(function(){
                         var ret = ko.toJSON(this.timeFilter.query.changed()) +
