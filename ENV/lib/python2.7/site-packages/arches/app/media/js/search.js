@@ -437,11 +437,17 @@ require(['jquery',
                     el: $.find('input.resource_search_widget' + i)[0],
                     index: i
                 });
+                $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
                 this.termFilter[i].on('change', function(){
                     this.isNewQuery = true;
                     this.searchResults.page(1);
                     _.defer(function () {
                         this.doQuery();
+                        if (this.termFilter[i].query.filter.terms().length < 2) {
+                            $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
+                        } else {
+                            $(".search-box-container[data-index='"+i+"'] .select-groupping").show();
+                        }
                     }.bind(this)) 
                     if($('#saved-searches').is(":visible")){
                         this.hideSavedSearches();
