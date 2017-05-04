@@ -61,11 +61,12 @@ define([
                 view.fitExtent(vectorSource.getExtent(), (self.map.getSize()));
                 self.trigger('layerDropped', vectorLayer, event.file.name);
             });
-
+            var mySpan = document.createElement("span");
+            mySpan.className = "fa fa-expand";
             this.map = new ol.Map({
                 controls: ol.control.defaults().extend([
                     new ol.control.FullScreen(),
-                    new ol.control.ScaleLine()
+                    new ol.control.ScaleLine({minWidth:100, target:$('#scale-line')[0]})
                 ]),
                 layers: layers,
                 interactions: ol.interaction.defaults({
@@ -89,7 +90,6 @@ define([
                     condition: ol.events.condition.click,
                     style: function(feature, resolution) {
                         var isSelectFeature = _.contains(feature.getKeys(), 'select_feature');
-                        //var fillOpacity = isSelectFeature ? 0.3 : 0; DEPRECATED 17 May 2016
                         var strokeOpacity = isSelectFeature ? 0.9 : 0;
                         return [new ol.style.Style({
                             fill: new ol.style.Fill({
