@@ -64,6 +64,9 @@
             <!-- Advanced Search Option -->
             <div class="col-xs-12 col-md-5 col-lg-4">
               <div class="btn-group pull-right">
+                  <button type="button" class="btn btn-default advanced-search">
+                      <i class="fa fa-sliders" aria-hidden="true"></i>
+                  </button>
 
                 {% if 'edit' in user.user_groups %}
                 <button class="btn btn-success btn" id="map-filter-button" style=""> 
@@ -103,9 +106,6 @@
                         <li class="divider"></li>
                         <li><a href="javascript:void(0);" id="clear-search">{% trans "Clear Search" %}</a></li>
                     </ul>
-                    <button type="button" class="btn btn-default advanced-search">
-                        <i class="fa fa-sliders" aria-hidden="true"></i>
-                    </button>
 
                 </div>
             </div>
