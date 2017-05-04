@@ -172,6 +172,10 @@ button#map-filter-button.enabled .close-btn {
 	display:inline-block;
 }
 
+button.btn-default.advanced-search {
+	margin-right: 5px;
+}
+
 .select2-container {
 	width: -webkit-calc(100% - 70px);
 	width:    -moz-calc(100% - 70px);

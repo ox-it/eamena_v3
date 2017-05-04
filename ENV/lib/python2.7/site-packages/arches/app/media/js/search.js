@@ -80,8 +80,10 @@ require(['jquery',
                 this.timeFilter.on('enabled', function(enabled, inverted){
                     if(enabled){
                         this.termFilter[0].addTag(this.timeFilterText, inverted);
+                        this.termFilterSimple.addTag(this.timeFilterText, inverted);
                     }else{
                         this.termFilter[0].removeTag(this.timeFilterText);
+                        this.termFilterSimple.removeTag(this.timeFilterText);
                     }
                 }, this);
                 this.booleanSearch = "and";
