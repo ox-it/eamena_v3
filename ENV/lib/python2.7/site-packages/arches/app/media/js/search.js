@@ -85,7 +85,7 @@ require(['jquery',
                     }
                 }, this);
                 this.booleanSearch = "and";
-                this.advancedSearch = false
+                this.advancedSearch = false;
                 // console.log("query", query);
                 // this.simpleQueryString
                 // this.advancedQueryString
@@ -187,7 +187,6 @@ require(['jquery',
             doQuery: function () {
                 var self = this;
                 var queryString = this.searchQuery.queryString();
-                console.log("doQuery queryString", queryString);
                 if (this.updateRequest) {
                     this.updateRequest.abort();
                 }
@@ -303,11 +302,13 @@ require(['jquery',
                 this.searchResults.restoreState(query.page);
 
                 if('advancedSearch' in query){
-                    console.log("advancedSearch", query.advancedSearch);
-                    this.onToggleAdvancedSearch();
+                    var queryAdvancedSearch = query.advancedSearch == "true" ? true : false;
+                    if (queryAdvancedSearch != this.advancedSearch) {
+                        this.onToggleAdvancedSearch();
+                    }
                     doQuery = true;
                 }
-                console.log("getSearchQuery: this.advancedSearch", this.advancedSearch);
+                
                 if('termFilter' in query){
                     query.termFilter = JSON.parse(query.termFilter);
                     // remove termfilters if they are empty
