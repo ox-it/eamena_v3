@@ -296,12 +296,12 @@ require(['jquery',
                     if (queryAdvancedSearch != this.advancedSearch) {
                         this.onToggleAdvancedSearch();
                     }
-                    if (this.advancedSearch) {
-                        this.showAdvancedSearch();
-                    } else {
-                        this.hideAdvancedSearch();
-                    }
                     doQuery = true;
+                }
+                if (this.advancedSearch) {
+                    this.showAdvancedSearch();
+                } else {
+                    this.hideAdvancedSearch();
                 }
                 
                 if('termFilter' in query){
