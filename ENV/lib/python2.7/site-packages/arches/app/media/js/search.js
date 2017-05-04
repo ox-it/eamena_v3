@@ -548,7 +548,13 @@ require(['jquery',
             onAddSearchBox: function (e) {
                 this.searchBoxes++;
                 this.cloneSearchBox(this.searchBoxes);
-                this.addSearchBox(this.searchBoxes);
+                this.termFilterGrouping[this.searchBoxes] = "and";
+                this.termFilter[this.searchBoxes] = this.addSearchBox(this.searchBoxes);
+                this.addSearchBoxEvents (this.termFilter[this.searchBoxes], this.searchBoxes);
+                $(".search-box-container[data-index='"+this.searchBoxes+"'] .select-groupping").hide();
+                
+                
+    
             },
 
             onRemoveSearchBox: function (e) {
