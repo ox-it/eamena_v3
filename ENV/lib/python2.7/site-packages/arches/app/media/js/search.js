@@ -130,7 +130,6 @@ require(['jquery',
                             var termFilters = [];
                             var termFilterGrouping = [];
                             var termFiltersLen = 0;
-                            console.log("self.termFilter", self.termFilter);
                             _.each(self.termFilter,function (term, i) {
                                 termFiltersLen += term.query.filter.terms().length;
                                 termFilters.push(term.query.filter.terms());
@@ -159,14 +158,11 @@ require(['jquery',
                             }
 
                             params.include_ids = self.isNewQuery;
-                            console.log("adv queryString", $.param(params));
                             return $.param(params).split('+').join('%20');
                         } else {
-                            var termFilter = self.termFilterSimple.query.filter.terms();
-                            console.log("simple termFilter", termFilter);
                             var params = {
                                 page: self.searchResults.page(),
-                                termFilter: ko.toJSON(termFilter),
+                                termFilter: ko.toJSON([self.termFilterSimple.query.filter.terms()]),
                                 temporalFilter: ko.toJSON({
                                     year_min_max: self.timeFilter.query.filter.year_min_max(),
                                     filters: self.timeFilter.query.filter.filters(),
@@ -179,15 +175,13 @@ require(['jquery',
                                 termFilterGrouping: ko.toJSON(self.termFilterGrouping),
                                 advancedSearch: self.advancedSearch ? "true" : "false",
                             };
-                            if (termFilter.length === 0 &&
+                            if (self.termFilterSimple.query.filter.terms().length === 0 &&
                                 self.timeFilter.query.filter.year_min_max().length === 0 &&
                                 self.timeFilter.query.filter.filters().length === 0 &&
                                 self.mapFilter.query.filter.geometry.coordinates().length === 0) {
                                 params.no_filters = true;
                             }
                             params.include_ids = self.isNewQuery;
-
-                            console.log("simple queryString", $.param(params));
                             return $.param(params).split('+').join('%20');
                         }
                     },
