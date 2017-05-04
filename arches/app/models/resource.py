@@ -338,7 +338,9 @@ class Resource(Entity):
         document.domains = []
         document.geometries = []
         document.numbers = []
-
+        document.nested_entity = self
+        self.add_conceptid_to_nested_entities(document.nested_entity.child_entities)
+        
         for entity in self.flatten():
             if entity.entityid != self.entityid:
                 if entity.businesstablename == 'domains':
@@ -358,6 +360,21 @@ class Resource(Entity):
 
         return [JSONSerializer().serializeToPython(document)]
 
+    def add_conceptid_to_nested_entities(self, child_entities):
+        """
+        Recursively adds concept id to child entities
+
+        """
+        
+        for entity in child_entities:
+            if entity.businesstablename == 'domains':
+                value = archesmodels.Values.objects.get(pk=entity.value)
+                entity.conceptid = value.conceptid_id
+                
+            self.add_conceptid_to_nested_entities(entity.child_entities)
+
+        return
+        
     def prepare_documents_for_map_index(self, geom_entities=[]):
         """
         Generates a list of geojson documents to support the display of resources on a map
@@ -411,6 +428,8 @@ class Resource(Entity):
             elif entity.businesstablename == 'numbers':
                 pass
             elif entity.businesstablename == 'files':
+                pass
+            elif entity.businesstablename == 'nested_entity':
                 pass
 
         self.traverse(gather_entities)
