@@ -302,20 +302,31 @@ require(['jquery',
                     if (queryAdvancedSearch != this.advancedSearch) {
                         this.onToggleAdvancedSearch();
                     }
+                    if (this.advancedSearch) {
+                        this.showAdvancedSearch();
+                    } else {
+                        this.hideAdvancedSearch();
+                    }
                     doQuery = true;
                 }
                 
                 if('termFilter' in query){
-                    query.termFilter = JSON.parse(query.termFilter);
-                    // remove termfilters if they are empty
-                    // except the 1st (date-location) and 2nd (at least one searchbox is needed)
-                    query.termFilter = _.filter(query.termFilter , function(filter, i){
-                        if (i<2) return true;
-                        return filter.length > 0
-                     });
-                    doQuery = true;
-                    for (var i = 0; i < this.searchBoxes+1; i++) {
-                        this.termFilter[i].restoreState(query.termFilter[i]);
+                    if (this.advancedSearch) {
+                        query.termFilter = JSON.parse(query.termFilter);
+                        // remove termfilters if they are empty
+                        // except the 1st (date-location) and 2nd (at least one searchbox is needed)
+                        query.termFilter = _.filter(query.termFilter , function(filter, i){
+                            if (i<2) return true;
+                            return filter.length > 0
+                         });
+                        doQuery = true;
+                        for (var i = 0; i < this.searchBoxes+1; i++) {
+                            this.termFilter[i].restoreState(query.termFilter[i]);
+                        }
+                    } else {
+                        query.termFilter = JSON.parse(query.termFilter);
+                        doQuery = true;
+                        this.termFilterSimple.restoreState(query.termFilter[0]);
                     }
                 }
                 
@@ -414,16 +425,31 @@ require(['jquery',
             onToggleAdvancedSearch: function () {
                 if (this.advancedSearch) {
                     this.advancedSearch = false;
-                    $(".btn.advanced-search").removeClass("btn-primary");
-                    
+                    this.hideAdvancedSearch();
                 } else {
                     this.advancedSearch = true;
-                    $(".btn.advanced-search").addClass("btn-primary");
+                    this.showAdvancedSearch();
                 }
-                
                 this.doQuery();
             },
-
+            
+            showAdvancedSearch: function () {
+                $(".btn.advanced-search").addClass("btn-primary");
+                $(".select2-container.select-location-time").show();
+                $(".search-box-container.term-search-advanced").show();
+                $(".search-box-container.term-search-simple").hide();
+                $(".global-and-or").show();
+                $(".add-remove-search-box").show();
+            },
+            hideAdvancedSearch: function () {
+                $(".btn.advanced-search").removeClass("btn-primary");
+                $(".select2-container.select-location-time").hide();
+                $(".search-box-container.term-search-advanced").hide();
+                $(".search-box-container.term-search-simple").show();
+                $(".global-and-or").hide();
+                $(".add-remove-search-box").hide();
+            },
+            
             onChangeGroup: function (e) {
                 var i = $(e.target.closest("div")).data("index");
                 if (i == "_simple") {
@@ -472,7 +498,7 @@ require(['jquery',
                 this.termFilterSimple = this.addSearchBox("_simple");
                 this.addSearchBoxEvents(this.termFilterSimple, "_simple");
                 $(".search-box-container[data-index='_simple'] .select-groupping").hide();
-
+                $(".search-box-container[data-index='_simple']").addClass("term-search-simple");
                 for (var i = 0; i <= this.searchBoxes; i++) {
                     if (i > 0) {
                         this.cloneSearchBox(i);
@@ -481,6 +507,7 @@ require(['jquery',
                     this.termFilter[i] = this.addSearchBox(i);
                     this.addSearchBoxEvents(this.termFilter[i], i);
                     $(".search-box-container[data-index='"+i+"'] .select-groupping").hide();
+                    $(".search-box-container[data-index='"+i+"']").addClass("term-search-advanced");
                 }
                 $('.resource_search_widget0 input').attr({'disabled': true});
             },
@@ -551,10 +578,8 @@ require(['jquery',
                 this.termFilterGrouping[this.searchBoxes] = "and";
                 this.termFilter[this.searchBoxes] = this.addSearchBox(this.searchBoxes);
                 this.addSearchBoxEvents (this.termFilter[this.searchBoxes], this.searchBoxes);
+                $(".search-box-container[data-index='"+i+"']").addClass("term-search-advanced");
                 $(".search-box-container[data-index='"+this.searchBoxes+"'] .select-groupping").hide();
-                
-                
-    
             },
 
             onRemoveSearchBox: function (e) {
