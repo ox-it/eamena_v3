@@ -86,10 +86,6 @@ require(['jquery',
                 }, this);
                 this.booleanSearch = "and";
                 this.advancedSearch = false;
-                // console.log("query", query);
-                // this.simpleQueryString
-                // this.advancedQueryString
-                // this.groupSearch = "normal";
 
                 this.searchResults = new SearchResults({
                     el: $('#search-results-container')[0]
@@ -425,34 +421,7 @@ require(['jquery',
                     $(".btn.advanced-search").addClass("btn-primary");
                 }
                 
-                console.log("new this.advancedSearch", this.advancedSearch);
                 this.doQuery();
-                // var targetClass;
-                // if (e.target) {
-                //     if ($(e.target).hasClass("search-and")) {
-                //         targetClass = "and";
-                //     }
-                //     if ($(e.target).hasClass("search-or")) {
-                //         targetClass = "or";
-                //     }
-                // } else {
-                //     targetClass = e;
-                // }
-                // if (targetClass == 'and') {
-                //     if (this.booleanSearch != "and") {
-                //         $(".and-or-value").html("And");
-                //         this.booleanSearch = "and";
-                //         $(".select2-choices").removeClass("or-search");
-                //         this.doQuery();
-                //     }
-                // } else if (targetClass == 'or') {
-                //     if (this.booleanSearch != "or") {
-                //         $(".and-or-value").html("Or");
-                //         this.booleanSearch = "or";
-                //         $(".select2-choices").addClass("or-search");
-                //         this.doQuery();
-                //     }
-                // }
             },
 
             onChangeGroup: function (e) {
