@@ -456,22 +456,39 @@ require(['jquery',
 
             onChangeGroup: function (e) {
                 var i = $(e.target.closest("div")).data("index");
+                if (i == "_simple") {
+                    var termFilterGrouping = this.termFilterGroupingSimple
+                } else {
+                    var termFilterGrouping = this.termFilterGrouping[i]
+                }
                 if ($(e.target).hasClass("search-and")) {
-                    if (this.termFilterGrouping[i] != "and") {
+                    if (termFilterGrouping != "and") {
                         $(e.target).closest(".dropdown").find(".group-value").html("And");
-                        this.termFilterGrouping[i] = "and";
+                        if (i == "_simple") {
+                            this.termFilterGroupingSimple = "and";
+                        } else {
+                            this.termFilterGrouping[i] = "and";
+                        }
                         this.doQuery();
                     }
                 } else if ($(e.target).hasClass("search-or")) {
-                    if (this.termFilterGrouping[i] != "or") {
+                    if (termFilterGrouping != "or") {
                         $(e.target).closest(".dropdown").find(".group-value").html("Or");
-                        this.termFilterGrouping[i] = "or";
+                        if (i == "_simple") {
+                            this.termFilterGroupingSimple = "or";
+                        } else {
+                            this.termFilterGrouping[i] = "or";
+                        }
                         this.doQuery();
                     }
                 } else if ($(e.target).hasClass("search-group")) {
-                    if (this.termFilterGrouping[i] != "group") {
+                    if (termFilterGrouping != "group") {
                         $(e.target).closest(".dropdown").find(".group-value").html("Group");
-                        this.termFilterGrouping[i] = "group";
+                        if (i == "_simple") {
+                            this.termFilterGroupingSimple = "group";
+                        } else {
+                            this.termFilterGrouping[i] = "group";
+                        }
                         this.doQuery();
                     }
                 }
