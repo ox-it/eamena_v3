@@ -126,11 +126,11 @@ require(['jquery',
                 self.isNewQuery = true;
                 this.searchQuery = {
                     queryString: function(){
-                        // if (true) {
                         if (self.advancedSearch) {
                             var termFilters = [];
                             var termFilterGrouping = [];
                             var termFiltersLen = 0;
+                            console.log("self.termFilter", self.termFilter);
                             _.each(self.termFilter,function (term, i) {
                                 termFiltersLen += term.query.filter.terms().length;
                                 termFilters.push(term.query.filter.terms());
@@ -162,10 +162,33 @@ require(['jquery',
                             console.log("adv queryString", $.param(params));
                             return $.param(params).split('+').join('%20');
                         } else {
-                            console.log("queryString no");
-                            
-                            return "";
-                            
+                            var termFilter = self.termFilterSimple.query.filter.terms();
+                            console.log("simple termFilter", termFilter);
+                            var params = {
+                                page: self.searchResults.page(),
+                                termFilter: ko.toJSON(termFilter),
+                                temporalFilter: ko.toJSON({
+                                    year_min_max: self.timeFilter.query.filter.year_min_max(),
+                                    filters: self.timeFilter.query.filter.filters(),
+                                    inverted: self.timeFilter.query.filter.inverted()
+                                }),
+                                spatialFilter: ko.toJSON(self.mapFilter.query.filter),
+                                mapExpanded: self.mapFilter.expanded(),
+                                timeExpanded: self.timeFilter.expanded(),
+                                booleanSearch: self.booleanSearch,
+                                termFilterGrouping: ko.toJSON(self.termFilterGrouping),
+                                advancedSearch: self.advancedSearch ? "true" : "false",
+                            };
+                            if (termFilter.length === 0 &&
+                                self.timeFilter.query.filter.year_min_max().length === 0 &&
+                                self.timeFilter.query.filter.filters().length === 0 &&
+                                self.mapFilter.query.filter.geometry.coordinates().length === 0) {
+                                params.no_filters = true;
+                            }
+                            params.include_ids = self.isNewQuery;
+
+                            console.log("simple queryString", $.param(params));
+                            return $.param(params).split('+').join('%20');
                         }
                     },
                     changed: ko.pureComputed(function(){
