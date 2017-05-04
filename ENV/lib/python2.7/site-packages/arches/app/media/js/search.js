@@ -220,14 +220,6 @@ require(['jquery',
                 $('#search-results').slideDown('slow');
             },
 
-            testMapFilter: function(){
-                if($('#saved-searches').is(":visible")){
-                    this.doQuery();
-                    this.hideSavedSearches();
-                }
-                this.mapFilter.expanded(!this.mapFilter.expanded());
-            },
-            
             // clickMapFilter opens map filter if closed, toggles the invert map filter if open
             clickMapFilter: function () {
                 if($('#saved-searches').is(":visible")){
