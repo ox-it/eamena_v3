@@ -580,7 +580,7 @@ require(['jquery',
                 this.termFilterGrouping[this.searchBoxes] = "and";
                 this.termFilter[this.searchBoxes] = this.addSearchBox(this.searchBoxes);
                 this.addSearchBoxEvents (this.termFilter[this.searchBoxes], this.searchBoxes);
-                $(".search-box-container[data-index='"+i+"']").addClass("term-search-advanced");
+                $(".search-box-container[data-index='"+this.searchBoxes+"']").addClass("term-search-advanced");
                 $(".search-box-container[data-index='"+this.searchBoxes+"'] .select-groupping").hide();
             },
 
