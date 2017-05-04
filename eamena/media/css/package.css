@@ -106,7 +106,8 @@ button#map-filter-button.enabled {
 	background-color: #428bca;
 }
 button#map-filter-button.inverted {
-	background-color: #B41F1F;
+	background-color: #B41F1F !important;
+	border: 1px solid #943434 !important;
 }
 
 button#map-filter-button .invert-btn {
