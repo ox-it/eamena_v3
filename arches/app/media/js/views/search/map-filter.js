@@ -93,16 +93,10 @@ define(['jquery',
                     }
                 }).layer();
                 
-                //create and add a layer to show the results clusters
-                this.resultsClustersLayer = new ol.layer.Vector({
-                    source: new ol.source.Vector()
-                });
-                
                 this.map = new MapView({
                     el: $('#map'),
                     overlays: [
-                        this.vectorLayer,
-                        this.resultsClustersLayer
+                        this.vectorLayer
                     ]
                 });
 
@@ -216,7 +210,7 @@ define(['jquery',
 
                     if (feature && (feature.get('arches_marker') || feature.get('arches_cluster'))) {
                         cursorStyle = "pointer";
-                        if (feature.get('arches_marker') || feature.get('features').length === 1) {
+                        if (feature.get('arches_marker') || feature.get('point_count') === 1) {
                             if (feature.get('features')) {
                                 feature = feature.get('features')[0];
                             }
@@ -353,7 +347,7 @@ define(['jquery',
                     $('#resource-info').hide();
                     if (clickFeature) {
                         var keys = clickFeature.getKeys();
-                        var isCluster = _.contains(keys, "features");
+                        var isCluster = _.contains(keys, "features") || _.contains(keys, "point_count");
                         var isArchesFeature = (_.contains(keys, 'arches_cluster') || _.contains(keys, 'arches_marker'));
                         if (isCluster && clickFeature.get('features').length > 1) {
                             if (currentZoom !== arches.mapDefaults.maxZoom) {
@@ -539,10 +533,14 @@ define(['jquery',
                     this.resultsIndex.load(allResultsPointsGeoJSON);
                     
                     console.log('rebuilt supercluster index');
+                    this.onViewChanged();
                 }
             },
             
             onViewChanged: function () {
+                if(!this.resultsIndex) {
+                    return;
+                }
                 // var extent = this.getMapExtent();
                 var extentOl = this.map.map.getView().calculateExtent(this.map.map.getSize());
                 var extentLatLng = ol.proj.transformExtent(extentOl, 'EPSG:3857', 'EPSG:4326');
@@ -552,7 +550,7 @@ define(['jquery',
                 // console.log('View changed. Extent = ', extent);
                 //clear the clusters layer
                 //TODO
-                var clustersSource = this.resultsClustersLayer.getSource()
+                var clustersSource = this.resultLayer.getSource()
                 clustersSource.clear();
                 
                 var clusters = this.resultsIndex.getClusters(extentLatLng, zoom);
@@ -565,6 +563,9 @@ define(['jquery',
                         coords
                     ));
                     f.setProperties(cluster.properties);
+                    if(cluster.id) {
+                        f.setId(cluster.id);
+                    }
                     return f;
                 }.bind(this));
                 
