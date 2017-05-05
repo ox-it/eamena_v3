@@ -347,6 +347,7 @@ class Resource(Entity):
                     value = archesmodels.Values.objects.get(pk=entity.value)
                     entity_copy = entity.copy()
                     entity_copy.conceptid = value.conceptid_id
+                    entity_copy.conceptid2 = value.conceptid_id
                     document.domains.append(entity_copy)
                 elif entity.businesstablename == 'dates':
                     document.dates.append(entity)
@@ -573,7 +574,71 @@ class Resource(Entity):
                                     "type" : "date"
                                 }
                             }
-                        }
+                        },
+                        'nested_entity' : { 
+                            'type' : 'nested', 
+                            'index' : 'analyzed',
+                            'properties' : {
+                                'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                'value' : {
+                                    'type' : 'string',
+                                    'index' : 'analyzed',
+                                    'fields' : {
+                                        'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                    },
+                                },
+                                'child_entities': {
+                                    'type' : 'nested',
+                                    'index' : 'analyzed',
+                                    'properties' : {
+                                        'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                        'value' : {
+                                            'type' : 'string',
+                                            'index' : 'analyzed',
+                                            'fields' : {
+                                                'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                            },
+                                        },
+                                        'child_entities': {
+                                            'type' : 'nested',
+                                            'index' : 'analyzed',
+                                            'properties' : {
+                                                'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                'value' : {
+                                                    'type' : 'string',
+                                                    'index' : 'analyzed',
+                                                    'fields' : {
+                                                        'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                                    },
+                                                },
+                                                'child_entities': {
+                                                    'type' : 'nested',
+                                                    'index' : 'analyzed',
+                                                },
+                                                'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                                            }
+                                        },
+                                        'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                                    }
+                                },
+                                'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                            }
+                        },
                     }
                 }
             }
