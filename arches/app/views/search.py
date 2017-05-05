@@ -127,18 +127,39 @@ def build_search_results_dsl(request):
         for index, select_box in enumerate(JSONDeserializer().deserialize(term_filter)):
             selectbox_boolfilter = Bool()
             if filter_grouping[index] == 'group':
+                logging.warning("-=-==-=-GROUP select_box: -=-==-=-===-=--=-==-=-===-=-> %s", select_box)
+                
+                group = ""
                 for term in select_box:
                     if term['type'] == 'concept':
-                        concept_ids = _get_child_concepts(term['value'])
-                        logging.warning("-=-==-=-===-=--=-==-=-===-GROUP=- concept_ids: -=-==-=-===-=--=-==-=-===-=-> %s", concept_ids)
-                        terms = Terms(field='domains.conceptid', terms=concept_ids)
-                        nested = Nested(path='domains', query=terms)
-                        selectbox_boolfilter.should(nested)
+                        # Site Function Type (SITE_FUNCTION_TYPE.E55)
+                        if term['context_label'] == 'Site Function Type':
+                            group = "Site Function Type"
+                        
+                if group == "Site Function Type":
+                    # matches = (t for t in select_box if t['context_label'] == 'Site Function Type') #matches should allways be 1 ?!?!?!
+                    term = next((t for t in select_box if t['context_label'] == 'Site Function Certainty Type'))
+                    concept_ids = _get_child_concepts(term['value'])
+                    terms = Terms(field='nested_entity.child_entities.child_entities.conceptid', terms=concept_ids)
+                    child_bool = Bool()
+                    child_bool.must(terms)
+                    child_nested = Nested(path='nested_entity.child_entities.child_entities', query=child_bool)
+                    
+                    term = next((t for t in select_box if t['context_label'] == 'Site Function Type'))
+                    concept_ids = _get_child_concepts(term['value'])
+                    terms = Terms(field='nested_entity.child_entities.conceptid', terms=concept_ids)
+                    parent_bool = Bool()
+                    parent_bool.must(terms)
+                    parent_bool.must(child_nested)
+                    parent_nested = Nested(path='nested_entity.child_entities', query=parent_bool)
+                    selectbox_boolfilter.must(parent_nested)
+                    logging.warning("-=-==-=-GROUP Site Function Type nested!!!!: -=-==-=-===-=--=-==-=-===-=-> %s %s", type(selectbox_boolfilter), selectbox_boolfilter)
                         
             else:
                 for term in select_box:
                     if term['type'] == 'term':
                         entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
+                        logging.warning("-=-==-=-===-=--=-==-=-===-=- conceptid_id: -=-==-=-===-=--=-==-=-===-=-> %s", term['context'])
                         logging.warning("-=-==-=-===-=--=-==-=-===-=- entitytype: -=-==-=-===-=--=-==-=-===-=-> %s", entitytype)
                         
                         boolfilter_nested = Bool()
