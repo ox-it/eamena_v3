@@ -126,58 +126,71 @@ def build_search_results_dsl(request):
     if term_filter != '':
         for index, select_box in enumerate(JSONDeserializer().deserialize(term_filter)):
             selectbox_boolfilter = Bool()
-            for term in select_box:
-                if term['type'] == 'term':
-                    entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
-                    boolfilter_nested = Bool()
-                    boolfilter_nested.must(Terms(field='child_entities.entitytypeid', terms=[entitytype.pk]))
-                    boolfilter_nested.must(Match(field='child_entities.value', query=term['value'], type='phrase'))
-                    nested = Nested(path='child_entities', query=boolfilter_nested)
-                    if filter_grouping[index] == 'or':
-                        if not term['inverted']:
-                            selectbox_boolfilter.should(nested)
-                    else:
-                        if term['inverted']:
-                            selectbox_boolfilter.must_not(nested)
-                        else:    
-                            selectbox_boolfilter.must(nested)
-                            
-                elif term['type'] == 'concept':
-                    concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field='domains.conceptid', terms=concept_ids)
-                    nested = Nested(path='domains', query=terms)
-                    if filter_grouping[index] == 'or':
-                        if not term['inverted']:
+            if filter_grouping[index] == 'group':
+                for term in select_box:
+                    if term['type'] == 'concept':
+                        concept_ids = _get_child_concepts(term['value'])
+                        logging.warning("-=-==-=-===-=--=-==-=-===-GROUP=- concept_ids: -=-==-=-===-=--=-==-=-===-=-> %s", concept_ids)
+                        terms = Terms(field='domains.conceptid', terms=concept_ids)
+                        nested = Nested(path='domains', query=terms)
+                        selectbox_boolfilter.should(nested)
+                        
+            else:
+                for term in select_box:
+                    if term['type'] == 'term':
+                        entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
+                        logging.warning("-=-==-=-===-=--=-==-=-===-=- entitytype: -=-==-=-===-=--=-==-=-===-=-> %s", entitytype)
+                        
+                        boolfilter_nested = Bool()
+                        boolfilter_nested.must(Terms(field='child_entities.entitytypeid', terms=[entitytype.pk]))
+                        boolfilter_nested.must(Match(field='child_entities.value', query=term['value'], type='phrase'))
+                        nested = Nested(path='child_entities', query=boolfilter_nested)
+                        if filter_grouping[index] == 'or':
+                            if not term['inverted']:
                                 selectbox_boolfilter.should(nested)
-                    else:
-                        if term['inverted']:
-                            selectbox_boolfilter.must_not(nested)
                         else:
-                            selectbox_boolfilter.must(nested)
-                            
-                elif term['type'] == 'string':
-                    boolquery2 = Bool() #This bool contains the subset of nested string queries on both domains and child_entities paths
-                    boolfilter_folded = Bool() #This bool searches by string in child_entities, where free text strings get indexed
-                    boolfilter_folded2 = Bool() #This bool searches by string in the domains path,where controlled vocabulary concepts get indexed
-                    boolfilter_folded.should(Match(field='child_entities.value', query=term['value'], type='phrase_prefix'))
-                    boolfilter_folded.should(Match(field='child_entities.value.folded', query=term['value'], type='phrase_prefix'))
-                    nested = Nested(path='child_entities', query=boolfilter_folded)
-                    boolfilter_folded2.should(Match(field='domains.label', query=term['value'], type='phrase_prefix'))
-                    boolfilter_folded2.should(Match(field='domains.label.folded', query=term['value'], type='phrase_prefix'))
-                    nested2 = Nested(path='domains', query=boolfilter_folded2)
-                    boolquery2.should(nested)
-                    boolquery2.should(nested2)
-                    if filter_grouping[index] == 'or':
-                        if not term['inverted']:
-                            # use boolfilter here instead of boolquery because boolquery
-                            # can't be combined with other boolfilters using boolean OR
-                            selectbox_boolfilter.should(boolquery2)
-                    else:
-                        if term['inverted']:
-                            selectbox_boolfilter.must_not(boolquery2)
-                        else:    
-                            selectbox_boolfilter.must(boolquery2)
-                            
+                            if term['inverted']:
+                                selectbox_boolfilter.must_not(nested)
+                            else:    
+                                selectbox_boolfilter.must(nested)
+                                
+                    elif term['type'] == 'concept':
+                        concept_ids = _get_child_concepts(term['value'])
+                        logging.warning("-=-==-=-===-=--=-==-=-===-=- concept_ids: -=-==-=-===-=--=-==-=-===-=-> %s", concept_ids)
+                        terms = Terms(field='domains.conceptid', terms=concept_ids)
+                        nested = Nested(path='domains', query=terms)
+                        if filter_grouping[index] == 'or':
+                            if not term['inverted']:
+                                    selectbox_boolfilter.should(nested)
+                        else:
+                            if term['inverted']:
+                                selectbox_boolfilter.must_not(nested)
+                            else:
+                                selectbox_boolfilter.must(nested)
+                                
+                    elif term['type'] == 'string':
+                        boolquery2 = Bool() #This bool contains the subset of nested string queries on both domains and child_entities paths
+                        boolfilter_folded = Bool() #This bool searches by string in child_entities, where free text strings get indexed
+                        boolfilter_folded2 = Bool() #This bool searches by string in the domains path,where controlled vocabulary concepts get indexed
+                        boolfilter_folded.should(Match(field='child_entities.value', query=term['value'], type='phrase_prefix'))
+                        boolfilter_folded.should(Match(field='child_entities.value.folded', query=term['value'], type='phrase_prefix'))
+                        nested = Nested(path='child_entities', query=boolfilter_folded)
+                        boolfilter_folded2.should(Match(field='domains.label', query=term['value'], type='phrase_prefix'))
+                        boolfilter_folded2.should(Match(field='domains.label.folded', query=term['value'], type='phrase_prefix'))
+                        nested2 = Nested(path='domains', query=boolfilter_folded2)
+                        boolquery2.should(nested)
+                        boolquery2.should(nested2)
+                        if filter_grouping[index] == 'or':
+                            if not term['inverted']:
+                                # use boolfilter here instead of boolquery because boolquery
+                                # can't be combined with other boolfilters using boolean OR
+                                selectbox_boolfilter.should(boolquery2)
+                        else:
+                            if term['inverted']:
+                                selectbox_boolfilter.must_not(boolquery2)
+                            else:    
+                                selectbox_boolfilter.must(boolquery2)
+                                
             if not selectbox_boolfilter.empty:
                 if boolean_search == 'or':
                     boolfilter.should(selectbox_boolfilter)
@@ -230,7 +243,7 @@ def build_search_results_dsl(request):
     
 #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
-    # logging.warning("-=-==-=-===-=--=-==-=-===-=- query: -=-==-=-===-=--=-==-=-===-=-> %s", query)
+    logging.warning("-=-==-=-===- query: ==-=-===-=-> %s", query)
 
     return query
 
