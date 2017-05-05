@@ -65,8 +65,19 @@ define(['openlayers'], function (ol) {
     /**
      * @inheritDoc
      */
-    ol.source.CulledCluster.prototype.loadFeatures = function(extent, resolution,
-        projection) {
+    ol.source.CulledCluster.prototype.loadFeatures = function(extent, resolution, projection) {
+            
+        if( this.lastExtent &&
+            this.lastExtent[0] == extent[0] &&
+            this.lastExtent[1] == extent[1] &&
+            this.lastExtent[2] == extent[2] &&
+            this.lastExtent[3] == extent[3] &&
+            this.lastResolution == resolution ) {
+            return;
+        }
+        this.lastExtent = extent;
+        this.lastResolution = resolution;
+        this.lastProjection = projection;
         this.clear();
         this.resolution_ = resolution;
         this.source_.loadFeatures(extent, resolution, projection);
