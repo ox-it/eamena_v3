@@ -480,13 +480,30 @@ define(['jquery',
 
             highlightFeatures: function (resultsarray, entityIdArray) {
                 // this.resultsLayer.updateIndex(resultsarray, entityIdArray);
+                
+                var mercatorToLatLng = function (olFeature) {
+                    var coordsOl = olFeature.getGeometry().getCoordinates();
+                    //unproject these coords to get lat/lng
+                    // var lonlat = ol.proj.toLonLat(coordsOl, 'EPSG:3857');
+                    var latlon = ol.proj.transform(coordsOl, 'EPSG:3857', 'EPSG:4326');
+                    return {
+                        geometry: {
+                            type: "Point",
+                            coordinates: latlon
+                        },
+                        id: olFeature.id_,
+                        type: 'Feature'
+                    };
+                }
+                
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
                         //all results, just use full array
                         var allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
-                        _.each(allResultsPoints, function (resultP) {
-                            
-                        }
+                        //convert results from ol.Features to GeoJSON features.
+                        // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
+                        // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
+                        var allResultsPointsGeoJSON = _.map(allResultsPoints, mercatorToLatLng)
                     } else {
                         //just a subset, look them up.
                         var allResultsPoints = _.map(entityIdArray, function (id) {
@@ -498,6 +515,7 @@ define(['jquery',
                                 console.error("Couldn't find feature model for id: " + id);
                             }
                         }.bind(this));
+                        var allResultsPointsGeoJSON = _.map(allResultsPoints, mercatorToLatLng);
                     }
                     
                 
@@ -515,10 +533,10 @@ define(['jquery',
 
 
                     this.resultsIndex = supercluster({
-                        radius: 100000,
+                        radius: 100 ,
                         maxZoom: 16
                     });
-                    this.resultsIndex.load(allResultsPoints);
+                    this.resultsIndex.load(allResultsPointsGeoJSON);
                     
                     console.log('rebuilt supercluster index');
                 }
@@ -526,43 +544,23 @@ define(['jquery',
             
             onViewChanged: function () {
                 // var extent = this.getMapExtent();
-                var extent = this.map.map.getView().calculateExtent(this.map.map.getSize());
-                
-                var modifiedExtent = [
-                    extent[0] * 1000,
-                    extent[1] * 1000,
-                    extent[2] * 1000,
-                    extent[3] * 1000
-                ];
+                var extentOl = this.map.map.getView().calculateExtent(this.map.map.getSize());
+                var extentLatLng = ol.proj.transformExtent(extentOl, 'EPSG:3857', 'EPSG:4326');
+
                 var zoom = this.getMapZoom();
                 
-                console.log('View changed. Extent = ', extent);
+                // console.log('View changed. Extent = ', extent);
                 //clear the clusters layer
                 //TODO
                 var clustersSource = this.resultsClustersLayer.getSource()
                 clustersSource.clear();
                 
-                //get the points which are within the view extents
-                console.log('view extents', extent);
-                // var resultsInView = this.resultsIndex.range(viewExtents)
+                var clusters = this.resultsIndex.getClusters(extentLatLng, zoom);
                 
-                //calculate clusters
-                // var bbox = [
-                //     extent
-                // ];
-                var clusters = this.resultsIndex.getClusters(extent, zoom);
-                
-                //convert supercluster features to ol features
+                //convert supercluster GeoJSON features to ol features
                 var clusterFeatures = _.map(clusters, function (cluster) {
-                    var coords;
-                    if(cluster.geometry) {
-                        coords = cluster.geometry.coordinates;
-                        console.log('DIRECT VAR - ', coords);
-                    } else {
-                        coords = cluster.getGeometry().getCoordinates();
-                        console.log('GET METHOD - ', coords);
-                    }
-                    
+                    //project to map coordinates
+                    var coords = ol.proj.transform(cluster.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
                     var f = new ol.Feature(new ol.geom.Point(
                         coords
                     ));
@@ -572,12 +570,6 @@ define(['jquery',
                 
                 clustersSource.addFeatures(clusterFeatures);
                 
-                //add features to the clusters layer
-                // this.resultsClustersLayer.getSource().addFeatures(clusters);
-                // _.each(clusters, function (cluster) {
-                // })
-                
-                //create individual markers layer (for current page of results)
             },
 
 
