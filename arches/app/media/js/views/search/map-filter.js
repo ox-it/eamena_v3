@@ -10,8 +10,8 @@ define(['jquery',
     'map/resource-layer-model',
     'utils',
     'resource-types',
-    'plugins/kdbush/src/kdbush'], 
-    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, kdbush) {
+    'plugins/supercluster/supercluster'], 
+    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster) {
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -77,13 +77,11 @@ define(['jquery',
                     return enabled;
                 }, this);
 
-
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
                     //create a backbone model to quickly index features by id
                     var FeatureModel = Backbone.Model.extend({ idAttribute: 'id_'});
                     self.resourceFeaturesCollection = new Backbone.Collection(features, {model:FeatureModel});
-                    
                     if (self.highlightOnLoad) {
                         _.defer(function () { self.highlightFeatures(self.highlightOnLoad.resultsarray, self.highlightOnLoad.entityIdArray) });
                     }
@@ -91,19 +89,25 @@ define(['jquery',
                     if (!self.cancelFitBaseLayer){
                         setTimeout(function() {
                               self.zoomToExtent(self.vectorLayer.getSource().getExtent());
-                        }, 500);                        
+                        }, 500);
                     }
                 }).layer();
-                this.map = new MapView({
-                    el: $('#map'),
-                    overlays: [this.vectorLayer]
-                });
-
+                
                 //create and add a layer to show the results clusters
-                this.resultsClustersLayer = new ol.VectorLayer({
+                this.resultsClustersLayer = new ol.layer.Vector({
                     source: new ol.source.Vector()
                 });
-                this.map.addLayer(this.resultsClustersLayer);
+                
+                this.map = new MapView({
+                    el: $('#map'),
+                    overlays: [
+                        this.vectorLayer,
+                        this.resultsClustersLayer
+                    ]
+                });
+
+                // this.map.map.on('viewChanged', this.onViewChanged, this);
+                this.map.on('viewChanged', this.onViewChanged, this);
 
                 this.bufferFeatureOverlay = new ol.FeatureOverlay({
                     style: new ol.style.Style({
@@ -477,44 +481,105 @@ define(['jquery',
             highlightFeatures: function (resultsarray, entityIdArray) {
                 // this.resultsLayer.updateIndex(resultsarray, entityIdArray);
                 if (this.resourceFeatures) {
-                    var allResultsPoints = _.map(entityIdArray, function (id) {
-                        var feature = this.resourceFeaturesCollection.get(id);
-                        // console.log(feature);
-                        return feature;
-                    }.bind(this));
-                
-                    this.resultsIndex = kdbush(
-                        allResultsPoints,
-                        function (f) {
-                            //get x
-                            return f.attributes.values_.geometry.flatCoordinates[0];
-                        },
-                        function (f) {
-                            //get y
-                            return f.attributes.values_.geometry.flatCoordinates[1];
+                    if (entityIdArray[0] === '_all') {
+                        //all results, just use full array
+                        var allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
+                        _.each(allResultsPoints, function (resultP) {
+                            
                         }
-                    );
+                    } else {
+                        //just a subset, look them up.
+                        var allResultsPoints = _.map(entityIdArray, function (id) {
+                            var featureModel = this.resourceFeaturesCollection.get(id);
+                            // console.log(feature);
+                            if(featureModel) {
+                                return featureModel.attributes;
+                            } else {
+                                console.error("Couldn't find feature model for id: " + id);
+                            }
+                        }.bind(this));
+                    }
                     
-                    console.log('rebuilt index');
+                
+                    // this.resultsIndex = kdbush(
+                    //     allResultsPoints,
+                    //     function (f) {
+                    //         //get x
+                    //         return f.attributes.values_.geometry.flatCoordinates[0];
+                    //     },
+                    //     function (f) {
+                    //         //get y
+                    //         return f.attributes.values_.geometry.flatCoordinates[1];
+                    //     }
+                    // );
+
+
+                    this.resultsIndex = supercluster({
+                        radius: 100000,
+                        maxZoom: 16
+                    });
+                    this.resultsIndex.load(allResultsPoints);
+                    
+                    console.log('rebuilt supercluster index');
                 }
             },
             
-            onViewChanged: function (extent) {
+            onViewChanged: function () {
+                // var extent = this.getMapExtent();
+                var extent = this.map.map.getView().calculateExtent(this.map.map.getSize());
+                
+                var modifiedExtent = [
+                    extent[0] * 1000,
+                    extent[1] * 1000,
+                    extent[2] * 1000,
+                    extent[3] * 1000
+                ];
+                var zoom = this.getMapZoom();
+                
+                console.log('View changed. Extent = ', extent);
                 //clear the clusters layer
                 //TODO
-                this.resultsClustersLayer.getSource().clear();
+                var clustersSource = this.resultsClustersLayer.getSource()
+                clustersSource.clear();
                 
                 //get the points which are within the view extents
-                console.log('view extents', viewExtents);
+                console.log('view extents', extent);
                 // var resultsInView = this.resultsIndex.range(viewExtents)
                 
                 //calculate clusters
+                // var bbox = [
+                //     extent
+                // ];
+                var clusters = this.resultsIndex.getClusters(extent, zoom);
                 
+                //convert supercluster features to ol features
+                var clusterFeatures = _.map(clusters, function (cluster) {
+                    var coords;
+                    if(cluster.geometry) {
+                        coords = cluster.geometry.coordinates;
+                        console.log('DIRECT VAR - ', coords);
+                    } else {
+                        coords = cluster.getGeometry().getCoordinates();
+                        console.log('GET METHOD - ', coords);
+                    }
+                    
+                    var f = new ol.Feature(new ol.geom.Point(
+                        coords
+                    ));
+                    f.setProperties(cluster.properties);
+                    return f;
+                }.bind(this));
+                
+                clustersSource.addFeatures(clusterFeatures);
                 
                 //add features to the clusters layer
+                // this.resultsClustersLayer.getSource().addFeatures(clusters);
+                // _.each(clusters, function (cluster) {
+                // })
                 
                 //create individual markers layer (for current page of results)
-            }
+            },
+
 
             highlightFeatures_: function(resultsarray, entityIdArray){
                 var resultFeatures = [];
@@ -610,9 +675,14 @@ define(['jquery',
                 var extent = ol.proj.transformExtent(this.map.map.getView().calculateExtent(this.map.map.getSize()), 'EPSG:3857', 'EPSG:4326');
                 return extent;
             },
+            
+            getMapZoom: function () {
+                return this.map.map.getView().getZoom();
+            },
 
             onMoveEnd: function(evt) {
                 this.query.filter.geometry.coordinates(this.getMapExtent());
+                this.onViewChanged(this.getMapExtent());
             },
 
             togglefilter: function(evt){
