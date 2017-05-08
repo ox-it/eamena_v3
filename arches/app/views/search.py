@@ -172,39 +172,54 @@ def build_search_results_dsl(request):
                     parent_bool.must(child_nested)
                     parent_nested = Nested(path='nested_entity.child_entities', query=parent_bool)
                     
-                elif group == "Site Function Type":
+                elif group == "Site Function Type" or group == "Cultural Period":
+                    if group == "Site Function Type":
+                        parent_string = 'Site Function Type'
+                        child_string = 'Site Function Certainty Type'
+                        parent_field = 'nested_entity.child_entities'
+                    elif group == "Cultural Period":
+                        parent_string = 'Cultural Period'
+                        child_string = 'Cultural Period Certainty Type'
+                        parent_field = 'nested_entity.child_entities.child_entities.child_entities'
+                    
+                    logging.warning("-=-=| | | | | -=--===-=-=-=-parent_string-> %s", parent_string)
                     # matches = (t for t in select_box if t['context_label'] == 'Site Function Type') #matches should allways be 1 ?!?!?!
-                    term = next((t for t in select_box if t['context_label'] == 'Site Function Certainty Type'))
+                    term = next((t for t in select_box if t['context_label'] == child_string))
                     concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field='nested_entity.child_entities.child_entities.conceptid', terms=concept_ids)
+                    logging.warning("1")
+                    terms = Terms(field=parent_field + '.child_entities.conceptid', terms=concept_ids)
                     child_bool = Bool()
+                    logging.warning("1")
                     child_bool.must(terms)
-                    child_nested = Nested(path='nested_entity.child_entities.child_entities', query=child_bool)
+                    child_nested = Nested(path=parent_field + '.child_entities', query=child_bool)
+                    logging.warning("1")
                     
-                    term = next((t for t in select_box if t['context_label'] == 'Site Function Type'))
+                    term = next((t for t in select_box if t['context_label'] == parent_string))
                     concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field='nested_entity.child_entities.conceptid', terms=concept_ids)
+                    logging.warning("1")
+                    terms = Terms(field=parent_field + '.conceptid', terms=concept_ids)
                     parent_bool = Bool()
                     parent_bool.must(terms)
+                    logging.warning("1")
                     parent_bool.must(child_nested)
-                    parent_nested = Nested(path='nested_entity.child_entities', query=parent_bool)
+                    parent_nested = Nested(path=parent_field, query=parent_bool)
                     
-                elif group == "Cultural Period":
-                    logging.warning("-=-==-=- select_box-> %s", select_box)
-                    term = next((t for t in select_box if t['context_label'] == 'Cultural Period Certainty Type'))
-                    concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
-                    child_bool = Bool()
-                    child_bool.must(terms)
-                    child_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities.child_entities', query=child_bool)
-                    
-                    term = next((t for t in select_box if t['context_label'] == 'Cultural Period'))
-                    concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
-                    parent_bool = Bool()
-                    parent_bool.must(terms)
-                    parent_bool.must(child_nested)
-                    parent_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities', query=parent_bool)
+                # elif group == "Cultural Period":
+                #     logging.warning("-=-==-=- select_box-> %s", select_box)
+                #     term = next((t for t in select_box if t['context_label'] == 'Cultural Period Certainty Type'))
+                #     concept_ids = _get_child_concepts(term['value'])
+                #     terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
+                #     child_bool = Bool()
+                #     child_bool.must(terms)
+                #     child_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities.child_entities', query=child_bool)
+                #     
+                #     term = next((t for t in select_box if t['context_label'] == 'Cultural Period'))
+                #     concept_ids = _get_child_concepts(term['value'])
+                #     terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
+                #     parent_bool = Bool()
+                #     parent_bool.must(terms)
+                #     parent_bool.must(child_nested)
+                #     parent_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities', query=parent_bool)
                     
                 selectbox_boolfilter.must(parent_nested)
                 logging.warning("-=-=| | | | | -=--===-=-=-=-%s nested-> %s", group, selectbox_boolfilter)
