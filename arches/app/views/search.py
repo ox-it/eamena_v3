@@ -156,6 +156,8 @@ def build_search_results_dsl(request):
                             group = "Cultural Period"
                         elif term['context_label'] == 'Assessment Type':
                             group = "Assessment Type"
+                        elif term['context_label'] == 'Feature Evidence Type':
+                            group = "Feature Evidence Type"
                         
                 logging.warning("-=-==-=- GROUP-> %s", group)
                 if group == "Resource Names":
@@ -188,21 +190,38 @@ def build_search_results_dsl(request):
                         child_string = 'Assessor Name Type'
                         parent_field = 'nested_entity.child_entities.child_entities'
                     
-                    logging.warning("-=-=| | | | | -=--===-=-=-=-parent_string-> %s", parent_string)
                     # matches = (t for t in select_box if t['context_label'] == 'Site Function Type') #matches should allways be 1 ?!?!?!
-                    term = next((t for t in select_box if t['context_label'] == child_string))
-                    concept_ids = _get_child_concepts(term['value'])
-                    terms = Terms(field=parent_field + '.child_entities.conceptid', terms=concept_ids)
-                    child_bool = Bool()
-                    child_bool.must(terms)
-                    child_nested = Nested(path=parent_field + '.child_entities', query=child_bool)
+                    parent_bool = Bool()
+                    term = next((t for t in select_box if t['context_label'] == child_string), None)
+                    if term is not None:
+                        concept_ids = _get_child_concepts(term['value'])
+                        terms = Terms(field=parent_field + '.child_entities.conceptid', terms=concept_ids)
+                        child_bool = Bool()
+                        child_bool.must(terms)
+                        child_nested = Nested(path=parent_field + '.child_entities', query=child_bool)
+                        parent_bool.must(child_nested)
                     
                     term = next((t for t in select_box if t['context_label'] == parent_string))
                     concept_ids = _get_child_concepts(term['value'])
                     terms = Terms(field=parent_field + '.conceptid', terms=concept_ids)
-                    parent_bool = Bool()
                     parent_bool.must(terms)
-                    parent_bool.must(child_nested)
+                    parent_nested = Nested(path=parent_field, query=parent_bool)
+                    
+                elif group == "Feature Evidence Type":
+                    parent_field = 'nested_entity.child_entities.child_entities.child_entities'
+                    children_strings = ['Feature Evidence Type', 'Feature Evidence Type Certainty Type', 'Feature Evidence Shape Type', 'Feature Evidence Arrangement Type', 'Feature Evidence Number Type']
+                    parent_bool = Bool()
+                    
+                    for child_string in children_strings:
+                        term = next((t for t in select_box if t['context_label'] == child_string), None)
+                        if term is not None:
+                            concept_ids = _get_child_concepts(term['value'])
+                            terms = Terms(field=parent_field + '.child_entities.conceptid', terms=concept_ids)
+                            child_bool = Bool()
+                            child_bool.must(terms)
+                            child_nested = Nested(path=parent_field + '.child_entities', query=child_bool)
+                            parent_bool.must(child_nested)
+                    
                     parent_nested = Nested(path=parent_field, query=parent_bool)
                     
                 selectbox_boolfilter.must(parent_nested)
@@ -317,7 +336,7 @@ def build_search_results_dsl(request):
     
     #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
-    logging.warning("-=-==-=-===- query: ==-=-===-=-> %s", query)
+    # logging.warning("-=-==-=-===- query: ==-=-===-=-> %s", query)
 
     return query
 
