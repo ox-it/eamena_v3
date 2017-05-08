@@ -30,6 +30,8 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
 
+import logging
+
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
     min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
@@ -48,7 +50,10 @@ def search_results(request):
     results = query.search(index='entity', doc_type='') 
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
+    group_search = request.GET.get('groupSearch', '')
 
+    term_filter = request.GET.get('termFilter', '')
+    
     all_entity_ids = ['_all']
     if request.GET.get('include_ids', 'false') == 'false':
         all_entity_ids = ['_none']
