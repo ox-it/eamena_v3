@@ -663,6 +663,66 @@ class Resource(Entity):
                                                                 'child_entities': {
                                                                     'type' : 'nested',
                                                                     'index' : 'analyzed',
+                                                                    'properties' : {
+                                                                        'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                        'value' : {
+                                                                            'type' : 'string',
+                                                                            'index' : 'analyzed',
+                                                                            'fields' : {
+                                                                                'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                                                            },
+                                                                        },
+                                                                        'child_entities': {
+                                                                            'type' : 'nested',
+                                                                            'index' : 'analyzed',
+                                                                            'properties' : {
+                                                                                'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                'value' : {
+                                                                                    'type' : 'string',
+                                                                                    'index' : 'analyzed',
+                                                                                    'fields' : {
+                                                                                        'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                                                                    },
+                                                                                },
+                                                                                'child_entities': {
+                                                                                    'type' : 'nested',
+                                                                                    'index' : 'analyzed',
+                                                                                    'properties' : {
+                                                                                        'entityid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'parentid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'property' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'entitytypeid' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'businesstablename' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'label' : {'type' : 'string', 'index' : 'not_analyzed'},
+                                                                                        'value' : {
+                                                                                            'type' : 'string',
+                                                                                            'index' : 'analyzed',
+                                                                                            'fields' : {
+                                                                                                'raw' : { 'type' : 'string', 'index' : 'not_analyzed'}
+                                                                                            },
+                                                                                        },
+                                                                                        'child_entities': {
+                                                                                            'type' : 'nested',
+                                                                                            'index' : 'analyzed',
+                                                                                        },
+                                                                                        'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                                                                                    }
+                                                                                },
+                                                                                'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                                                                            }
+                                                                        },
+                                                                        'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
+                                                                    }
                                                                 },
                                                                 'conceptid' : {'type' : 'string', 'index' : 'not_analyzed'}
                                                             }
