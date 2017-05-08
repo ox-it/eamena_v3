@@ -127,16 +127,52 @@ def build_search_results_dsl(request):
         for index, select_box in enumerate(JSONDeserializer().deserialize(term_filter)):
             selectbox_boolfilter = Bool()
             if filter_grouping[index] == 'group':
-                logging.warning("-=-==-=-GROUP select_box: -=-==-=-===-=--=-==-=-===-=-> %s", select_box)
+                # logging.warning("-=-==-=-GROUP select_box: -=-==-=-===-=--=-==-=-===-=-> %s", select_box)
                 
+                # Resource Names (parent: NAME.E41)
+                # Site function (SITE_FUNCTION_TYPE.E55)
+                # Cultural period (CULTURAL_PERIOD.E55)
+                # Assessment (ASSESSMENT_TYPE.E55)
+                # Feature form (FEATURE_EVIDENCE_ASSIGNMENT.E17)
+                # Feature interpretation (FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17)
+                # Disturbance assessment (DISTURBANCE_STATE.E3)
+                # Threat assessment (THREAT_STATE.E3)
+                # Designation (PROTECTION_EVENT.E65)
+                # Measurements (MEASUREMENT_TYPE.E55)
+                # Addresses (PLACE_ADDRESS.E45)
+                # Administrative areas (ADMINISTRATIVE_SUBDIVISION.E48)
                 group = ""
                 for term in select_box:
-                    if term['type'] == 'concept':
-                        # Site Function Type (SITE_FUNCTION_TYPE.E55)
+                    if term['type'] == 'term':
+                        logging.warning("-=-==-=- GROUP->term  : -=-==-=-===-=--=-==-=-===-=-> %s", term['context_label'])
+                        if term['context_label'] == 'Name.E41':
+                            group = "Resource Names"
+                            
+                    elif term['type'] == 'concept':
+                        logging.warning("-=-==-=- GROUP->concept  : -=-==-=-===-=--=-==-=-===-=-> %s", term['context_label'])
                         if term['context_label'] == 'Site Function Type':
                             group = "Site Function Type"
+                        elif term['context_label'] == 'Cultural Period':
+                            group = "Cultural Period"
                         
-                if group == "Site Function Type":
+                logging.warning("-=-==-=- GROUP-> %s", group)
+                if group == "Resource Names":
+                    term = next((t for t in select_box if t['context_label'] == 'Name Type'))
+                    concept_ids = _get_child_concepts(term['value'])
+                    terms = Terms(field='nested_entity.child_entities.child_entities.conceptid', terms=concept_ids)
+                    child_bool = Bool()
+                    child_bool.must(terms)
+                    child_nested = Nested(path='nested_entity.child_entities.child_entities', query=child_bool)
+
+                    term = next((t for t in select_box if t['context_label'] == 'Name.E41'))
+                    entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
+                    parent_bool = Bool()
+                    parent_bool.must(Terms(field='nested_entity.child_entities.entitytypeid', terms=[entitytype.pk]))
+                    parent_bool.must(Match(field='nested_entity.child_entities.value', query=term['value'], type='phrase'))
+                    parent_bool.must(child_nested)
+                    parent_nested = Nested(path='nested_entity.child_entities', query=parent_bool)
+                    
+                elif group == "Site Function Type":
                     # matches = (t for t in select_box if t['context_label'] == 'Site Function Type') #matches should allways be 1 ?!?!?!
                     term = next((t for t in select_box if t['context_label'] == 'Site Function Certainty Type'))
                     concept_ids = _get_child_concepts(term['value'])
@@ -152,15 +188,33 @@ def build_search_results_dsl(request):
                     parent_bool.must(terms)
                     parent_bool.must(child_nested)
                     parent_nested = Nested(path='nested_entity.child_entities', query=parent_bool)
-                    selectbox_boolfilter.must(parent_nested)
-                    logging.warning("-=-==-=-GROUP Site Function Type nested!!!!: -=-==-=-===-=--=-==-=-===-=-> %s %s", type(selectbox_boolfilter), selectbox_boolfilter)
+                    
+                elif group == "Cultural Period":
+                    logging.warning("-=-==-=- select_box-> %s", select_box)
+                    term = next((t for t in select_box if t['context_label'] == 'Cultural Period Certainty Type'))
+                    concept_ids = _get_child_concepts(term['value'])
+                    terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
+                    child_bool = Bool()
+                    child_bool.must(terms)
+                    child_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities.child_entities', query=child_bool)
+                    
+                    term = next((t for t in select_box if t['context_label'] == 'Cultural Period'))
+                    concept_ids = _get_child_concepts(term['value'])
+                    terms = Terms(field='nested_entity.child_entities.child_entities.child_entities.conceptid', terms=concept_ids)
+                    parent_bool = Bool()
+                    parent_bool.must(terms)
+                    parent_bool.must(child_nested)
+                    parent_nested = Nested(path='nested_entity.child_entities.child_entities.child_entities', query=parent_bool)
+                    
+                selectbox_boolfilter.must(parent_nested)
+                logging.warning("-=-=| | | | | -=--===-=-=-=-%s nested-> %s", group, selectbox_boolfilter)
                         
             else:
                 for term in select_box:
                     if term['type'] == 'term':
                         entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
-                        logging.warning("-=-==-=-===-=--=-==-=-===-=- conceptid_id: -=-==-=-===-=--=-==-=-===-=-> %s", term['context'])
-                        logging.warning("-=-==-=-===-=--=-==-=-===-=- entitytype: -=-==-=-===-=--=-==-=-===-=-> %s", entitytype)
+                        logging.warning("-=-==-=-===-=--=-==-=-===-=- TERM conceptid_id: -=-==-=-===-=--=-==-=-===-=-> %s", term['context'])
+                        # logging.warning("-=-==-=-===-=--=-==-=-===-=- entitytype: -=-==-=-===-=--=-==-=-===-=-> %s", entitytype)
                         
                         boolfilter_nested = Bool()
                         boolfilter_nested.must(Terms(field='child_entities.entitytypeid', terms=[entitytype.pk]))
@@ -177,7 +231,7 @@ def build_search_results_dsl(request):
                                 
                     elif term['type'] == 'concept':
                         concept_ids = _get_child_concepts(term['value'])
-                        logging.warning("-=-==-=-===-=--=-==-=-===-=- concept_ids: -=-==-=-===-=--=-==-=-===-=-> %s", concept_ids)
+                        logging.warning("-=-==-=-===-=--=-==-=-===-=- CONCEPT concept_ids: -=-==-=-===-=--=-==-=-===-=-> %s", term['value'])
                         terms = Terms(field='domains.conceptid', terms=concept_ids)
                         nested = Nested(path='domains', query=terms)
                         if filter_grouping[index] == 'or':
@@ -262,7 +316,7 @@ def build_search_results_dsl(request):
     if not boolfilter.empty:
         query.add_filter(boolfilter)
     
-#  Sorting criterion added to query (AZ 10/08/16)
+    #  Sorting criterion added to query (AZ 10/08/16)
     query.dsl.update({'sort': sorting})
     logging.warning("-=-==-=-===- query: ==-=-===-=-> %s", query)
 
