@@ -162,6 +162,12 @@ def build_search_results_dsl(request):
                             group = "Feature Evidence Interpretation Type"
                         elif term['context_label'] == 'Disturbance Type':
                             group = "Disturbance Type"
+                        elif term['context_label'] == 'Threat Type':
+                            group = "Threat Type"
+                        # elif term['context_label'] == 'Type Of Designation Or Protection':
+                        #     group = "Type Of Designation Or Protection"
+                        elif term['context_label'] == 'Measurement Type':
+                            group = "Measurement Type"
                         
                 logging.warning("-=-==-=- GROUP-> %s", group)
                 if group == "Resource Names":
@@ -263,7 +269,61 @@ def build_search_results_dsl(request):
                             parent_bool_tmp.must(child_nested)
                     child_nested = Nested(path=parent_field + '.child_entities', query=parent_bool_tmp)
                     parent_bool.must(child_nested)
-                parent_nested = Nested(path=parent_field, query=parent_bool)
+                    
+                elif group == "Threat Type":
+                    parent_field = 'nested_entity.child_entities.child_entities.child_entities'
+                    parent_bool = Bool()
+                    term = next((t for t in select_box if t['context_label'] == 'Threat Type'), None)
+                    if term is not None:
+                        concept_ids = _get_child_concepts(term['value'])
+                        terms = Terms(field=parent_field + '.child_entities.child_entities.conceptid', terms=concept_ids)
+                        child_bool = Bool()
+                        child_bool.must(terms)
+                        child_nested = Nested(path=parent_field + '.child_entities.child_entities', query=child_bool)
+                        parent_bool.must(child_nested)
+                    parent_bool_tmp = Bool()
+                    children_strings = ['Threat Cause Type', 'Threat Cause Certainty Type']
+                    for child_string in children_strings:
+                        term = next((t for t in select_box if t['context_label'] == child_string), None)
+                        if term is not None:
+                            concept_ids = _get_child_concepts(term['value'])
+                            terms = Terms(field=parent_field + '.child_entities.child_entities.conceptid', terms=concept_ids)
+                            child_bool = Bool()
+                            child_bool.must(terms)
+                            child_nested = Nested(path=parent_field + '.child_entities.child_entities', query=child_bool)
+                            parent_bool_tmp.must(child_nested)
+                    child_nested = Nested(path=parent_field + '.child_entities', query=parent_bool_tmp)
+                    parent_bool.must(child_nested)
+                    
+                elif group == "Measurement Type":
+                    parent_field = 'nested_entity.child_entities'
+                    parent_bool = Bool()
+                    grand_child_bool = Bool()
+                    term = next((t for t in select_box if t['context_label'] == 'Value_Of_Measurement.E60'), None)
+                    if term is not None:
+                        entitytype = models.EntityTypes.objects.get(conceptid_id=term['context'])
+                        child_bool = Bool()
+                        child_bool.must(Terms(field=parent_field + '.child_entities.child_entities.entitytypeid', terms=[entitytype.pk]))
+                        child_bool.must(Match(field=parent_field + '.child_entities.child_entities.value', query=term['value'], type='phrase'))
+                        child_nested = Nested(path=parent_field + '.child_entities.child_entities', query=child_bool)
+                        grand_child_nested = Nested(path=parent_field + '.child_entities.child_entities', query=child_bool)
+                        grand_child_bool.must(child_nested)
+                    term = next((t for t in select_box if t['context_label'] == 'Unit Of Measurement'), None)
+                    if term is not None:
+                        concept_ids = _get_child_concepts(term['value'])
+                        terms = Terms(field=parent_field + '.child_entities.conceptid', terms=concept_ids)
+                        child_bool = Bool()
+                        child_bool.must(terms)
+                        child_bool.must(grand_child_nested)
+                        child_nested = Nested(path=parent_field + '.child_entities', query=child_bool)
+                    term = next((t for t in select_box if t['context_label'] == 'Measurement Type'))
+                    if term is not None:
+                        concept_ids = _get_child_concepts(term['value'])
+                        terms = Terms(field=parent_field + '.conceptid', terms=concept_ids)
+                        parent_bool.must(terms)
+                        parent_bool.must(child_nested)
+                    parent_nested = Nested(path=parent_field, query=parent_bool)
+                    
                 selectbox_boolfilter.must(parent_nested)
                 logging.warning("-=-=| | | | | -=--===-=-=-=-%s nested-> %s", group, selectbox_boolfilter)
                         
