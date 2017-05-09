@@ -93,6 +93,10 @@ define(['jquery',
                     }
                 }).layer();
                 
+                //Hide the non-result features for now - continually resetting this layer with all markers NOT in the results set
+                // seriously harms performance.
+                this.vectorLayer.setVisible(false);
+                
                 this.map = new MapView({
                     el: $('#map'),
                     overlays: [
@@ -349,27 +353,54 @@ define(['jquery',
                         var keys = clickFeature.getKeys();
                         var isCluster = _.contains(keys, "features") || _.contains(keys, "point_count");
                         var isArchesFeature = (_.contains(keys, 'arches_cluster') || _.contains(keys, 'arches_marker'));
-                        if (isCluster && clickFeature.get('features').length > 1) {
+                        var numFeatures = 0;
+                        if(isCluster) {
+                            if(clickFeature.get('features')) {
+                                numFeatures = clickFeature.get('features').length;
+                            } else if (clickFeature.get('point_count')) {
+                                numFeatures = clickFeature.get('point_count');
+                            }
+                        }
+                        if (isCluster && numFeatures > 1) {
                             if (currentZoom !== arches.mapDefaults.maxZoom) {
                                 var extent = clickFeature.getGeometry().getExtent();
-                                _.each(clickFeature.get("features"), function (feature) {
-                                    if (_.contains(keys, 'extent')) {
-                                        featureExtent = ol.extent.applyTransform(feature.get('extent'), ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
-                                    } else {
-                                        featureExtent = feature.getGeometry().getExtent();
-                                    }
-                                    extent = ol.extent.extend(extent, featureExtent);
-                                });
-                                self.map.map.getView().fitExtent(extent, (self.map.map.getSize()));
+                                if(clickFeature.get("features")) {
+                                    //an ol cluster - we have information about the sub-features, so zoom to their extents
+                                    _.each(clickFeature.get("features"), function (feature) {
+                                        if (_.contains(keys, 'extent')) {
+                                            featureExtent = ol.extent.applyTransform(feature.get('extent'), ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
+                                        } else {
+                                            featureExtent = feature.getGeometry().getExtent();
+                                        }
+                                        extent = ol.extent.extend(extent, featureExtent);
+                                    });
+                                    self.map.map.getView().fitExtent(extent, (self.map.map.getSize()));
+                                } else {
+                                    //a supercluster cluster. We only know the number of points and their shared centre;
+                                    // Zoom in by two levels, and centre the map on this point
+                                    var view = self.map.map.getView();
+                                    
+                                    //animate not available in ol 3.1
+                                    // view.animate({
+                                    //     zoom: view.getZoom() + 2,
+                                    //     center: clickFeature.getGeometry().getCoordinates(),
+                                    //     duration: 0.5
+                                    // })
+                                    
+                                    view.setZoom(view.getZoom() + 2);
+                                    view.setCenter(clickFeature.getGeometry().getCoordinates());
+                                }
                             } else {
                                 showClusterPopup(clickFeature);
                             }
                         } else {
                             if (isCluster) {
+                                //cluster of 1
                                 clickFeature = clickFeature.get('features')[0];
                                 keys = clickFeature.getKeys();
                             }
                             if (!_.contains(keys, 'select_feature')) {
+                                //individual feature - TODO assess how well this works for features originating from supercluster
                                 if (isArchesFeature) {
                                     if (archesFeaturesCache[clickFeature.getId()] && archesFeaturesCache[clickFeature.getId()] !== 'loading'){
                                         showFeaturePopup(archesFeaturesCache[clickFeature.getId()]);
