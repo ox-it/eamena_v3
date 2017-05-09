@@ -553,10 +553,10 @@ define(['jquery',
                         } else {
                             //brand new result set
                             this.allResultsPoints = _.map(entityIdArray, function (id) {
-                                var featureModel = this.resourceFeaturesCollection.get(id).get('feature');
-                                // console.log(feature);
+                                var featureModel = this.resourceFeaturesCollection.get(id);
                                 if(featureModel) {
-                                    return featureModel.attributes;
+                                    var feature = featureModel.get('feature');
+                                    return feature;
                                 } else {
                                     console.error("Couldn't find feature model for id: " + id);
                                     return null;
