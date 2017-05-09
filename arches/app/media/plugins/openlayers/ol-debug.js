@@ -100682,9 +100682,9 @@ ol.structs.RBush = function(opt_maxEntries) {
  * @param {T} value Value.
  */
 ol.structs.RBush.prototype.insert = function(extent, value) {
-  if (goog.DEBUG && this.readers_) {
-    throw new Error('Can not insert value while reading');
-  }
+  // if (goog.DEBUG && this.readers_) {
+  //   throw new Error('Can not insert value while reading');
+  // }
   var item = [
     extent[0],
     extent[1],
@@ -100704,9 +100704,9 @@ ol.structs.RBush.prototype.insert = function(extent, value) {
  * @param {Array.<T>} values Values.
  */
 ol.structs.RBush.prototype.load = function(extents, values) {
-  if (goog.DEBUG && this.readers_) {
-    throw new Error('Can not insert values while reading');
-  }
+  // if (goog.DEBUG && this.readers_) {
+  //   throw new Error('Can not insert values while reading');
+  // }
   goog.asserts.assert(extents.length === values.length);
 
   var items = new Array(values.length);
@@ -100734,9 +100734,9 @@ ol.structs.RBush.prototype.load = function(extents, values) {
  * @return {boolean} Removed.
  */
 ol.structs.RBush.prototype.remove = function(value) {
-  if (goog.DEBUG && this.readers_) {
-    throw new Error('Can not remove value while reading');
-  }
+  // if (goog.DEBUG && this.readers_) {
+  //   throw new Error('Can not remove value while reading');
+  // }
   var uid = goog.getUid(value).toString();
   goog.asserts.assert(goog.object.containsKey(this.items_, uid));
 

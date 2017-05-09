@@ -82,7 +82,12 @@ define(['jquery',
                     self.resourceFeatures = features;
                     //create a backbone model to quickly index features by id
                     var FeatureModel = Backbone.Model.extend({ idAttribute: 'id_'});
-                    self.resourceFeaturesCollection = new Backbone.Collection(features, {model:FeatureModel});
+                    
+                    //wrap feature as a backbone model and add all to a collection, for efficient retrieval by id.
+                    var featureModels = _.map(features, function (f) {
+                        return {feature: f};
+                    });
+                    self.resourceFeaturesCollection = new Backbone.Collection(featureModels, {model:FeatureModel});
                     if (self.highlightOnLoad) {
                         _.defer(function () { self.highlightFeatures(self.highlightOnLoad.resultsarray, self.highlightOnLoad.entityIdArray) });
                     }
@@ -381,13 +386,6 @@ define(['jquery',
                                     // Zoom in by two levels, and centre the map on this point
                                     var view = self.map.map.getView();
                                     
-                                    //animate not available in ol 3.1
-                                    // view.animate({
-                                    //     zoom: view.getZoom() + 2,
-                                    //     center: clickFeature.getGeometry().getCoordinates(),
-                                    //     duration: 0.5
-                                    // })
-                                    
                                     //get desired new zoom
                                     var clusterId = clickFeature.get("cluster_id");
                                     if(clusterId) {
@@ -396,6 +394,13 @@ define(['jquery',
                                     } else {
                                         var newZoom = view.getZoom() + 2;
                                     }
+                                    
+                                    //animate not available in ol 3.1
+                                    // view.animate({
+                                    //     zoom: view.getZoom() + 2,
+                                    //     center: clickFeature.getGeometry().getCoordinates(),
+                                    //     duration: 0.5
+                                    // })
                                     
                                     view.setZoom(view.getZoom() + 2);
                                     view.setCenter(clickFeature.getGeometry().getCoordinates());
@@ -538,6 +543,9 @@ define(['jquery',
                     if (entityIdArray[0] === '_all') {
                         //all results, just use full array
                         this.allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
+                        this.allResultsPoints = this.resourceFeaturesCollection.map(function (model) {
+                            return model.get('feature');
+                        })
                         this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
                     } else {
                         if(sameResultSet) {
@@ -545,7 +553,7 @@ define(['jquery',
                         } else {
                             //brand new result set
                             this.allResultsPoints = _.map(entityIdArray, function (id) {
-                                var featureModel = this.resourceFeaturesCollection.get(id);
+                                var featureModel = this.resourceFeaturesCollection.get(id).get('feature');
                                 // console.log(feature);
                                 if(featureModel) {
                                     return featureModel.attributes;
@@ -593,6 +601,11 @@ define(['jquery',
                     
                     
                     console.log('rebuilt supercluster index');
+                    
+                    if (this.drawingFeatureOverlay.getFeatures().getLength() === 0 && this.query.filter.geometry.type() !== 'bbox') {
+                        this.zoomToResults();
+                    }
+                    
                     this.onViewChanged();
                 }
             },
