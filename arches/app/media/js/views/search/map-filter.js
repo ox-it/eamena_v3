@@ -10,8 +10,9 @@ define(['jquery',
     'map/resource-layer-model',
     'utils',
     'resource-types',
-    'plugins/supercluster/supercluster'], 
-    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster) {
+    'plugins/supercluster/supercluster', 
+    'plugins/geojson_extent/geojson_extent'], 
+    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster, geojsonExtent) {
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -387,6 +388,15 @@ define(['jquery',
                                     //     duration: 0.5
                                     // })
                                     
+                                    //get desired new zoom
+                                    var clusterId = clickFeature.get("cluster_id");
+                                    if(clusterId) {
+                                        var newZoom = this.resultsIndex.getClusterExpansionZoom(clusterId, view.getZoom());
+                                        console.log('new zoom', newZoom);
+                                    } else {
+                                        var newZoom = view.getZoom() + 2;
+                                    }
+                                    
                                     view.setZoom(view.getZoom() + 2);
                                     view.setCenter(clickFeature.getGeometry().getCoordinates());
                                 }
@@ -427,7 +437,7 @@ define(['jquery',
                             }
                         }
                     }
-                });
+                }.bind(this));
 
                 this.resultLayer = new ResourceLayerModel({entitytypeid: null, vectorColor: arches.resourceMarker.defaultColor}).layer();
                 this.map.map.addLayer(this.resultLayer);
@@ -504,8 +514,11 @@ define(['jquery',
             },
 
             highlightFeatures: function (resultsarray, entityIdArray) {
-                // this.resultsLayer.updateIndex(resultsarray, entityIdArray);
+                var sameResultSet = (entityIdArray[0] === '_none');
                 
+                //takes an openlayers feature object with mercator projection coordinates, and creates a geojson object with lat/lng coordinates.
+                // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
+                // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
                 var mercatorToLatLng = function (olFeature) {
                     var coordsOl = olFeature.getGeometry().getCoordinates();
                     //unproject these coords to get lat/lng
@@ -524,44 +537,60 @@ define(['jquery',
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
                         //all results, just use full array
-                        var allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
-                        //convert results from ol.Features to GeoJSON features.
-                        // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
-                        // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
-                        var allResultsPointsGeoJSON = _.map(allResultsPoints, mercatorToLatLng)
+                        this.allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
+                        this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
                     } else {
-                        //just a subset, look them up.
-                        var allResultsPoints = _.map(entityIdArray, function (id) {
-                            var featureModel = this.resourceFeaturesCollection.get(id);
-                            // console.log(feature);
-                            if(featureModel) {
-                                return featureModel.attributes;
-                            } else {
-                                console.error("Couldn't find feature model for id: " + id);
-                            }
-                        }.bind(this));
-                        var allResultsPointsGeoJSON = _.map(allResultsPoints, mercatorToLatLng);
+                        if(sameResultSet) {
+                            //new page of existing results 
+                        } else {
+                            //brand new result set
+                            this.allResultsPoints = _.map(entityIdArray, function (id) {
+                                var featureModel = this.resourceFeaturesCollection.get(id);
+                                // console.log(feature);
+                                if(featureModel) {
+                                    return featureModel.attributes;
+                                } else {
+                                    console.error("Couldn't find feature model for id: " + id);
+                                    return null;
+                                }
+                            }.bind(this));
+                            
+                            //filter out null entries
+                            this.allResultsPoints = _.filter(this.allResultsPoints, function (res) {
+                                return !!res;
+                            });
+                            this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
+                        }
                     }
+
+                    var currentPageIDs = _.map(resultsarray.results.hits.hits, function (hit) {
+                        return hit['_id'];
+                    });
+                    var partitionedPoints = _.partition(this.allResultsPoints, function (point) {
+                        return currentPageIDs.indexOf(point.id_) > -1;
+                    });
                     
-                
-                    // this.resultsIndex = kdbush(
-                    //     allResultsPoints,
-                    //     function (f) {
-                    //         //get x
-                    //         return f.attributes.values_.geometry.flatCoordinates[0];
-                    //     },
-                    //     function (f) {
-                    //         //get y
-                    //         return f.attributes.values_.geometry.flatCoordinates[1];
-                    //     }
-                    // );
+                    this.currentPageResults = partitionedPoints[0];
+                    this.notCurrentPageResults = partitionedPoints[1];
+                    _.each(this.currentPageResults, function (feature) {
+                        if (!feature.get('arches_marker')) {
+                            feature.set('arches_marker', true);
+                        }
+                    });
+                    // this.currentPageResultsPointsGeoJSON = _.map(this.currentPageResults, mercatorToLatLng);
+                    this.notCurrentPageResultsPointsGeoJSON = _.map(this.notCurrentPageResults, mercatorToLatLng);
 
-
+                    //fill cluster index with all results not on the current page
                     this.resultsIndex = supercluster({
                         radius: 100 ,
                         maxZoom: 16
                     });
-                    this.resultsIndex.load(allResultsPointsGeoJSON);
+                    this.resultsIndex.load(this.notCurrentPageResultsPointsGeoJSON);
+                    
+                    //plot current page results
+                    this.currentPageLayer.getSource().clear();
+                    this.currentPageLayer.getSource().addFeatures(this.currentPageResults);
+                    
                     
                     console.log('rebuilt supercluster index');
                     this.onViewChanged();
@@ -677,7 +706,14 @@ define(['jquery',
 
             zoomToResults: function () {
                 var extent = ol.extent.extend(this.currentPageLayer.getSource().getExtent(), this.resultLayer.vectorSource.getExtent());
-                this.map.map.getView().fitExtent(extent, this.map.map.getSize());
+                var allResultsGeoJSON = {
+                    type: "FeatureCollection",
+                    features: this.allResultsPointsGeoJSON
+                }
+                var extent = geojsonExtent(allResultsGeoJSON);
+                var extentProjected = ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+                
+                this.map.map.getView().fitExtent(extentProjected, this.map.map.getSize());
             },
 
             selectFeatureById: function(resourceid){
