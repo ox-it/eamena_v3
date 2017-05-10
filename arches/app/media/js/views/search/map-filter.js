@@ -10,9 +10,8 @@ define(['jquery',
     'map/resource-layer-model',
     'utils',
     'resource-types',
-    'plugins/supercluster/supercluster', 
-    'plugins/geojson_extent/geojson_extent'], 
-    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster, geojsonExtent) {
+    'plugins/supercluster/supercluster'], 
+    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster) {
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -80,14 +79,14 @@ define(['jquery',
 
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
-                    //create a backbone model to quickly index features by id
-                    var FeatureModel = Backbone.Model.extend({ idAttribute: 'id_'});
-                    
                     //wrap feature as a backbone model and add all to a collection, for efficient retrieval by id.
                     var featureModels = _.map(features, function (f) {
-                        return {feature: f};
+                        return {
+                            id: f.id_,
+                            feature: f
+                        };
                     });
-                    self.resourceFeaturesCollection = new Backbone.Collection(featureModels, {model:FeatureModel});
+                    self.resourceFeaturesCollection = new Backbone.Collection(featureModels);
                     if (self.highlightOnLoad) {
                         _.defer(function () { self.highlightFeatures(self.highlightOnLoad.resultsarray, self.highlightOnLoad.entityIdArray) });
                     }
@@ -390,7 +389,6 @@ define(['jquery',
                                     var clusterId = clickFeature.get("cluster_id");
                                     if(clusterId) {
                                         var newZoom = this.resultsIndex.getClusterExpansionZoom(clusterId, view.getZoom());
-                                        console.log('new zoom', newZoom);
                                     } else {
                                         var newZoom = view.getZoom() + 2;
                                     }
@@ -535,14 +533,15 @@ define(['jquery',
                             coordinates: latlon
                         },
                         id: olFeature.id_,
-                        type: 'Feature'
+                        type: 'Feature',
+                        properties: null
                     };
                 }
                 
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
                         //all results, just use full array
-                        this.allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
+                        // this.allResultsPoints = _.pluck(this.resourceFeaturesCollection.models, 'attributes');
                         this.allResultsPoints = this.resourceFeaturesCollection.map(function (model) {
                             return model.get('feature');
                         })
@@ -551,6 +550,7 @@ define(['jquery',
                         if(sameResultSet) {
                             //new page of existing results 
                         } else {
+                            var unfoundFeatures = 0;
                             //brand new result set
                             this.allResultsPoints = _.map(entityIdArray, function (id) {
                                 var featureModel = this.resourceFeaturesCollection.get(id);
@@ -558,7 +558,8 @@ define(['jquery',
                                     var feature = featureModel.get('feature');
                                     return feature;
                                 } else {
-                                    console.error("Couldn't find feature model for id: " + id);
+                                    unfoundFeatures++;
+                                    // console.error("Couldn't find feature model for id: " + id);
                                     return null;
                                 }
                             }.bind(this));
@@ -567,6 +568,7 @@ define(['jquery',
                             this.allResultsPoints = _.filter(this.allResultsPoints, function (res) {
                                 return !!res;
                             });
+                            console.warn("couldn't find " + unfoundFeatures + " features");
                             this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
                         }
                     }
@@ -620,9 +622,10 @@ define(['jquery',
 
                 var zoom = this.getMapZoom();
                 
-                // console.log('View changed. Extent = ', extent);
+                if(!zoom) { return; }
+                
+                
                 //clear the clusters layer
-                //TODO
                 var clustersSource = this.resultLayer.getSource()
                 clustersSource.clear();
                 
@@ -718,15 +721,46 @@ define(['jquery',
             },
 
             zoomToResults: function () {
-                var extent = ol.extent.extend(this.currentPageLayer.getSource().getExtent(), this.resultLayer.vectorSource.getExtent());
+                // var extent = ol.extent.extend(this.currentPageLayer.getSource().getExtent(), this.resultLayer.vectorSource.getExtent());
                 var allResultsGeoJSON = {
                     type: "FeatureCollection",
                     features: this.allResultsPointsGeoJSON
                 }
-                var extent = geojsonExtent(allResultsGeoJSON);
-                var extentProjected = ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+                // var extent = geojsonExtent(allResultsGeoJSON);
+                var extent = this.getResultExtents();
+                if(extent) {
+                    var extentProjected = ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+                    this.map.map.getView().fitExtent(extentProjected, this.map.map.getSize());
+                }
+            },
+
+            getResultExtents: function () {
+                var extent = null
+                _.each(this.allResultsPointsGeoJSON, function (point) {
+                    var latlon = point.geometry.coordinates;
+                    if(!extent) {
+                         extent = {
+                             w: latlon[0],
+                             n: latlon[1],
+                             e: latlon[0],
+                             s: latlon[1]
+                         };
+                     } else {
+                         if(latlon[0] < extent.w) {
+                             extent.w = latlon[0];
+                         } else if(latlon[0] > extent.e) {
+                             extent.e = latlon[0];
+                         }
+                         
+                         if(latlon[1] > extent.n) {
+                             extent.y = latlon[1];
+                         } else if(latlon[1] < extent.s) {
+                             extent.s = latlon[1];
+                         }
+                     }
+                });
                 
-                this.map.map.getView().fitExtent(extentProjected, this.map.map.getSize());
+                return extent ? [extent.w, extent.s, extent.e, extent.n]: null;
             },
 
             selectFeatureById: function(resourceid){
