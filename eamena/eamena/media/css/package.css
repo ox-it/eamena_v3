@@ -1,0 +1,191 @@
+/*App wide CSS*/
+
+#scale-line {
+	  float: right;
+	  z-index: 900 !important;
+}
+.ol-scale-line {
+	  background: rgba(255, 255, 255,0.0);
+	  position: relative;
+	  bottom: 0px;
+	  left: 0px;
+}
+
+.ol-scale-line-inner {
+	border: 2px solid #000000;
+	border-top: none;
+	color: #000000;
+	font-size: 12px;
+
+}
+
+.wrapper {
+	height: 100%;
+	margin: 0px auto;
+	overflow: auto;
+}
+.pagination-centered img {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;	
+	
+}
+/*Landing page*/
+
+.layer_slider {
+	background-color: #585f69;
+	height:100%;
+}
+
+#layerslider {
+	width: 100%; 
+	height: 700px; 
+	margin: 0px auto;
+}
+
+/*Landing page end*/
+
+/* Report page CSS */
+
+.arches-report-section-header {
+	text-align: center;
+	margin-bottom: 10px;
+	font-size: 26px;
+	font-weight: 200;
+	font-family: 'PT Sans', sans-serif;
+}
+
+
+.arches-report-subsection h3 {
+	margin-bottom: 5px;
+	margin-top: 5px;
+	font-size: 21px;
+	font-weight: 200;
+	font-family: 'PT Sans', sans-serif;
+}
+
+.arches-report-subsection dd {
+	font-family: 'PT Sans', sans-serif;
+}
+
+
+.arches-report-resource-name {
+	margin-bottom: 0px;
+	margin-top: 5px;
+	font-size: 21px;
+	font-weight: 400;
+	color: #4765a0;
+}
+
+
+.arches-report-subsection-content {
+	margin-top: 5px;
+	padding-left: 10px;
+}
+
+
+.arches-report-subsection-title {
+	font-size: 18px;
+	font-weight: 200;
+	color: #777;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+
+.arches-report-subsection-item {
+	font-size: 16px;
+	font-weight: 200;
+	color: #4765a0;
+	margin-left: 10px;
+	line-height: 1.175;
+}
+
+
+.arches-report-subsection-item-type {
+	font-size: 14px;
+	font-weight: 200;
+	color: #888;
+}
+
+.arches-report-image-thumbnail {
+	margin-bottom: 20px;
+}
+
+.arches-report-group-spacer {
+	margin-bottom: 9px;
+}
+
+.arches-report-spacer {
+	margin-bottom: 10px;
+}
+
+.arches-report-list-spacer {
+	margin-bottom: 5px;
+}
+
+.report-breadcrumb {
+	width: 100%;
+	z-index: 1;
+}
+
+.report-body {
+	overflow-y: scroll; 
+}
+
+/* Report page section end */
+.search-block button.btn {
+	padding: 6px 10px;
+}
+ul.select2-choices.or-search .select2-search-choice.inverted {
+	background-color: lightgrey!important;
+	color: white;
+	border-color: grey !important;
+}
+
+button.btn.btn-default.dropdown-toggle.select-groupping {
+    margin-top: 2px;
+}
+button#map-filter-button.enabled {
+	background-color: #428bca;
+	border-color: #357ebd;
+}
+button#map-filter-button.inverted {
+	background-color: #B41F1F !important;
+	border: 1px solid #943434 !important;
+}
+
+button#map-filter-button .invert-btn {
+	display: none;
+}
+button#map-filter-button.enabled .invert-btn {
+	display:inline-block;
+}
+button#map-filter-button.enabled .fa-map-marker {
+	display: none;
+}
+
+button#map-filter-button .close-btn {
+	display: none;
+}
+
+button#map-filter-button.enabled .close-btn {
+	display:inline-block;
+}
+
+button.btn-default.advanced-search {
+	margin-right: 3px;
+}
+
+.select2-container {
+	width: -webkit-calc(100% - 70px);
+	width:    -moz-calc(100% - 70px);
+	width:         calc(100% - 70px);
+}
+
+.search-box-container span.dropdown.pull-right {
+	width: 70px;
+}
+
+.search-box-container .select-groupping {
+	width: 100%;
+}

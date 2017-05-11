@@ -18,7 +18,8 @@ services:
             - MAPBOX_API_KEY=foo
             - DOMAIN_NAMES=foo
             - ARCHES_PROJECT=eamena
-            - PROJECT_ROOT=/web_root/arches
+            - ARCHES_ROOT=/web_root/ENV/lib/python2.7/site-packages/arches
+            - PROJECT_ROOT=/web_root/arches/eamena
         links:
             - psql
             - elasticsearch
@@ -27,7 +28,7 @@ services:
         volumes:
             # - ./arches:/arches_eamena
             - ./eamena:/web_root/arches/eamena
-            - ./arches:/web_root/ENV/lib/python2.7/site-packages/arches
+            - ./ENV/lib/python2.7/site-packages/arches:/web_root/ENV/lib/python2.7/site-packages/arches
             
     psql:
         # image: mdillon/postgis:9.3
