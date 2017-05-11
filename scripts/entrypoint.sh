@@ -1,10 +1,13 @@
 #!/bin/bash
+# sleep infinity
 
-if [[ ! -z ${ARCHES_PROJECT} ]]; then
-	PROJECT_ROOT=${ARCHES_ROOT}/${ARCHES_PROJECT}
-else
-	PROJECT_ROOT=${ARCHES_ROOT}
-fi
+# if [[ ! -z ${ARCHES_PROJECT} ]]; then
+# 	PROJECT_ROOT=${ARCHES_ROOT}/${ARCHES_PROJECT}
+# else
+# 	PROJECT_ROOT=${ARCHES_ROOT}
+# fi
+
+
 
 cd_arches_root() {
 	cd ${ARCHES_ROOT}
@@ -15,6 +18,7 @@ cd_project_root() {
 }
 
 activate_virtualenv() {
+	echo "Activating virtual env"
 	. ${WEB_ROOT}/ENV/bin/activate
 }
 
@@ -122,6 +126,7 @@ run_django_server() {
 	echo ""
 	echo ""
 	echo "----- *** RUNNING DJANGO SERVER *** -----"
+	echo $PROJECT_ROOT
 	echo ""
 	exec python ${PROJECT_ROOT}/manage.py runserver 0.0.0.0:8000
 }
@@ -131,9 +136,11 @@ run_django_server() {
 ### Starting point ###
 
 # Run first commands from ${ARCHES_ROOT}
+
 cd_arches_root
 activate_virtualenv
 init_arches
+# sleep infinity
 
 # Install the eamena requirements
 # cat ${PROJECT_ROOT}/requirements.txt
@@ -149,7 +156,6 @@ if [[ "${DJANGO_MODE}" == "DEV" ]]; then
 fi
 
 # run_tests
-
 run_django_server
 
 # From here on, run from ${PROJECT_ROOT}
