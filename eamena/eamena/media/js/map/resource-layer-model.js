@@ -110,7 +110,13 @@ define([
             $('.map-loading').show();
 
             var clusterStyle = function(feature, resolution) {
-                var size = feature.get('features').length;
+                if(feature.get('features')) {
+                    var size = feature.get('features').length;
+                } else if (feature.get('point_count')) {
+                    var size = feature.get('point_count');
+                } else {
+                    var size = 1;
+                }
                 var mouseOver = feature.get('mouseover');
                 var text = size + ' ' + mouseOver;
 
