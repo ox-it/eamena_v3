@@ -121,9 +121,9 @@ require([
                 var maxX = extent[2];
                 var maxY = extent[3];
                 var polygon = new ol.geom.Polygon([[[minX, minY], [maxX, minY], [maxX, maxY], [minX, maxY], [minX, minY]]]);
-                this.map.map.getView().fitGeometry(polygon, this.map.map.getSize(), {maxZoom:18}); 
+                this.map.map.getView().fit(polygon, this.map.map.getSize(), {maxZoom:18}); 
             }else{
-                this.map.map.getView().fitGeometry(feature.getGeometry().getGeometries()[0], this.map.map.getSize(), {maxZoom:18});                    
+                this.map.map.getView().fit(feature.getGeometry().getGeometries()[0], this.map.map.getSize(), {maxZoom:18});                    
             }
         },
 
@@ -158,7 +158,9 @@ require([
                     })];
                 };                     
                 this.selectedFeatureLayer = new ol.layer.Vector({
-                    source: new ol.source.GeoJSON(),
+                    source: new ol.source.Vector({
+                        format: new ol.format.GeoJSON()
+                    }),
                     style: style
                 });
                 this.map.map.addLayer(this.selectedFeatureLayer);  
