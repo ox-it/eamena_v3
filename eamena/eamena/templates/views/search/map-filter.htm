@@ -4,12 +4,11 @@
 <div id="map-filter" class="" style="display: none; direction: ltr !important;">
 
     <div class="row" style="margin-left: -19px;">
-        <div class="col-xs-2 col-xs-offset-10" style="z-index: 900;">
-
+        <div class="col-xs-2 col-xs-offset-10" style="z-index: 900;">     
             <div class="row" style="margin-right: 0px; margin-top: 0px;">
                 <!-- Filter Tools -->
-                <div class="col-sm-5 col-md-4 pull-right hidden-xs" style="padding-right: 0px;">
-                    <div id="map-tools-btn" class="btn-group pull-right margin-10 margin-right-10" style="margin-top: 15px;">
+                <div class="col-sm-5 col-md-4 pull-right hidden-xs" style="padding-right: 0px; ">
+                    <div id="map-tools-btn" class="btn-group pull-right margin-10 margin-right-20" style="margin-top: 15px;margin-right:20px;">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             {% trans "Map Tools" %}
                             <i class="fa fa-chevron-down"></i>
@@ -29,8 +28,14 @@
                     </div>
                 </div>
             </div>
+                                <!-- Map: Scaleline--->
+             <div class="row" style="margin-left: -19px;">
+                <div class="col-sm-5 col-md-4 pull-right" style="">
+                    <div id="scale-line" style = "position:absolute; float: right !important;left:-600px;top:300px;"></div>        
+                </div>
+            </div>   
         </div>
-            
+
         <!-- Map -->
         <div class="col-xs-12" style="margin-top: -50px;">
             
@@ -42,7 +47,12 @@
                 </div>
             </div>
             <div id="olmap" class="fill"></div>
-
+                        <!-- Data loading mask -->
+                        <div class="col-xs-11 col-xs-offset-1 col-sm-4 col-sm-offset-7 col-md-3 spinner" style="position: absolute;left: -100px; top: 150px;">
+                            
+                            <img src="{{ STATIC_URL }}img/spinner.gif" height="50" width="50" style="margin-top: 2px;"></img>
+                           
+                        </div>
             <!-- Map: Project Info Panel -->
             <div class="container">
                 
