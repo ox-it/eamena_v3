@@ -21,6 +21,7 @@ define([
                     'editing': ko.observable(editing), 
                     'nodes': ko.observableArray(self.defaults)
                 });
+                
                 var geom = feature.getGeometry();
                 if (editing) {
                     self.removeEditedBranch();
@@ -34,6 +35,7 @@ define([
                 self.viewModel.branch_lists.push(branch);
                 self.trigger('change', 'geometrychange', branch);
                 self.trigger('geometrychange', feature, wkt.writeGeometry(geom));
+                
             };
             var object = JSON.parse($('#formdata').val());
             var datesall =[];
@@ -142,7 +144,9 @@ define([
             }
 
             var refreshFreatureOverlay = function () {
-                featureOverlay.getSource().clear();
+                featureOverlay.getSource().forEachFeature(function(feature) {
+                     featureOverlay.getSource().removeFeature(feature);
+                });
                 _.each(self.getBranchLists(), function(branch) {
                     var geom = wkt.readGeometry(getGeomNode(branch).value());
                     geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
