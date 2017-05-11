@@ -9,8 +9,9 @@ define(['jquery',
     'knockout',
     'map/resource-layer-model',
     'utils',
-    'resource-types',], 
-    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes) {
+    'resource-types',
+    'plugins/supercluster/supercluster'], 
+    function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster) {
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -76,29 +77,44 @@ define(['jquery',
                     return enabled;
                 }, this);
 
-
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
+                    //wrap feature as a backbone model and add all to a collection, for efficient retrieval by id.
+                    var featureModels = _.map(features, function (f) {
+                        return {
+                            id: f.id_,
+                            feature: f
+                        };
+                    });
+                    self.resourceFeaturesCollection = new Backbone.Collection(featureModels);
                     if (self.highlightOnLoad) {
                         _.defer(function () { self.highlightFeatures(self.highlightOnLoad.resultsarray, self.highlightOnLoad.entityIdArray) });
                     }
                     self.trigger('vectorlayerloaded', features);
                     if (!self.cancelFitBaseLayer){
+                        //Hide the non-result features for now - continually resetting this layer with all markers NOT in the results set
+                        // seriously harms performance.
+                        self.vectorLayer.setVisible(false);
                         setTimeout(function() {
-                              self.zoomToExtent(self.vectorLayer.getSource().getExtent());
-                        }, 500);         
+                            self.zoomToExtent(self.vectorLayer.getSource().getExtent());
+                        }, 500);
                     }
                 }).layer();
+                
+                
                 this.map = new MapView({
                     el: $('#map'),
-                    overlays: [this.vectorLayer]
+                    overlays: [
+                        this.vectorLayer
+                    ]
                 });
 
+                this.map.on('viewChanged', this.onViewChanged, this);
 
                 this.bufferFeatureOverlay = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features: new ol.Collection()
-                    }),
+					source: new ol.source.Vector({
+						features: new ol.Collection()
+					}),
                     style: new ol.style.Style({
                         fill: new ol.style.Fill({
                             color: 'rgba(123, 123, 255, 0.5)'
@@ -110,9 +126,10 @@ define(['jquery',
                         })
                     })
                 }); 
-                this.bufferFeatureOverlay.setMap(this.map.map);
-                this.FeatureOverlayCollection = new ol.Collection();                   
-                var style = function (feature) {
+                this.bufferFeatureOverlay.setMap(this.map.map);                   
+                
+				this.FeatureOverlayCollection = new ol.Collection();
+				var style = function (feature) {
                     return [new ol.style.Style({
                         fill: new ol.style.Fill({
                             color: 'rgba(92, 184, 92, 0)'
@@ -134,9 +151,9 @@ define(['jquery',
                     })];
                 }
                 this.drawingFeatureOverlay = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features: this.FeatureOverlayCollection
-                    }),
+					source: new ol.source.Vector({
+						features: this.FeatureOverlayCollection
+					}),
                     style: style
                 });
                 this.drawingFeatureOverlay.setMap(this.map.map);
@@ -221,7 +238,7 @@ define(['jquery',
 
                     if (feature && (feature.get('arches_marker') || feature.get('arches_cluster'))) {
                         cursorStyle = "pointer";
-                        if (feature.get('arches_marker') || feature.get('features').length === 1) {
+                        if (feature.get('arches_marker') || feature.get('point_count') === 1) {
                             if (feature.get('features')) {
                                 feature = feature.get('features')[0];
                             }
@@ -255,9 +272,9 @@ define(['jquery',
                 var clusterFeaturesCache = {};
 
                 var selectFeatureOverlay = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features: new ol.Collection()
-                    }),                    
+					source: new ol.source.Vector({
+						features: new ol.Collection()
+					}),
                     style: function(feature, resolution) {
                         var isSelectFeature = _.contains(feature.getKeys(), 'select_feature');
                         var fillOpacity = isSelectFeature ? 0.3 : 0;
@@ -361,33 +378,70 @@ define(['jquery',
                     $('#resource-info').hide();
                     if (clickFeature) {
                         var keys = clickFeature.getKeys();
-                        var isCluster = _.contains(keys, "features");
+                        var isCluster = _.contains(keys, "features") || _.contains(keys, "point_count");
                         var isArchesFeature = (_.contains(keys, 'arches_cluster') || _.contains(keys, 'arches_marker'));
-                        if (isCluster && clickFeature.get('features').length > 1) {
+                        var numFeatures = 0;
+                        if(isCluster) {
+                            if(clickFeature.get('features')) {
+                                numFeatures = clickFeature.get('features').length;
+                            } else if (clickFeature.get('point_count')) {
+                                numFeatures = clickFeature.get('point_count');
+                            }
+                        }
+                        if (isCluster && numFeatures > 1) {
                             if (currentZoom !== arches.mapDefaults.maxZoom) {
                                 var extent = clickFeature.getGeometry().getExtent();
-                                _.each(clickFeature.get("features"), function (feature) {
-                                    if (_.contains(keys, 'extent')) {
-                                        featureExtent = ol.extent.applyTransform(feature.get('extent'), ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
+                                if(clickFeature.get("features")) {
+                                    //an ol cluster - we have information about the sub-features, so zoom to their extents
+                                    _.each(clickFeature.get("features"), function (feature) {
+                                        if (_.contains(keys, 'extent')) {
+                                            featureExtent = ol.extent.applyTransform(feature.get('extent'), ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
+                                        } else {
+                                            featureExtent = feature.getGeometry().getExtent();
+                                        }
+                                        extent = ol.extent.extend(extent, featureExtent);
+                                    });
+                                    self.map.map.getView().fit(extent, (self.map.map.getSize()));
+                                } else {
+                                    //a supercluster cluster. We only know the number of points and their shared centre;
+                                    // Zoom in by two levels, and centre the map on this point
+                                    var view = self.map.map.getView();
+                                    
+                                    //get desired new zoom
+                                    var clusterId = clickFeature.get("cluster_id");
+                                    var zoom = Math.ceil(view.getZoom());
+                                    if(clusterId) {
+                                        var newZoom = this.resultsIndex.getClusterExpansionZoom(clusterId, zoom);
                                     } else {
-                                        featureExtent = feature.getGeometry().getExtent();
+                                        var newZoom = zoom + 2;
                                     }
-                                    extent = ol.extent.extend(extent, featureExtent);
-                                });
-                                self.map.map.getView().fit(extent, (self.map.map.getSize()));
+                                    
+                                    //animate not available in ol 3.1
+                                    // view.animate({
+                                    //     zoom: view.getZoom() + 2,
+                                    //     center: clickFeature.getGeometry().getCoordinates(),
+                                    //     duration: 0.5
+                                    // })
+                                    
+                                    view.setZoom(newZoom + 2);
+                                    view.setCenter(clickFeature.getGeometry().getCoordinates());
+                                }
                             } else {
                                 showClusterPopup(clickFeature);
                             }
                         } else {
                             if (isCluster) {
+                                //cluster of 1
                                 clickFeature = clickFeature.get('features')[0];
                                 keys = clickFeature.getKeys();
                             }
                             if (!_.contains(keys, 'select_feature')) {
+                                //individual feature
                                 if (isArchesFeature) {
                                     if (archesFeaturesCache[clickFeature.getId()] && archesFeaturesCache[clickFeature.getId()] !== 'loading'){
                                         showFeaturePopup(archesFeaturesCache[clickFeature.getId()]);
                                     } else {
+                                        $('.map-loading').show();
                                         archesFeaturesCache[clickFeature.getId()] = 'loading';
                                         $.ajax({
                                             url: arches.urls.map_markers + 'all?entityid=' + clickFeature.getId(),
@@ -400,6 +454,7 @@ define(['jquery',
                                                 feature.set('entityid', feature.getId());
 
                                                 archesFeaturesCache[clickFeature.getId()] = feature;
+                                                $('.map-loading').hide();
                                                 showFeaturePopup(feature);
                                             }
                                         });
@@ -408,7 +463,7 @@ define(['jquery',
                             }
                         }
                     }
-                });
+                }.bind(this));
 
                 this.resultLayer = new ResourceLayerModel({entitytypeid: null, vectorColor: arches.resourceMarker.defaultColor}).layer();
                 this.map.map.addLayer(this.resultLayer);
@@ -446,8 +501,8 @@ define(['jquery',
 
                 this.currentPageLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        format: new ol.format.GeoJSON()
-                    }),
+						format: new ol.format.GeoJSON()
+					}),
                     style: function(feature) {
                         if(feature.get('highlight')) {
                             return highlightStyle;
@@ -469,7 +524,6 @@ define(['jquery',
                     var maxX = extent[2];
                     var maxY = extent[3];
                     var polygon = new ol.geom.Polygon([[[minX, minY], [maxX, minY], [maxX, maxY], [minX, maxY], [minX, minY]]]);
-                    //polygon.transform('EPSG:3857', 'EPSG:4326');
                     this.map.map.getView().fit(polygon, this.map.map.getSize(), {maxZoom:16}); 
                 }else{
                     this.map.map.getView().fit(feature.getGeometry().getGeometries()[0], this.map.map.getSize(), {maxZoom:16});                    
@@ -478,76 +532,103 @@ define(['jquery',
             
             zoomToExtent: function(extent){
                 var size = this.map.map.getSize();
-                var view = this.map.map.getView();
+                var view = this.map.map.getView()
                 view.fit(
                     extent,
                     size
                 );
             },
 
-            highlightFeatures: function(resultsarray, entityIdArray){
-                var resultFeatures = [];
-                var currentPageFeatures = [];
-                var nonResultFeatures = [];
-                var self = this;
+            highlightFeatures: function (resultsarray, entityIdArray) {
                 var sameResultSet = (entityIdArray[0] === '_none');
-
+                
+                //takes an openlayers feature object with mercator projection coordinates, and creates a geojson object with lat/lng coordinates.
+                // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
+                // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
+                var mercatorToLatLng = function (olFeature) {
+                    var coordsOl = olFeature.getGeometry().getCoordinates();
+                    //unproject these coords to get lat/lng
+                    var latlon = ol.proj.transform(coordsOl, 'EPSG:3857', 'EPSG:4326');
+                    return {
+                        geometry: {
+                            type: "Point",
+                            coordinates: latlon
+                        },
+                        id: olFeature.id_,
+                        type: 'Feature',
+                        properties: null
+                    };
+                }
+                
                 if (this.resourceFeatures) {
-                    if (sameResultSet) {
-                        currentPageFeatures = this.currentPageLayer.getSource().getFeatures();
-                        self.currentPageLayer.getSource().clear();
-                        self.resultLayer.vectorSource.addFeatures(currentPageFeatures);
-                        currentPageFeatures = [];
-                        _.each(resultsarray.results.hits.hits, function(pageResult) {
-                            var feature = self.resultLayer.vectorSource.getFeatureById(pageResult['_id']);
-                            if (feature) {
-                                self.resultLayer.vectorSource.removeFeature(feature);
-                                if (!feature.get('arches_marker')) {
-                                    feature.set('arches_marker', true);
-                                }
-                                currentPageFeatures.push(feature);
-                            }
-                        });
-                        self.currentPageLayer.getSource().addFeatures(currentPageFeatures);
+                    if (entityIdArray[0] === '_all') {
+                        //all results, just use full array
+                        this.allResultsPoints = this.resourceFeaturesCollection.map(function (model) {
+                            return model.get('feature');
+                        })
+                        this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
                     } else {
-                        self.vectorLayer.vectorSource.clear();
-                        this.resultLayer.vectorSource.clear();
-                        this.currentPageLayer.getSource().clear();
-
-                        if (entityIdArray[0] === '_all') {
-                             _.each(this.resourceFeatures, function (feature) {
-                                if (_.find(resultsarray.results.hits.hits, function(hit){ return hit['_id'] === feature.getId() })) {
-                                    if (!feature.get('arches_marker')) {
-                                        feature.set('arches_marker', true);
-                                    }
-                                    currentPageFeatures.push(feature);
-                                } else {
-                                    resultFeatures.push(feature);
-                                }
-                            });
+                        if(sameResultSet) {
+                            //new page of existing results 
                         } else {
-                            _.each(this.resourceFeatures, function (feature) {
-                                if (_.find(resultsarray.results.hits.hits, function(hit){ return hit['_id'] === feature.getId() })) {
-                                    if (!feature.get('arches_marker')) {
-                                        feature.set('arches_marker', true);
-                                    }
-                                    currentPageFeatures.push(feature);
-                                } else if (entityIdArray.indexOf(feature.getId()) > 0) {
-                                    resultFeatures.push(feature);
+                            var unfoundFeatures = 0;
+                            //brand new result set
+                            this.allResultsPoints = _.map(entityIdArray, function (id) {
+                                var featureModel = this.resourceFeaturesCollection.get(id);
+                                if(featureModel) {
+                                    var feature = featureModel.get('feature');
+                                    return feature;
                                 } else {
-                                    nonResultFeatures.push(feature);
+                                    unfoundFeatures++;
+                                    return null;
                                 }
-                            });
-                        }
-                        self.currentPageLayer.getSource().addFeatures(currentPageFeatures);
-                        self.resultLayer.vectorSource.addFeatures(resultFeatures);
-                        self.vectorLayer.vectorSource.addFeatures(nonResultFeatures);
-                        if (self.drawingFeatureOverlay.getSource().getFeatures().length === 0 && this.query.filter.geometry.type() !== 'bbox') {
-                            self.zoomToResults();
+                            }.bind(this));
                             
+                            //filter out null entries
+                            this.allResultsPoints = _.filter(this.allResultsPoints, function (res) {
+                                return !!res;
+                            });
+                            console.warn("couldn't find " + unfoundFeatures + " features. Presume these to have no geometry");
+                            this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
                         }
                     }
-                    self.previousEntityIdArray = entityIdArray;
+
+                    var currentPageIDs = _.map(resultsarray.results.hits.hits, function (hit) {
+                        return hit['_id'];
+                    });
+                    var partitionedPoints = _.partition(this.allResultsPoints, function (point) {
+                        return currentPageIDs.indexOf(point.id_) > -1;
+                    });
+                    
+                    this.currentPageResults = partitionedPoints[0];
+                    this.notCurrentPageResults = partitionedPoints[1];
+                    _.each(this.currentPageResults, function (feature) {
+                        if (!feature.get('arches_marker')) {
+                            feature.set('arches_marker', true);
+                        }
+                    });
+                    this.notCurrentPageResultsPointsGeoJSON = _.map(this.notCurrentPageResults, mercatorToLatLng);
+
+                    //fill cluster index with all results not on the current page
+                    this.resultsIndex = supercluster({
+                        radius: 100 ,
+                        maxZoom: 16
+                    });
+                    this.resultsIndex.load(this.notCurrentPageResultsPointsGeoJSON);
+                    
+                    //plot current page results
+                    this.currentPageLayer.getSource().clear();
+                    this.currentPageLayer.getSource().addFeatures(this.currentPageResults);
+                    
+                    
+                    console.log('rebuilt supercluster index');
+                    
+                    if (this.drawingFeatureOverlay.getSource().getFeatures().length === 0 && this.query.filter.geometry.type() !== 'bbox') {
+                        this.zoomToResults();
+                    }
+                    
+                    this.onViewChanged();
+                    $('.spinner').hide();
                 } else {
                     this.highlightOnLoad = {
                         resultsarray: resultsarray,
@@ -555,16 +636,82 @@ define(['jquery',
                     };
                 }
             },
+            
+            onViewChanged: function () {
+                if(!this.resultsIndex) {
+                    return;
+                }
+                var extentOl = this.map.map.getView().calculateExtent(this.map.map.getSize());
+                var extentLatLng = ol.proj.transformExtent(extentOl, 'EPSG:3857', 'EPSG:4326');
+
+                var zoom = Math.ceil(this.getMapZoom());
+                
+                if(!zoom) { return; }
+                
+                
+                //clear the clusters layer
+                var clustersSource = this.resultLayer.getSource()
+                clustersSource.clear();
+                
+                var clusters = this.resultsIndex.getClusters(extentLatLng, zoom);
+                
+                //convert supercluster GeoJSON features to ol features
+                var clusterFeatures = _.map(clusters, function (cluster) {
+                    //project to map coordinates
+                    var coords = ol.proj.transform(cluster.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
+                    var f = new ol.Feature(new ol.geom.Point(
+                        coords
+                    ));
+                    f.setProperties(cluster.properties);
+                    if(cluster.id) {
+                        f.setId(cluster.id);
+                    }
+                    return f;
+                }.bind(this));
+                
+                clustersSource.addFeatures(clusterFeatures);
+                
+            },
 
             zoomToResults: function () {
-                
-                var extent = ol.extent.extend(this.currentPageLayer.getSource().getExtent(), this.resultLayer.vectorSource.getExtent());
-                if (extent.filter(isFinite).length == 4) {
-                    this.map.map.getView().fit(extent, this.map.map.getSize());
-                    $('.spinner').hide();             
-                }else{
-                    $('.spinner').show();
+                var allResultsGeoJSON = {
+                    type: "FeatureCollection",
+                    features: this.allResultsPointsGeoJSON
                 }
+                var extent = this.getResultExtents();
+                if(extent) {
+                    var extentProjected = ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+                    this.map.map.getView().fit(extentProjected, this.map.map.getSize());
+                }
+            },
+
+            getResultExtents: function () {
+                var extent = null
+                _.each(this.allResultsPointsGeoJSON, function (point) {
+                    var latlon = point.geometry.coordinates;
+                    if(!extent) {
+                         extent = {
+                             w: latlon[0],
+                             n: latlon[1],
+                             e: latlon[0],
+                             s: latlon[1]
+                         };
+                     } else {
+                         if(latlon[0] < extent.w) {
+                             extent.w = latlon[0];
+                         } else if(latlon[0] > extent.e) {
+                             extent.e = latlon[0];
+                         }
+                         
+                         if(latlon[1] > extent.n) {
+                             extent.y = latlon[1];
+                         } else if(latlon[1] < extent.s) {
+                             extent.s = latlon[1];
+                         }
+                     }
+                });
+                
+                return extent ? [extent.w, extent.s, extent.e, extent.n]: null;
             },
 
             selectFeatureById: function(resourceid){
@@ -586,9 +733,14 @@ define(['jquery',
                 var extent = ol.proj.transformExtent(this.map.map.getView().calculateExtent(this.map.map.getSize()), 'EPSG:3857', 'EPSG:4326');
                 return extent;
             },
+            
+            getMapZoom: function () {
+                return this.map.map.getView().getZoom();
+            },
 
             onMoveEnd: function(evt) {
                 this.query.filter.geometry.coordinates(this.getMapExtent());
+                this.onViewChanged(this.getMapExtent());
             },
 
             togglefilter: function(evt){
@@ -622,6 +774,7 @@ define(['jquery',
 
             changeDrawingTool: function(map, tooltype){
                 this.disableDrawingTools();
+
                 var modifyTool = new ol.interaction.Modify({
                     features: this.FeatureOverlayCollection,
                     // the SHIFT key must be pressed to delete vertices, so
@@ -629,10 +782,11 @@ define(['jquery',
                     // of existing vertices
                     deleteCondition: function(event) {
                         return ol.events.condition.shiftKeyOnly(event) &&
-                        ol.events.condition.singleClick(event);
+                                ol.events.condition.singleClick(event);
                     }
                 });
-                map.addInteraction(modifyTool);
+                map.addInteraction(modifyTool);                
+
                 this.drawingtool = new ol.interaction.Draw({
                     features: this.FeatureOverlayCollection,
                     type: tooltype
@@ -704,13 +858,13 @@ define(['jquery',
                         },
                         success: function(results){
                             var source = new ol.source.Vector({
-                                features: (new ol.format.GeoJSON()).readFeatures({
-                                    type: 'FeatureCollection', 
-                                    features: [{
-                                        type:'Feature',
-                                        geometry: JSON.parse(results)}]
-                                })
-                            });
+								features: (new ol.format.GeoJSON()).readFeatures({
+									type: 'FeatureCollection',
+									features: [{
+										type:'Feature',
+										geometry: JSON.parse(results)}]
+									})
+							});
                             var feature = source.getFeatures()[0];
                             
                             feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
