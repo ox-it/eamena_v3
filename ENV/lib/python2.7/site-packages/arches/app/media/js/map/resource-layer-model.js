@@ -4,8 +4,9 @@ define([
     'underscore',
     'arches',
     'map/layer-model',
-    'utils'
-], function($, ol, _, arches, LayerModel, utils) {
+    'utils',
+    'map/culledCluster'
+], function($, ol, _, arches, LayerModel, utils, clusters2) {
     return function(config, featureCallback) {
         config = _.extend({
             entitytypeid: 'all',
@@ -85,7 +86,7 @@ define([
                 }
             });
 
-            var clusterSource = new ol.source.Cluster({
+            var clusterSource = new ol.source.CulledCluster({
                 distance: 45,
                 source: source
             });
