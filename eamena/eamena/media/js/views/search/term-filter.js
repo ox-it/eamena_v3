@@ -172,7 +172,7 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
         updateTerms: function(terms){
             this.searchbox.select2('data', terms);
 
-            $('.resource_search_widget').find('.select2-search-choice').each(function(i, el) {
+            $('.resource_search_widget'+this.index).find('.select2-search-choice').each(function(i, el) {
                 if ($(el).data('select2-data').type === 'filter-flag') {
                     $(el).addClass('filter-flag');
                 }
@@ -202,7 +202,7 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
 
                 this.searchbox.select2('data', results).trigger('change');
 
-                $('.resource_search_widget').find('.select2-search-choice').each(function(i, el) {
+                $('.resource_search_widget'+this.index).find('.select2-search-choice').each(function(i, el) {
                     if ($(el).data('select2-data').inverted) {
                         $(el).addClass('inverted');
                     }
