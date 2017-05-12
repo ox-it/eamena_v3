@@ -26,6 +26,9 @@ RUN . /web_root/ENV/bin/activate
 
 ADD ./eamena/requirements.txt /web_root/arches/eamena/requirements.txt
 RUN /web_root/ENV/bin/pip install -r /web_root/arches/eamena/requirements.txt
+
+ADD ./EAMENA_Data.json /web_root/EAMENA_Data.json
+
 # 
 # ADD ./arches /web_root/ENV/lib/python2.7/site-packages/arches
 
