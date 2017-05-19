@@ -27,6 +27,17 @@ define([
                     self.removeEditedBranch();
                 }
                 geom.transform(ol.proj.get('EPSG:3857'), ol.proj.get('EPSG:4326'));
+                if (geom.getLayout() === 'XYZ'){ //Dragged&dropped KMLs have XYZ layouts which are read by default by the ol WKT parser. This routine pops the Z values out and flattens the layout to XY
+                    var FlatCoordinates = [];
+                    FlatCoordinates[0] = [];
+                    _.each(geom.getCoordinates()[0], function(coordinate_set){
+                            if (coordinate_set.length === 3){
+                                coordinate_set.pop();
+                                FlatCoordinates[0].push(coordinate_set);
+                            }
+                    });
+                    geom.setCoordinates(FlatCoordinates, 'XY');
+                }
                 _.each(branch.nodes(), function(node) {
                     if (node.entitytypeid() === self.dataKey) {
                         node.value(wkt.writeGeometry(geom));
