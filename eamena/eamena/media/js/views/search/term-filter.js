@@ -42,6 +42,7 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
                     data: function (term, page) {
                         return {
                             q: term, // search term
+                            group_root_node: self.termFilterGroup,
                             page_limit: 30
                         };
                     },
