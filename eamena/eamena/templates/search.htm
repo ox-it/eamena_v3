@@ -20,14 +20,25 @@
                 <div id="term-select-template" class="search-box-container hidden">
                     <input class="select2 arches-select2 term-search" name="" placeholder="{% trans "Search for a resource..." %}" value="">
                     <span class="dropdown pull-right">
-                        <button class="btn btn-default dropdown-toggle select-groupping" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="group-value">And</span>
+                        <button class="btn btn-default dropdown-toggle select-term-groupping" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="term-group-value">None</span>
                             <i class="fa fa-chevron-down"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdown-grouped">
-                                <li><a href="#" class="search-grouped search-and">And</a></li>
-                                <li><a href="#" class="search-grouped search-or">Or</a></li>
-                            </ul>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown-grouped">
+                            <li><a href="#" class="search-grouped" data-value='None'>None</a></li>
+                            <li><a href="#" class="search-grouped" data-value='CULTURAL_PERIOD.E55'>Cultural period</a></li>
+                            <li><a href="#" class="search-grouped" data-value='SITE_FUNCTION_TYPE.E55'>Site function</a></li>
+                        </ul>
+                    </span>
+                    <span class="dropdown pull-right">
+                        <button class="btn btn-default dropdown-toggle select-term-and-or" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="term-and-or-value">And</span>
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown-grouped">
+                            <li><a href="#" class="search-term-and-or search-term-and">And</a></li>
+                            <li><a href="#" class="search-term-and-or search-term-or">Or</a></li>
+                        </ul>
                     </span>
                 </div>
                 <div class="form-group term-search-boxes">
