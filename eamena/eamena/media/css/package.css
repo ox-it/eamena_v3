@@ -177,9 +177,9 @@ button.btn-default.advanced-search {
 }
 
 .select2-container {
-	width: -webkit-calc(100% - 200px);
-	width:    -moz-calc(100% - 200px);
-	width:         calc(100% - 200px);
+	width: -webkit-calc(100% - 315px);
+	width:    -moz-calc(100% - 315px);
+	width:         calc(100% - 315px);
 }
 
 .search-box-container span.dropdown.pull-right.term-and-or {
@@ -188,7 +188,14 @@ button.btn-default.advanced-search {
 .search-box-container span.dropdown.pull-right.term-group {
 	width: 130px;
 }
-
+.time-filter-button {
+	width: 110px;
+}
 .search-box-container .select-groupping {
 	width: 100%;
+}
+
+.global-and-or-container {
+	width: 100%;
+	display: inline-block;
 }
