@@ -41,7 +41,9 @@ def home_page(request):
             'active_page': 'Search',
             'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
             'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
-            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data())
+            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
+            'test': 'mamola',
+            'group_options': settings.SEARCH_GROUP_ROOTS
         }, 
         context_instance=RequestContext(request))
 
