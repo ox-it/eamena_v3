@@ -25,9 +25,10 @@
                             <i class="fa fa-chevron-down"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdown-grouped">
-                            <li><a href="#" class="search-grouped" data-value='None'>None</a></li>
-                            <li><a href="#" class="search-grouped" data-value='CULTURAL_PERIOD.E55'>Cultural period</a></li>
-                            <li><a href="#" class="search-grouped" data-value='SITE_FUNCTION_TYPE.E55'>Site function</a></li>
+                            <li><a href="#" class="search-grouped" data-value='None' id="{{ test }}">None</a></li>
+                            {% for option in group_options %}
+                                <li><a href="#" class="search-grouped" data-value='{{option.0}}'>{{option.1}}</a></li>
+                            {% endfor %}
                         </ul>
                     </span>
                     <span class="dropdown pull-right term-and-or">
