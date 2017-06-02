@@ -177,13 +177,16 @@ button.btn-default.advanced-search {
 }
 
 .select2-container {
-	width: -webkit-calc(100% - 70px);
-	width:    -moz-calc(100% - 70px);
-	width:         calc(100% - 70px);
+	width: -webkit-calc(100% - 200px);
+	width:    -moz-calc(100% - 200px);
+	width:         calc(100% - 200px);
 }
 
-.search-box-container span.dropdown.pull-right {
+.search-box-container span.dropdown.pull-right.term-and-or {
 	width: 70px;
+}
+.search-box-container span.dropdown.pull-right.term-group {
+	width: 130px;
 }
 
 .search-box-container .select-groupping {
