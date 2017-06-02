@@ -16,6 +16,7 @@ define(['jquery',
         return Backbone.View.extend({
 
             initialize: function(options) { 
+                this.index = options.index;
                 var self = this;
                 var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
                 
@@ -49,7 +50,7 @@ define(['jquery',
 
                 this.expanded = ko.observable(false);
                 this.expanded.subscribe(function(status){
-                    self.toggleFilterSection($('#time-filter'), status)
+                    self.toggleFilterSection($('.resource_time_filter_widget'+self.index+'#time-filter'), status)
                 });
 
                 this.query = {
@@ -95,7 +96,8 @@ define(['jquery',
                 }, this);
 
                 this.time_filter_branchlist = new BranchList({
-                    el: $('#time-filter')[0],
+                    // el: $('#time-filter')[0],
+                    el: $.find('.resource_time_filter_widget'+self.index+'#time-filter')[0],
                     data: this.viewModel,
                     dataKey: 'date_operators',
                     validateBranch: function (nodes) {
