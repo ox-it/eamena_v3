@@ -35,7 +35,7 @@ define(['jquery',
                     return ret
                 }
 
-                this.slider = new Slider('input.slider', {});
+                this.slider = new Slider('.resource_time_filter_widget'+self.index+' input.slider', {});
                 this.slider.on('slideStop', function(evt){
                     // if ther user has the slider at it's min and max, then essentially they don't want to filter by year
                     if(self.slider.getAttribute('min') === evt.value[0] && self.slider.getAttribute('max') === evt.value[1]){
