@@ -19,9 +19,6 @@
             <div class="col-xs-12 col-md-8 col-lg-9">
                 <div id="term-select-template" class="search-box-container hidden">
                     <input class="select2 arches-select2 term-search" name="" placeholder="{% trans "Search for a resource..." %}" value="">
-                    <button class="btn btn-success btn time-filter-button" style=""> 
-                        <i class="fa fa-clock-o" style="padding-right:8px;"></i>{% trans "Time Filter" %}
-                    </button>
                     <span class="dropdown pull-right term-group">
                         <button class="btn btn-default dropdown-toggle select-term-groupping" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <span class="term-group-value">No group</span>
@@ -44,6 +41,9 @@
                             <li><a href="#" class="search-term-and-or search-term-or" data-value='or'>Or</a></li>
                         </ul>
                     </span>
+                    <button class="btn btn-success btn time-filter-button pull-right" style=""> 
+                        <i class="fa fa-clock-o" style="padding-right:8px;"></i>{% trans "Time Filter" %}
+                    </button>
                 </div>
                 <div class="form-group term-search-boxes">
                     {% if 'edit' in user.user_groups %}
