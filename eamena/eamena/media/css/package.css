@@ -135,6 +135,7 @@
 /* Report page section end */
 .search-block button.btn {
 	padding: 6px 10px;
+	margin: 2px 0;
 }
 ul.select2-choices.or-search .select2-search-choice.inverted {
 	background-color: lightgrey!important;
@@ -144,6 +145,11 @@ ul.select2-choices.or-search .select2-search-choice.inverted {
 
 button.btn.btn-default.dropdown-toggle.select-groupping {
     margin-top: 2px;
+}
+
+button.btn.btn-default.dropdown-toggle {
+	min-width: 98%;
+	text-align: right;
 }
 button#map-filter-button.enabled {
 	background-color: #428bca;
