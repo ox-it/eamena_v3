@@ -116,39 +116,39 @@ def build_search_results_dsl(request):
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
 
-    if 'filters' in temporal_filters:
-        for temporal_filter in temporal_filters['filters']:
-            date_type = ''
-            date = ''
-            date_operator = ''
-            for node in temporal_filter['nodes']:
-                if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
-                    date_operator = node['value']
-                elif node['entitytypeid'] == 'date':
-                    date = node['value']
-                else:
-                    date_type = node['value']
-
-
-            date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
-
-            if date_operator == '1': # equals query
-                range = Range(field='dates.value', gte=date_value, lte=date_value)
-            elif date_operator == '0': # greater than query 
-                range = Range(field='dates.value', lt=date_value)
-            elif date_operator == '2': # less than query
-                range = Range(field='dates.value', gt=date_value)
-            
-            nested = Nested(path='dates', query=range)
-            if 'inverted' not in temporal_filters:
-                temporal_filters['inverted'] = False
-
-            if temporal_filters['inverted']:
-                boolfilter.must_not(nested)
-            else:
-                boolfilter.must(nested)
-
-            query.add_filter(boolfilter)
+    # if 'filters' in temporal_filters:
+    #     for temporal_filter in temporal_filters['filters']:
+    #         date_type = ''
+    #         date = ''
+    #         date_operator = ''
+    #         for node in temporal_filter['nodes']:
+    #             if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
+    #                 date_operator = node['value']
+    #             elif node['entitytypeid'] == 'date':
+    #                 date = node['value']
+    #             else:
+    #                 date_type = node['value']
+    # 
+    # 
+    #         date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
+    # 
+    #         if date_operator == '1': # equals query
+    #             range = Range(field='dates.value', gte=date_value, lte=date_value)
+    #         elif date_operator == '0': # greater than query 
+    #             range = Range(field='dates.value', lt=date_value)
+    #         elif date_operator == '2': # less than query
+    #             range = Range(field='dates.value', gt=date_value)
+    #         
+    #         nested = Nested(path='dates', query=range)
+    #         if 'inverted' not in temporal_filters:
+    #             temporal_filters['inverted'] = False
+    # 
+    #         if temporal_filters['inverted']:
+    #             boolfilter.must_not(nested)
+    #         else:
+    #             boolfilter.must(nested)
+    # 
+    #         query.add_filter(boolfilter)
     #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
 
