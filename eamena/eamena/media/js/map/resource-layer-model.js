@@ -69,41 +69,43 @@ define([
             var layerConfig = {
                 format: new ol.format.GeoJSON()
             };
-
-            if (config.entitytypeid !== null) {
-                layerConfig.url = arches.urls.map_markers + config.entitytypeid;
-            }
-
+            
             var geojson_array;
             var spatial_index = supercluster({
                 radius: 100,
                 maxZoom: 16
             })
+
+            if (config.entitytypeid !== null) {
+                layerConfig.url = arches.urls.map_markers + config.entitytypeid;
+                
+                //fetch the raw geojson data and act on it
+                $.ajax({
+                    url: layerConfig.url,
+                    success: function (result) {
+                        console.log('fetched geojson features');
+                        
+                        //load features into supercluster index
+                        spatial_index.load(result.features)
+                        hasData = true;
+                        
+                        //trigger an initial clustering pass
+                        if(initialExtent && initialZoom) {
+                            clusterLayer.updateClusters(initialExtent, initialZoom)
+                        }
+                        
+                        if(typeof(featureCallback) === 'function') {
+                            featureCallback(result.features);
+                            geojson_array = result;
+                        }
+                        $('.map-loading').hide();
+                    },
+                    error: function (jqxhr, status, err) {
+                        console.error('error fetching geojson features', err);
+                    }
+                })
+            }
             
-            $.ajax({
-                url: layerConfig.url,
-                success: function (result) {
-                    console.log('fetched geojson features');
-                    
-                    //load features into supercluster index
-                    spatial_index.load(result.features)
-                    hasData = true;
-                    
-                    //trigger an initial clustering pass
-                    if(initialExtent && initialZoom) {
-                        clusterLayer.updateClusters(initialExtent, initialZoom)
-                    }
-                    
-                    if(typeof(featureCallback) === 'function') {
-                        featureCallback(result);
-                        geojson_array = result;
-                    }
-                    $('.map-loading').hide();
-                },
-                error: function (jqxhr, status, err) {
-                    console.error('error fetching geojson features', err);
-                }
-            })
 
             $('.map-loading').show();
 
