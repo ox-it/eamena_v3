@@ -17,6 +17,7 @@ define([
             var rgb = utils.hexToRgb(config.vectorColor);
             var zIndex = 0;
             var styleCache = {};
+            var hasData = false;
 
             var style = function(feature, resolution) {
                 var mouseOver = feature.get('mouseover');
@@ -83,7 +84,15 @@ define([
                 url: layerConfig.url,
                 success: function (result) {
                     console.log('fetched geojson features');
+                    
+                    //load features into supercluster index
                     spatial_index.load(result.features)
+                    hasData = true;
+                    
+                    //trigger an initial clustering pass
+                    if(initialExtent && initialZoom) {
+                        clusterLayer.updateClusters(initialExtent, initialZoom)
+                    }
                     
                     if(typeof(featureCallback) === 'function') {
                         featureCallback(result);
@@ -158,25 +167,35 @@ define([
 
             clusterLayer.geojson_data = geojson_array;
 
+            initialExtent = null;
+            initialZoom = null;
+
             clusterLayer.updateClusters = function (extentOl, zoom) {
                 var extentLatLng = ol.proj.transformExtent(extentOl, 'EPSG:3857', 'EPSG:4326');
-                var clusters = spatial_index.getClusters(extentLatLng, zoom)
+                if(hasData) {
+                    var clusters = spatial_index.getClusters(extentLatLng, zoom)
+                    
+                    var clusterFeatures = _.map(clusters, function (cluster) {
+                        //project to map coordinates
+                        var coords = ol.proj.transform(cluster.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
+                        var f = new ol.Feature(new ol.geom.Point(
+                            coords
+                        ));
+                        f.setProperties(cluster.properties);
+                        if(cluster.id) {
+                            f.setId(cluster.id);
+                        }
+                        return f;
+                    }.bind(this));
+                    
+                    clusterLayer.getSource().clear();
+                    clusterLayer.getSource().addFeatures(clusterFeatures);
+                } else {
+                    // store the zoom and extent to cluster when the data has loaded
+                    initialExtent = extentOl;
+                    initialZoom = zoom;
+                }
                 
-                var clusterFeatures = _.map(clusters, function (cluster) {
-                    //project to map coordinates
-                    var coords = ol.proj.transform(cluster.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
-                    var f = new ol.Feature(new ol.geom.Point(
-                        coords
-                    ));
-                    f.setProperties(cluster.properties);
-                    if(cluster.id) {
-                        f.setId(cluster.id);
-                    }
-                    return f;
-                }.bind(this));
-                
-                clusterLayer.getSource().clear();
-                clusterLayer.getSource().addFeatures(clusterFeatures);
             }
 
             // clusterLayer.vectorSource = source;
