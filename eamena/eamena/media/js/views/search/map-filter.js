@@ -423,7 +423,7 @@ define(['jquery',
                                     //     duration: 0.5
                                     // })
                                     
-                                    view.setZoom(newZoom + 2);
+                                    view.setZoom(newZoom);
                                     view.setCenter(clickFeature.getGeometry().getCoordinates());
                                 }
                             } else {
@@ -650,13 +650,13 @@ define(['jquery',
                 
                 
                 //clear the clusters layer
-                var clustersSource = this.resultLayer.getSource()
-                clustersSource.clear();
+                var resultsClustersSource = this.resultLayer.getSource()
+                resultsClustersSource.clear();
                 
-                var clusters = this.resultsIndex.getClusters(extentLatLng, zoom);
+                var resultsClusters = this.resultsIndex.getClusters(extentLatLng, zoom);
                 
                 //convert supercluster GeoJSON features to ol features
-                var clusterFeatures = _.map(clusters, function (cluster) {
+                var resultsClusterFeatures = _.map(resultsClusters, function (cluster) {
                     //project to map coordinates
                     var coords = ol.proj.transform(cluster.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
                     var f = new ol.Feature(new ol.geom.Point(
@@ -669,7 +669,7 @@ define(['jquery',
                     return f;
                 }.bind(this));
                 
-                clustersSource.addFeatures(clusterFeatures);
+                resultsClustersSource.addFeatures(resultsClusterFeatures);
                 
             },
 
