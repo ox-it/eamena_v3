@@ -423,7 +423,7 @@ define(['jquery',
                                     //     duration: 0.5
                                     // })
                                     
-                                    view.setZoom(newZoom);
+                                    view.setZoom(newZoom + 2);
                                     view.setCenter(clickFeature.getGeometry().getCoordinates());
                                 }
                             } else {
@@ -542,23 +542,26 @@ define(['jquery',
             highlightFeatures: function (resultsarray, entityIdArray) {
                 var sameResultSet = (entityIdArray[0] === '_none');
                 
-                //takes an openlayers feature object with mercator projection coordinates, and creates a geojson object with lat/lng coordinates.
-                // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
-                // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
-                var mercatorToLatLng = function (olFeature) {
-                    var coordsOl = olFeature.getGeometry().getCoordinates();
-                    //unproject these coords to get lat/lng
-                    var latlon = ol.proj.transform(coordsOl, 'EPSG:3857', 'EPSG:4326');
-                    return {
-                        geometry: {
-                            type: "Point",
-                            coordinates: latlon
-                        },
-                        id: olFeature.id_,
-                        type: 'Feature',
-                        properties: null
-                    };
-                }
+                // No longer needed - data is stored as raw geojson in the first instance
+                //
+                // //takes an openlayers feature object with mercator projection coordinates, and creates a geojson object with lat/lng coordinates.
+                // // Note: this is a little daft, since they arrive from the backend as GeoJSON, and are then converted to ol.feature by openlayers.
+                // // It would be faster to fetch the GeoJSON then pass it to here before importing to openlayers, but that would take more refactoring.
+                // var mercatorToLatLng = function (olFeature) {
+                //     var coordsOl = olFeature.getGeometry().getCoordinates();
+                //     //unproject these coords to get lat/lng
+                //     var latlon = ol.proj.transform(coordsOl, 'EPSG:3857', 'EPSG:4326');
+                //     return {
+                //         geometry: {
+                //             type: "Point",
+                //             coordinates: latlon
+                //         },
+                //         id: olFeature.id_,
+                //         type: 'Feature',
+                //         properties: null
+                //     };
+                // }
+                
                 
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
@@ -566,7 +569,8 @@ define(['jquery',
                         this.allResultsPoints = this.resourceFeaturesCollection.map(function (model) {
                             return model.get('feature');
                         })
-                        this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
+                        // this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
+                        this.allResultsPointsGeoJSON = this.allResultsPoints;
                     } else {
                         if(sameResultSet) {
                             //new page of existing results 
@@ -589,7 +593,8 @@ define(['jquery',
                                 return !!res;
                             });
                             console.warn("couldn't find " + unfoundFeatures + " features. Presume these to have no geometry");
-                            this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
+                            // this.allResultsPointsGeoJSON = _.map(this.allResultsPoints, mercatorToLatLng)
+                            this.allResultsPointsGeoJSON = this.allResultsPoints
                         }
                     }
 
@@ -597,17 +602,18 @@ define(['jquery',
                         return hit['_id'];
                     });
                     var partitionedPoints = _.partition(this.allResultsPoints, function (point) {
-                        return currentPageIDs.indexOf(point.id_) > -1;
+                        return currentPageIDs.indexOf(point.id) > -1;
                     });
                     
                     this.currentPageResults = partitionedPoints[0];
                     this.notCurrentPageResults = partitionedPoints[1];
-                    _.each(this.currentPageResults, function (feature) {
-                        if (!feature.get('arches_marker')) {
-                            feature.set('arches_marker', true);
-                        }
-                    });
-                    this.notCurrentPageResultsPointsGeoJSON = _.map(this.notCurrentPageResults, mercatorToLatLng);
+                    // _.each(this.currentPageResults, function (feature) {
+                        // if (!feature.get('arches_marker')) {
+                        //     feature.set('arches_marker', true);
+                        // }
+                    // });
+                    // this.notCurrentPageResultsPointsGeoJSON = _.map(this.notCurrentPageResults, mercatorToLatLng);
+                    this.notCurrentPageResultsPointsGeoJSON = this.notCurrentPageResults;
 
                     //fill cluster index with all results not on the current page
                     this.resultsIndex = supercluster({
@@ -618,8 +624,20 @@ define(['jquery',
                     
                     //plot current page results
                     this.currentPageLayer.getSource().clear();
-                    this.currentPageLayer.getSource().addFeatures(this.currentPageResults);
+                    // this.currentPageLayer.getSource().addFeatures(this.currentPageResults);
                     
+                    var currentPageOlFeatures = [];
+                    _.each(this.currentPageResults, function (geoJsonFeature) {
+                        //project to map coordinates
+                        var coords = ol.proj.transform(geoJsonFeature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857');
+                        var f = new ol.Feature(new ol.geom.Point(
+                            coords
+                        ));
+                        f.setProperties({arches_marker: true});
+                        f.setId(geoJsonFeature.id);
+                        currentPageOlFeatures.push(f);
+                    });
+                    this.currentPageLayer.getSource().addFeatures(currentPageOlFeatures);
                     
                     console.log('rebuilt supercluster index');
                     
