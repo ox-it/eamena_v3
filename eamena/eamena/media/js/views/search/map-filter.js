@@ -79,10 +79,13 @@ define(['jquery',
 
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
+                    self.resourceFeatureIds = _.map(self.resourceFeatures, function (f) {
+                        return f.id
+                    })
                     //wrap feature as a backbone model and add all to a collection, for efficient retrieval by id.
                     var featureModels = _.map(features, function (f) {
                         return {
-                            id: f.id_,
+                            id: f.id,
                             feature: f
                         };
                     });
@@ -546,25 +549,30 @@ define(['jquery',
                 
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
-                        //all results, just use full array
-                        this.allResultsPoints = this.resourceFeaturesCollection.map(function (model) {
-                            return model.get('feature');
-                        })
                         this.allNonResultsPoints = [];
+                        this.allResultsPoints = _.clone(this.resourceFeatures);
                     } else {
                         if(sameResultSet) {
                             //new page of existing results 
                         } else {
-                            var unfoundFeatures = 0;
                             //brand new result set
                             
-                            //split all the markers into those in the results set, and those not
-                            var resultsAndNonResults = _.partition(this.resourceFeatures, function (feature) {
-                                return entityIdArray.indexOf(feature.id) > -1;
-                            });
+                            // get all features which are in the result set
+                            this.allResultsPoints = []
+                            _.each(entityIdArray, function (id) {
+                                var result = this.resourceFeaturesCollection.get(id);
+                                if(result) {
+                                    this.allResultsPoints.push(result.get('feature'));
+                                }
+                                
+                            }.bind(this));
                             
-                            this.allResultsPoints = resultsAndNonResults[0];
-                            this.allNonResultsPoints = resultsAndNonResults[1];
+                            // get the features not in the result set
+                            var resourceFeaturesCollectionCopy = this.resourceFeaturesCollection.clone();
+                            resourceFeaturesCollectionCopy.remove(entityIdArray)
+                            this.allNonResultsPoints = resourceFeaturesCollectionCopy.map(function (f) {
+                                return f.get('feature');
+                            });
                         }
                     }
 
