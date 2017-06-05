@@ -192,6 +192,17 @@ require([
 
             map.on('viewChanged', function (zoom, extent) {
                 
+                //pass it on to the resource layer models
+                _.each(layers, function (layer) {
+                    // olLayer = layer_model.get('layer')
+                    if(typeof (layer.layer !== 'function')) {
+                        //wait for code elsewhere to invoke this and replace with the resultant layer object
+                        if(layer.layer.updateClusters) {
+                            layer.layer.updateClusters(extent, zoom)
+                        }
+                    }
+                })
+                
                 _.each(map.overlays, function (layer) {
                     layer.setExtent(extent); //On zoom and panning, filter overlays by map extent.
                     
@@ -239,7 +250,7 @@ require([
 
                 if (feature && (feature.get('arches_marker') || feature.get('arches_cluster'))) {
                     cursorStyle = "pointer";
-                    if (feature.get('arches_marker') || feature.get('features').length === 1) {
+                    if (feature.get('arches_marker') || ( feature.get('features') && feature.get('features').length === 1) ) {
                         feature = feature.get('features')[0];
                         var fullFeature = archesFeaturesCache[feature.getId()];
                         if (fullFeature && fullFeature != 'loading') {
@@ -332,9 +343,10 @@ require([
                 $('#resource-info').hide();
                 if (clickFeature) {
                     var keys = clickFeature.getKeys();
-                    var isCluster = _.contains(keys, "features");
+                    var isCluster = _.contains(keys, "features") || _.contains(keys, "cluster");
                     var isArchesFeature = (_.contains(keys, 'arches_cluster') || _.contains(keys, 'arches_marker'));
-                    if (isCluster && clickFeature.get('features').length > 1) {
+                    if (isCluster && clickFeature.get('features') && clickFeature.get('features').length > 1) {
+                        // ol cluster
                         if (self.viewModel.zoom() !== arches.mapDefaults.maxZoom) {
                             var extent = clickFeature.getGeometry().getExtent();
                             _.each(clickFeature.get("features"), function (feature) {
@@ -349,12 +361,30 @@ require([
                         } else {
                             showClusterPopup(clickFeature);
                         }
+                    } else if(isCluster && clickFeature.get('point_count') > 1) {
+                        // supercluster
+                        // rather than zooming to the extent of all sub-features as in the ol case above tries to, just get the desired zoom from supercluster
+                        clusterId = clickFeature.get('cluster_id');
+                        
+                        var view = map.map.getView();
+                        var zoom = Math.ceil(view.getZoom());
+                        
+                        var newZoom = zoom + 2;
+                        if(clusterId) {
+                            // newZoom
+                        }
+                        
+                        view.setZoom(newZoom);
+                        view.setCenter(clickFeature.getGeometry().getCoordinates())
+                        
                     } else {
                         if (isCluster) {
+                            // an ol cluster of 1. N.B. Supercluster should never yield a cluster of 1. If it did, the code here would fail.
                             clickFeature = clickFeature.get('features')[0];
                             keys = clickFeature.getKeys();
                         }
                         if (!_.contains(keys, 'select_feature')) {
+                            // an individual resource, whether at the leaf of a supercluster tree, or as an ol cluster
                             if (isArchesFeature) {
                                 if (archesFeaturesCache[clickFeature.getId()] && archesFeaturesCache[clickFeature.getId()] !== 'loading'){
                                     showFeaturePopup(archesFeaturesCache[clickFeature.getId()]);
