@@ -12,6 +12,10 @@ define(['jquery',
     'resource-types',
     'plugins/supercluster/supercluster'], 
     function($, jqui, _, Backbone, bootstrap, arches, MapView, ol, ko, ResourceLayerModel, utils, resourceTypes, supercluster) {
+        
+        SHOW_NON_RESULT_MARKERS = false;
+        
+        
         var geoJSON = new ol.format.GeoJSON();
         return Backbone.View.extend({
             previousEntityIdArray: [],
@@ -79,9 +83,7 @@ define(['jquery',
 
                 this.vectorLayer = new ResourceLayerModel({}, function(features){
                     self.resourceFeatures = features;
-                    self.resourceFeatureIds = _.map(self.resourceFeatures, function (f) {
-                        return f.id
-                    })
+
                     //wrap feature as a backbone model and add all to a collection, for efficient retrieval by id.
                     var featureModels = _.map(features, function (f) {
                         return {
@@ -549,8 +551,10 @@ define(['jquery',
                 
                 if (this.resourceFeatures) {
                     if (entityIdArray[0] === '_all') {
-                        this.allNonResultsPoints = [];
                         this.allResultsPoints = _.clone(this.resourceFeatures);
+                        if(SHOW_NON_RESULT_MARKERS) {
+                            this.allNonResultsPoints = [];
+                        }
                     } else {
                         if(sameResultSet) {
                             //new page of existing results 
@@ -566,13 +570,15 @@ define(['jquery',
                                 }
                                 
                             }.bind(this));
-                            
-                            // get the features not in the result set
-                            var resourceFeaturesCollectionCopy = this.resourceFeaturesCollection.clone();
-                            resourceFeaturesCollectionCopy.remove(entityIdArray)
-                            this.allNonResultsPoints = resourceFeaturesCollectionCopy.map(function (f) {
-                                return f.get('feature');
-                            });
+
+                            if(SHOW_NON_RESULT_MARKERS) {
+                                // get the features not in the result set
+                                var resourceFeaturesCollectionCopy = this.resourceFeaturesCollection.clone();
+                                resourceFeaturesCollectionCopy.remove(entityIdArray)
+                                this.allNonResultsPoints = resourceFeaturesCollectionCopy.map(function (f) {
+                                    return f.get('feature');
+                                });
+                            }
                         }
                     }
 
@@ -593,11 +599,13 @@ define(['jquery',
                     });
                     this.resultsIndex.load(this.notCurrentPageResults);
                     
-                    this.nonResultsIndex = supercluster({
-                        radius: 100,
-                        maxZoom: 16
-                    });
-                    this.nonResultsIndex.load(this.allNonResultsPoints);
+                    if(SHOW_NON_RESULT_MARKERS) {
+                        this.nonResultsIndex = supercluster({
+                            radius: 100,
+                            maxZoom: 16
+                        });
+                        this.nonResultsIndex.load(this.allNonResultsPoints);
+                    }
                     
                     //plot current page results
                     this.currentPageLayer.getSource().clear();
@@ -675,7 +683,7 @@ define(['jquery',
                     resultsClustersSource.addFeatures(resultsClusterFeatures);
                 }
                 
-                if(this.nonResultsIndex) {
+                if(SHOW_NON_RESULT_MARKERS && this.nonResultsIndex) {
                     var nonResultsClustersSource = this.vectorLayer.getSource()
                     nonResultsClustersSource.clear();
                     
