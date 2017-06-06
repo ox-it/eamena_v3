@@ -188,18 +188,17 @@ ORDER_REPORT_SECTIONS_BY= {
 }
 
 SEARCH_GROUP_ROOTS= [
-    ('NAME.E41', 'Resource Names'),
-    ('SITE_FUNCTION_TYPE.E55', 'Site function'),
-    ('CULTURAL_PERIOD.E55', 'Cultural period'),
-    ('ASSESSMENT_TYPE.E55', 'Assessment'),
-    ('FEATURE_EVIDENCE_ASSIGNMENT.E17', 'Feature form'),
-    ('FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17', 'Feature interpretation'),
-    ('DISTURBANCE_STATE.E3', 'Disturbance assessment'),
-    ('THREAT_STATE.E3', 'Threat assessment'),
-    ('PROTECTION_EVENT.E65', 'Designation'),
-    ('MEASUREMENT_TYPE.E55', 'Measurements'),
-    ('PLACE_ADDRESS.E45', 'Addresses'),
-    ('ADMINISTRATIVE_SUBDIVISION.E48', 'Administrative areas')
+    ('NAME.E41', _('Resource Names')),
+    ('SITE_FUNCTION_TYPE.E55', _('Site function')),
+    ('CULTURAL_PERIOD.E55', _('Cultural period')),
+    ('ASSESSMENT_TYPE.E55', _('Assessment')),
+    ('FEATURE_EVIDENCE_ASSIGNMENT.E17', _('Feature form')),
+    ('FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17', _('Feature interpretation')),
+    ('DISTURBANCE_STATE.E3', _('Disturbance assessment')),
+    ('THREAT_STATE.E3', _('Threat assessment')),
+    ('PROTECTION_EVENT.E65', _('Designation')),
+    ('MEASUREMENT_TYPE.E55', _('Measurements')),
+    ('PLACE_ADDRESS.E45', _('Addresses'))
 ]
 
 EXPORT_CONFIG = os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'resource_export_mappings.json'))
