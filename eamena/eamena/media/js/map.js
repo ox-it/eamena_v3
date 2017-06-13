@@ -250,27 +250,29 @@ require([
 
                 if (feature && (feature.get('arches_marker') || feature.get('arches_cluster'))) {
                     cursorStyle = "pointer";
-                    if (feature.get('arches_marker') || ( feature.get('features') && feature.get('features').length === 1) ) {
-                        feature = feature.get('features')[0];
-                        var fullFeature = archesFeaturesCache[feature.getId()];
-                        if (fullFeature && fullFeature != 'loading') {
-                            showMouseoverFeatureTooltip(fullFeature);
-                        } else if (fullFeature != 'loading') {
-                            archesFeaturesCache[feature.getId()] = 'loading';
-                            $.ajax({
-                                url: arches.urls.map_markers + 'all?entityid=' + feature.getId(),
-                                success: function(response) {
-                                    fullFeature = geoJSON.readFeature(response.features[0]);
-                                    var geom = fullFeature.getGeometry();
-                                    geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
-
-                                    fullFeature.set('select_feature', true);
-                                    fullFeature.set('entityid', fullFeature.getId());
-
-                                    archesFeaturesCache[feature.getId()] = fullFeature;
-                                    showMouseoverFeatureTooltip(fullFeature);
-                                }
-                            });
+                    if (feature.get('features')) {
+                        if (feature.get('arches_marker') || feature.get('features').length === 1) {
+                            feature = feature.get('features')[0];
+                            var fullFeature = archesFeaturesCache[feature.getId()];
+                            if (fullFeature && fullFeature != 'loading') {
+                                showMouseoverFeatureTooltip(fullFeature);
+                            } else if (fullFeature != 'loading') {
+                                archesFeaturesCache[feature.getId()] = 'loading';
+                                $.ajax({
+                                    url: arches.urls.map_markers + 'all?entityid=' + feature.getId(),
+                                    success: function(response) {
+                                        fullFeature = geoJSON.readFeature(response.features[0]);
+                                        var geom = fullFeature.getGeometry();
+                                        geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
+    
+                                        fullFeature.set('select_feature', true);
+                                        fullFeature.set('entityid', fullFeature.getId());
+    
+                                        archesFeaturesCache[feature.getId()] = fullFeature;
+                                        showMouseoverFeatureTooltip(fullFeature);
+                                    }
+                                });
+                            }
                         }
                     }
                 } else {
