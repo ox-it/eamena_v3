@@ -83,8 +83,6 @@ define([
                 $.ajax({
                     url: layerConfig.url,
                     success: function (result) {
-                        console.log('fetched geojson features');
-                        
                         //load features into supercluster index
                         spatial_index.load(result.features)
                         hasData = true;
