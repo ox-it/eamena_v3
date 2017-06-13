@@ -81,7 +81,6 @@
     {% endblock pre_require_js %}
     <script>
         require.config({
-            waitSeconds : 30,   //when loading debug openlayers, longer timeout is needed
             baseUrl: '{{ STATIC_URL }}js',
             paths: {
                 'plugins': '{{ STATIC_URL }}plugins',
