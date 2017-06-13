@@ -628,9 +628,7 @@ define(['jquery',
                     var currentPageOlFeatures = convertToOlFeatures(this.currentPageResults);
                     
                     this.currentPageLayer.getSource().addFeatures(currentPageOlFeatures);
-                    
-                    console.log('rebuilt supercluster index');
-                    
+
                     if (this.drawingFeatureOverlay.getSource().getFeatures().length === 0 && this.query.filter.geometry.type() !== 'bbox') {
                         this.zoomToResults();
                     }
