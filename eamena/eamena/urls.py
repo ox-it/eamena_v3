@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^search$', 'eamena.views.search.home_page', name="search_home"),
     url(r'^search/resources$', 'eamena.views.search.search_results', name="search_results"),
     url(r'^reports/(?P<resourceid>%s)$' % uuid_regex , 'eamena.views.resources.report', name='report'),
+    url(r'^admin/auth/user/(?P<userid>[0-9]*)/user_activity/$' , 'eamena.views.user_activity.user_activity', name='user_activity'),
     
     url(r'', include(arches_urls)),
 )
