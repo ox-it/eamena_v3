@@ -44,9 +44,12 @@ def user_activity(request, userid):
                 index = index + 1
 
             ret[index]['log'].append(log)
-            resource = se.search(index='resource', id=log['resourceid'])
-            ret[index]['name'] = resource['_source']['primaryname']
-            
+            try:
+                resource = se.search(index='resource', id=log['resourceid'])
+                ret[index]['name'] = resource['_source']['primaryname']
+            except:
+                print("Item does not exist")
+    
             if str(log['timestamp'].date()) not in ret_summary:
                 ret_summary[str(log['timestamp'].date())] = {'create': 0, 'update': 0, 'insert': 0, 'delete': 0}
             
