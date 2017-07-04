@@ -8,13 +8,17 @@
 {% endblock css%}
 {% block javascript%}
     <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+    <script>
+        activitySummary = {{activity_summary|safe}}
+        
+    </script>
     {{ block.super }}
 {% endblock javascript%}
 {% block content %}
 <div class="container">
-    
+    <h3>{{head_text}}</h3>
     <div class="row">
-        <div id="heat-chart">heat-chart</div>
+        <div id="heat-chart"></div>
     </div>
     <div class="row">
         {% for edit in activity%}
