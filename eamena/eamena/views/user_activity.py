@@ -47,6 +47,7 @@ def user_activity(request, userid):
             try:
                 resource = se.search(index='resource', id=log['resourceid'])
                 ret[index]['name'] = resource['_source']['primaryname']
+                ret[index]['resourceid'] = log['resourceid']
             except:
                 print("Item does not exist")
     
