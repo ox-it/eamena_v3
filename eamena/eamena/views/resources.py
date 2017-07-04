@@ -25,6 +25,7 @@ from django.shortcuts import render_to_response
 from django.conf import settings
 from arches.app.models import models
 from arches.app.models.concept import Concept
+import arches
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 from arches.app.utils.JSONResponse import JSONResponse
 from arches.app.views.concept import get_preflabel_from_valueid
