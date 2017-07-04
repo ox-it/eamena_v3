@@ -21,10 +21,10 @@
         <div id="heat-chart"></div>
     </div>
     <div class="row">
-        </br>
+    </br>
         {% for edit in activity%}
             <h3>{{edit.date}}</h3>
-            <h4>{{edit.name}}</h4>
+            <h4><a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/{{edit.resourceid}}">{{edit.name}}</a></h4>
             {% for field in edit.log%}
             {% if field.edittype == 'update'%}
                 <div class="arches-timeline-icon edited">
@@ -47,15 +47,15 @@
                 </div>
             {% endif %}
 
-                <div>{{field.edittype}} {{field.attributeentitytypeid}}</div>
+                <div>{{field.edittype}} <strong>{{field.attributeentitytypeid}}</strong></div>
                 <div>
                     {% if field.edittype == 'update'%}
                         from {{field.oldvalue}} to
                     {% endif %}
                     {{field.newvalue}}
                 </div>
-            </br>
             {% endfor %}
+            <br><br>
         {% endfor %}
     </div>
 </div>
