@@ -38,13 +38,6 @@ from arches.app.utils.JSONResponse import JSONResponse
 
 
 def user_activity(request, userid):
-    # lang = request.GET.get('lang', settings.LANGUAGE_CODE)
-    # dates = models.EditLog.objects.filter(user_email = "a@example.com").values_list('timestamp', flat=True).order_by('-timestamp').distinct('timestamp')[start:limit]
-    # 
-    # return render_to_response('user_activity.htm', {
-    #         'test': userid,
-    #     }, 
-    #     context_instance=RequestContext(request))
     ret = []
     ret_summary = {}
     current = None
@@ -53,9 +46,6 @@ def user_activity(request, userid):
     limit = request.GET.get('limit', 99)
     if userid != '':
         dates = models.EditLog.objects.filter(userid = userid).values_list('timestamp', flat=True).order_by('-timestamp').distinct('timestamp')[start:limit]
-        # for date in dates:
-        #     #ret[str(date)] = models.EditLog.objects.filter(resourceid = self.resource.entityid, timestamp = date)
-        #     print str(date)
 
         for log in models.EditLog.objects.filter(userid = userid, timestamp__in = dates).values().order_by('-timestamp', 'attributeentitytypeid'):
             if str(log['timestamp']) != current:
@@ -65,18 +55,22 @@ def user_activity(request, userid):
 
             ret[index]['log'].append(log)
 
-
             if str(log['timestamp'].date()) not in ret_summary:
-                ret_summary[str(log['timestamp'].date())] = {'create': 0, 'update': 0, 'insert': 0}
+                ret_summary[str(log['timestamp'].date())] = {'create': 0, 'update': 0, 'insert': 0, 'delete': 0}
             
-            logging.warning("-------- -- - log %s", log)
-            # for action in log:
-            #     logging.warning("-------- -- - action %s", action)
             ret_summary[str(log['timestamp'].date())][log['edittype']] = ret_summary[str(log['timestamp'].date())][log['edittype']] + 1;
             
+        head_text = "no data for this user"
+        if len(ret):
+            head_text = ret[0]['log'][0]['user_firstname'] +' '+ ret[0]['log'][0]['user_lastname']
+            if head_text != ' ' and ret[0]['log'][0]['user_email'] != '':
+                head_text += ', '
+            head_text += ret[0]['log'][0]['user_email']
+            
     return render_to_response('user_activity.htm', {
+            'head_text': head_text,
             'activity': ret,
-            'activity_summary': ret_summary,
+            'activity_summary': json.dumps(ret_summary),
             'main_script': 'heat-chart',
         }, 
         context_instance=RequestContext(request))
