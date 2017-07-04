@@ -41,6 +41,11 @@
                     <i class="fa fa-check"></i>
                 </div>
             {% endif %}
+            {% if field.edittype == 'delete'%}
+                <div class="arches-timeline-icon deleted">
+                    <i class="fa fa-minus"></i>
+                </div>
+            {% endif %}
 
                 <div>{{field.edittype}} {{field.attributeentitytypeid}}</div>
                 <div>
