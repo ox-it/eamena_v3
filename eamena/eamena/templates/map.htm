@@ -309,14 +309,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 {% trans 'Close' %}
                             </button>
                             {% if 'edit' in user.user_groups %}
-                            <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() ? selectedResource().reportLink : 'javascript:void(0);'}">
-                                <button type="button" class="btn btn-primary">
+                            <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() && selectedResource().can_access ? selectedResource().reportLink : 'javascript:void(0);'}">
+                                <button type="button" class="btn btn-primary" data-bind="enable: selectedResource() ? selectedResource().can_access : false">
                                     {% trans 'View Report' %}
                                 </button>
                             </a>
                             
-                            <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() ? 'resources/' +  selectedResource().entitytypeid + '/default/' + selectedResource().id : 'javascript:void(0);'}">
-                                <button type="button" class="btn btn-primary">
+                            <a href="javascript:void(0);" class="text-primary" target="_blank" data-bind="attr:{ href: selectedResource() && selectedResource().can_access ? 'resources/' +  selectedResource().entitytypeid + '/default/' + selectedResource().id : 'javascript:void(0);'}">
+                                <button type="button" class="btn btn-primary" data-bind="enable: selectedResource() ? selectedResource().can_access : false">
                                     {% trans 'Edit' %}
                                 </button>
                             </a>

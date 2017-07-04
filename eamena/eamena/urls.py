@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^search/resources$', 'eamena.views.search.search_results', name="search_results"),
     url(r'^reports/(?P<resourceid>%s)$' % uuid_regex , 'eamena.views.resources.report', name='report'),
     url(r'^resources/(?P<resourcetypeid>[0-9a-zA-Z_.]*)/(?P<form_id>[a-zA-Z_-]*)/(?P<resourceid>%s|())$' % uuid_regex, 'eamena.views.resources.resource_manager', name="resource_manager"),
+    url(r'^resources/markers/(?P<entitytypeid>.*)$', 'eamena.views.resources.map_layers', {'get_centroids':True}, name="map_markers"),
     
     url(r'', include(arches_urls)),
 )
