@@ -21,6 +21,8 @@ from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.db.models import Max, Min
+# from django.core.paginator import Paginator
+
 from arches.app.models import models
 from arches.app.views.search import get_paginator
 from arches.app.views.search import build_search_results_dsl as build_base_search_results_dsl
@@ -29,6 +31,8 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializ
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
+
+from eamena.models.group import canUserAccessResource
 
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
@@ -45,7 +49,11 @@ def home_page(request):
 
 def search_results(request):
     query = build_search_results_dsl(request)
-    results = query.search(index='entity', doc_type='') 
+    results = query.search(index='entity', doc_type='')
+    
+    for result in results['hits']['hits']:
+        result['can_access'] = canUserAccessResource(request.user, result['_id'])
+    
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
 
@@ -56,6 +64,22 @@ def search_results(request):
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
+
+# def get_paginator(results, total_count, page, count_per_page, all_ids):
+#     paginator = Paginator(range(total_count), count_per_page)
+#     pages = [page]
+#     if paginator.num_pages > 1:
+#         before = paginator.page_range[0:page-1]
+#         after = paginator.page_range[page:paginator.num_pages]
+#         default_ct = 3
+#         ct_before = default_ct if len(after) > default_ct else default_ct*2-len(after)
+#         ct_after = default_ct if len(before) > default_ct else default_ct*2-len(before)
+#         if len(before) > ct_before:
+#             before = [1,None]+before[-1*(ct_before-1):]
+#         if len(after) > ct_after:
+#             after = after[0:ct_after-1]+[None,paginator.num_pages]
+#         pages = before+pages+after
+#     return render_to_response('pagination.htm', {'pages': pages, 'page_obj': paginator.page(page), 'results': JSONSerializer().serialize(results), 'all_ids': JSONSerializer().serialize(all_ids)})
 
 def build_search_results_dsl(request):
     temporal_filters = JSONDeserializer().deserialize(request.GET.get('temporalFilter', None))
