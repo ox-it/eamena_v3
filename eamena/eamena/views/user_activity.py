@@ -22,8 +22,10 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from arches.app.models import models
 from arches.app.search.search_engine_factory import SearchEngineFactory
+from django.contrib.auth.decorators import permission_required
 import json
 
+@permission_required('edit')
 def user_activity(request, userid):
     se = SearchEngineFactory().create()
     ret = []
