@@ -15,6 +15,8 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
+from django.core.exceptions import PermissionDenied
+
 
 import re
 import urllib,json
@@ -36,8 +38,16 @@ from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
 from datetime import datetime
 
+from eamena.models.group import canUserAccessResource
 
 def report(request, resourceid):
+    print("ACCESSING REPORT")
+    can_access = canUserAccessResource(request.user, resourceid);
+    
+    if not can_access:
+        raise PermissionDenied
+
+    
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     page = request.GET.get('page', 1)
     se = SearchEngineFactory().create()
