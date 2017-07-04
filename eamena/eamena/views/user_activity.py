@@ -20,24 +20,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-# from django.db.models import Max, Min
 from arches.app.models import models
-
-
-import logging
+from arches.app.search.search_engine_factory import SearchEngineFactory
 import json
-# from arches.app.views.search import get_paginator
-# from arches.app.views.search import build_search_results_dsl as build_base_search_results_dsl
-# from arches.app.models.concept import Concept
-# from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
-# from arches.app.search.search_engine_factory import SearchEngineFactory
-# from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
-# from django.utils.translation import ugettext as _
-
-from arches.app.utils.JSONResponse import JSONResponse
-
 
 def user_activity(request, userid):
+    se = SearchEngineFactory().create()
     ret = []
     ret_summary = {}
     current = None
@@ -54,7 +42,9 @@ def user_activity(request, userid):
                 index = index + 1
 
             ret[index]['log'].append(log)
-
+            resource = se.search(index='resource', id=log['resourceid'])
+            ret[index]['name'] = resource['_source']['primaryname']
+            
             if str(log['timestamp'].date()) not in ret_summary:
                 ret_summary[str(log['timestamp'].date())] = {'create': 0, 'update': 0, 'insert': 0, 'delete': 0}
             
