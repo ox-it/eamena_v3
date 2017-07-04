@@ -47,6 +47,63 @@ def resource_manager(request, resourcetypeid='', form_id='default', resourceid='
     
     return arches.app.views.resources.resource_manager(request, resourcetypeid, form_id, resourceid)
 
+def map_layers(request, entitytypeid='all', get_centroids=False):
+    print("MAP LAYERS")
+    data = []
+
+    geom_param = request.GET.get('geom', None)
+
+    bbox = request.GET.get('bbox', '')
+    limit = request.GET.get('limit', settings.MAP_LAYER_FEATURE_LIMIT)
+    entityids = request.GET.get('entityid', '')
+    geojson_collection = {
+      "type": "FeatureCollection",
+      "features": []
+    }
+    
+    se = SearchEngineFactory().create()
+    query = Query(se, limit=limit)
+
+    args = { 'index': 'maplayers' }
+    if entitytypeid != 'all':
+        args['doc_type'] = entitytypeid
+    if entityids != '':
+        for entityid in entityids.split(','):
+            record = se.search(index='maplayers', id=entityid)['_source']
+            
+            # Set a param to indicate the user's permissions for this resource
+            record['properties']['can_access'] = canUserAccessResource(request.user, record['id'])
+            
+            geojson_collection['features'].append(record)
+        return JSONResponse(geojson_collection)
+
+    data = query.search(**args)
+
+    for item in data['hits']['hits']:
+        if get_centroids:
+            item['_source']['geometry'] = item['_source']['properties']['centroid']
+            item['_source'].pop('properties', None)
+        elif geom_param != None:
+            print("WE HAVE SOME GEOM")
+            item['_source']['geometry'] = item['_source']['properties'][geom_param]
+            item['_source']['properties'].pop('extent', None)
+            item['_source']['properties'].pop(geom_param, None)
+            
+            # Set a param to indicate the user's permissions for this resource
+            can_access = canUserAccessResource(request.user, item['_source']['id'])
+            item['_source']['properties']['can_access'] = can_access
+            
+        else:
+            item['_source']['properties'].pop('extent', None)
+            item['_source']['properties'].pop('centroid', None)
+            
+            # Set a param to indicate the user's permissions for this resource
+            can_access = canUserAccessResource(request.user, item['_source']['id'])
+            item['_source']['properties']['can_access'] = can_access
+        geojson_collection['features'].append(item['_source'])
+
+    return JSONResponse(geojson_collection)
+
 def report(request, resourceid):
     print("ACCESSING REPORT")
     can_access = canUserAccessResource(request.user, resourceid);
