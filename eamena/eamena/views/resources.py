@@ -40,13 +40,19 @@ from datetime import datetime
 
 from eamena.models.group import canUserAccessResource
 
+def resource_manager(request, resourcetypeid='', form_id='default', resourceid=''):
+    can_access = canUserAccessResource(request.user, resourceid);
+    if not can_access:
+        raise PermissionDenied
+    
+    return arches.app.views.resources.resource_manager(request, resourcetypeid, form_id, resourceid)
+
 def report(request, resourceid):
     print("ACCESSING REPORT")
     can_access = canUserAccessResource(request.user, resourceid);
     
     if not can_access:
         raise PermissionDenied
-
     
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     page = request.GET.get('page', 1)
