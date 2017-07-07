@@ -33,7 +33,7 @@ docker start eamena_psql
 ## 6. Import the elasticsearch data
 enter the elasticsearch contaienr:
 ```
-docker exec -it eamenav3_elasticsearch_1 /bin/bash
+docker exec -it eamena_es bash
 ```
 Copy the archived files over everything else
 ```

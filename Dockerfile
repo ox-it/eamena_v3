@@ -1,4 +1,4 @@
-FROM arches/arches
+FROM registry.oucs.ox.ac.uk/oucs/arches
 
 # RUN usermod -u 1000 mysql
 
