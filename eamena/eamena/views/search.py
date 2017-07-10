@@ -54,45 +54,6 @@ def search_results(request):
     group_search = request.GET.get('groupSearch', '')
 
     term_filter = request.GET.get('termFilter', '')
-    if term_filter != '' and group_search == 'group':
-        terms_list = []
-        delete_results = []
-        for term in JSONDeserializer().deserialize(term_filter):
-            terms_list.append(term['value'])
-        
-        logging.warning('*- *- terms= %s', terms_list)
-        for result in results['hits']['hits']:
-            # logging.warning(' -= -= result= %s ', result['_source']['primaryname'])
-            domains_list = []
-            for domain in result['_source']['domains']:
-                if domain['conceptid'] in terms_list:
-                    domains_list.append(domain)
-                    # logging.warning('*- *- found!!!! domain= %s', domain['conceptid'])
-                    
-            # logging.warning('*- *- domains_list= %s', domains_list)
-            delete_result = True
-            for i, domain1 in enumerate(domains_list):
-                # logging.warning('*- *- domain1= %s %s', i, domain1)
-                for j in range(i+1, len(domains_list)):
-                    # logging.warning('*- *- domain2= %s %s', j, domains_list[j])
-                    if domain1['parentid'] == domains_list[j]['parentid'] or \
-                       domain1['parentid'] == domains_list[j]['entityid'] or \
-                       domain1['entityid'] == domains_list[j]['parentid']:
-                        # logging.warning('*- *- YES!!! %s', result['_source']['primaryname'])
-                        delete_result = False
-                        break
-                
-                if not delete_result:
-                    break
-                    
-            # logging.warning('*---- delete %s= %s', result['_source']['primaryname'], delete_result)
-            if delete_result:
-                delete_results.append(result)
-            
-        results['hits']['total'] = results['hits']['total'] - len(delete_results)
-        total = results['hits']['total']
-        for result in delete_results:
-            results['hits']['hits'].remove(result);
             
     all_entity_ids = ['_all']
     if request.GET.get('include_ids', 'false') == 'false':
