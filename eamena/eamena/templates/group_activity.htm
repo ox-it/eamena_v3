@@ -25,10 +25,11 @@
             <li><a href="javascript:void(0);" class="select-action" data-action="insert">Insert</a></li>
             <li><a href="javascript:void(0);" class="select-action" data-action="delete">Delete</a></li>
         </ul>
-
-        <p class="chart-title">Users activity</a>
-        <div id="group-chart"></div>
-        <br><br><br>
+        <div class="group-chart-container">
+            <p class="chart-title">Group activity</a>
+            <div id="group-chart"></div>
+            <br><br><br>
+        </div>
         {% for user in user_ids%}
             <div class="user-chart-container">
                 <a class="chart-title" href="/admin/auth/user/{{user.id}}/user_activity/">{{user.name}}</a>

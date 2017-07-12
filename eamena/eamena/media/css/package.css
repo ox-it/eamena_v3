@@ -132,6 +132,10 @@
 	overflow-y: scroll; 
 }
 
+.activity-chart .group-chart-container {
+	text-align: center;
+}
+
 .activity-chart .user-chart-container {
 	width: 50%;
 	float: left;
