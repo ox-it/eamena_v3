@@ -32,12 +32,16 @@ def canUserAccessResource(user, resourceid):
     query = Query(se, limit=1)
     
     args = { 'id': resourceid }
+    
+    if geometry is 'null':
+        return True
         
     site_geom = GEOSGeometry(geometry)
     
     for group in user.groups.all():
-        group_geom = GEOSGeometry(group.geom)
-        if group_geom.contains(site_geom):
-            return True;
+        if group.geom:
+            group_geom = GEOSGeometry(group.geom)
+            if group_geom.contains(site_geom):
+                return True;
     
     return False

@@ -49,7 +49,15 @@ cd /web_root/arches/eamena
 
 Then add the created user to the 'edit' group via the django admin dashboard at ```http://docker.default:800/admin```
 
-## 8. Start using the app
+## 8. Update the db schema for group geometries
+```
+docker exec -it eamena_psql bash
+psql -U postgres
+\connect arches_eamena
+select AddGeometryColumn ( 'public', 'auth_group', 'geom', 4326, 'POLYGON', 2, false);
+```
+
+## 9. Start using the app
 navigate to ```http://docker.default:8000``` (substitute your own hostname, or the ip address of your docker machine)
 
 Elasticsearch can be browsed at ```http://docker.default:9200/_plugin/head```
