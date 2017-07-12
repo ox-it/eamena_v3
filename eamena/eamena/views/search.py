@@ -22,6 +22,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.db.models import Max, Min
 # from django.core.paginator import Paginator
+from django.contrib.gis.geos import GEOSGeometry
 
 from arches.app.models import models
 from arches.app.views.search import get_paginator
@@ -65,22 +66,6 @@ def search_results(request):
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
-# def get_paginator(results, total_count, page, count_per_page, all_ids):
-#     paginator = Paginator(range(total_count), count_per_page)
-#     pages = [page]
-#     if paginator.num_pages > 1:
-#         before = paginator.page_range[0:page-1]
-#         after = paginator.page_range[page:paginator.num_pages]
-#         default_ct = 3
-#         ct_before = default_ct if len(after) > default_ct else default_ct*2-len(after)
-#         ct_after = default_ct if len(before) > default_ct else default_ct*2-len(before)
-#         if len(before) > ct_before:
-#             before = [1,None]+before[-1*(ct_before-1):]
-#         if len(after) > ct_after:
-#             after = after[0:ct_after-1]+[None,paginator.num_pages]
-#         pages = before+pages+after
-#     return render_to_response('pagination.htm', {'pages': pages, 'page_obj': paginator.page(page), 'results': JSONSerializer().serialize(results), 'all_ids': JSONSerializer().serialize(all_ids)})
-
 def build_search_results_dsl(request):
     temporal_filters = JSONDeserializer().deserialize(request.GET.get('temporalFilter', None))
     sorting = {
@@ -94,6 +79,21 @@ def build_search_results_dsl(request):
 	}
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
+
+    # require the result to be within the user's area
+    locationfilter = Bool()
+    for group in request.user.groups.all():
+        if group.geom:
+            geojson = group.geom.geojson
+            # logging.warning("GEO JSON FOR GROUP -%s", geojson)
+            geojson_as_dict = JSONDeserializer().deserialize(geojson)
+            logging.warning("GEO JSON -%s", geojson_as_dict)
+            geoshape = GeoShape(field='geometries.value', type=geojson_as_dict['type'], coordinates=geojson_as_dict['coordinates'])
+            
+            nested = Nested(path='geometries', query=geoshape)
+            locationfilter.should(nested)
+
+    boolfilter.must(locationfilter)
 
     if 'filters' in temporal_filters:
         for temporal_filter in temporal_filters['filters']:
@@ -128,6 +128,10 @@ def build_search_results_dsl(request):
                 boolfilter.must(nested)
 
             query.add_filter(boolfilter)
+            
+    query.add_filter(locationfilter)
+    
+    
     #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
 

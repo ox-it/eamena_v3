@@ -25,14 +25,6 @@ def canUserAccessResource(user, resourceid):
     report_info = se.search(index='resource', id=resourceid)
     geometry = JSONSerializer().serialize(report_info['_source']['geometry'])
     
-    print('GROUP GEOMETRY: ' + geometry)
-    
-    
-    se = SearchEngineFactory().create()
-    query = Query(se, limit=1)
-    
-    args = { 'id': resourceid }
-    
     if geometry is 'null':
         return True
         
