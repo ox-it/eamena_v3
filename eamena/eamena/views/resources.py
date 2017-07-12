@@ -42,8 +42,8 @@ from datetime import datetime
 from eamena.models.group import canUserAccessResource
 
 def resource_manager(request, resourcetypeid='', form_id='default', resourceid=''):
-    can_access = canUserAccessResource(request.user, resourceid);
-    if not can_access:
+    can_edit = canUserAccessResource(request.user, resourceid, 'edit');
+    if not can_edit:
         raise PermissionDenied
     
     return arches.app.views.resources.resource_manager(request, resourcetypeid, form_id, resourceid)
@@ -83,7 +83,7 @@ def map_layers(request, entitytypeid='all', get_centroids=False):
             record = se.search(index='maplayers', id=entityid)['_source']
             
             # Set a param to indicate the user's permissions for this resource
-            record['properties']['can_access'] = canUserAccessResource(request.user, record['id'])
+            record['properties']['can_edit'] = canUserAccessResource(request.user, record['id'], 'edit')
             
             geojson_collection['features'].append(record)
         return JSONResponse(geojson_collection)
@@ -101,26 +101,28 @@ def map_layers(request, entitytypeid='all', get_centroids=False):
             item['_source']['properties'].pop(geom_param, None)
             
             # Set a param to indicate the user's permissions for this resource
-            can_access = canUserAccessResource(request.user, item['_source']['id'])
-            item['_source']['properties']['can_access'] = can_access
+            # This may be expensive, but we are assuming there won't be large numbers of results here
+            can_edit = canUserAccessResource(request.user, item['_source']['id'], 'edit')
+            item['_source']['properties']['can_edit'] = can_edit
             
         else:
             item['_source']['properties'].pop('extent', None)
             item['_source']['properties'].pop('centroid', None)
             
             # Set a param to indicate the user's permissions for this resource
-            can_access = canUserAccessResource(request.user, item['_source']['id'])
-            item['_source']['properties']['can_access'] = can_access
+            # This may be expensive, but we are assuming there won't be large numbers of results here
+            can_edit = canUserAccessResource(request.user, item['_source']['id'], 'edit')
+            item['_source']['properties']['can_edit'] = can_edit
         
         geojson_collection['features'].append(item['_source'])
 
     return JSONResponse(geojson_collection)
 
 def report(request, resourceid):
-    print("ACCESSING REPORT")
-    can_access = canUserAccessResource(request.user, resourceid);
+    can_view = canUserAccessResource(request.user, resourceid, 'view');
+    can_edit = canUserAccessResource(request.user, resourceid, 'edit');
     
-    if not can_access:
+    if not can_view:
         raise PermissionDenied
     
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
@@ -374,6 +376,7 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+            'can_edit': can_edit
         },
         context_instance=RequestContext(request))        

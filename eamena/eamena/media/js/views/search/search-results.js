@@ -138,7 +138,7 @@ define(['jquery',
                         geometries: ko.observableArray(this._source.geometries),
                         typeIcon: resourceTypes[this._source.entitytypeid].icon,
                         typeName: resourceTypes[this._source.entitytypeid].name,
-                        can_access: this.can_access
+                        can_edit: this.can_edit
                     });
                 });
 
