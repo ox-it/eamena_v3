@@ -52,9 +52,14 @@ def user_activity(request, userid):
                 print("Item does not exist")
     
             if str(log['timestamp'].date()) not in ret_summary:
-                ret_summary[str(log['timestamp'].date())] = {'create': 0, 'update': 0, 'insert': 0, 'delete': 0}
+                ret_summary[str(log['timestamp'].date())] = {}
+                
+            if log['resourceid'] not in ret_summary[str(log['timestamp'].date())]:
+                ret_summary[str(log['timestamp'].date())][log['resourceid']] = {
+                    'create': 0, 'update': 0, 'insert': 0, 'delete': 0
+                }
             
-            ret_summary[str(log['timestamp'].date())][log['edittype']] = ret_summary[str(log['timestamp'].date())][log['edittype']] + 1;
+            ret_summary[str(log['timestamp'].date())][log['resourceid']][log['edittype']] = 1;
             
         head_text = "no data for this user"
         if len(ret):
