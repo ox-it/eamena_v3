@@ -41,17 +41,17 @@ def group_activity(request, groupid):
         users = User.objects.filter(groups__id=groupid)
         for user in users:
             user_ids.append(user.id)
-            ret_summary[user.id] = {'id': user.id, 'name': str(user)}
+            ret_summary[user.id] = {'id': user.id, 'name': str(user), 'data': {}}
             for log in models.EditLog.objects.filter(userid = user.id).values().order_by('-timestamp', 'attributeentitytypeid'):
-                if str(log['timestamp'].date()) not in ret_summary[user.id]:
-                    ret_summary[user.id][str(log['timestamp'].date())] = {}
+                if str(log['timestamp'].date()) not in ret_summary[user.id]['data']:
+                    ret_summary[user.id]['data'][str(log['timestamp'].date())] = {}
                 
-                if log['resourceid'] not in ret_summary[user.id][str(log['timestamp'].date())]:
-                    ret_summary[user.id][str(log['timestamp'].date())][log['resourceid']] = {
+                if log['resourceid'] not in ret_summary[user.id]['data'][str(log['timestamp'].date())]:
+                    ret_summary[user.id]['data'][str(log['timestamp'].date())][log['resourceid']] = {
                         'create': 0, 'update': 0, 'insert': 0, 'delete': 0
                     }
 
-                ret_summary[user.id][str(log['timestamp'].date())][log['resourceid']][log['edittype']] = 1;
+                ret_summary[user.id]['data'][str(log['timestamp'].date())][log['resourceid']][log['edittype']] = 1;
 
     logging.warning(' -= -= log : %s ', user_ids)
     return render_to_response('group_activity.htm', {
