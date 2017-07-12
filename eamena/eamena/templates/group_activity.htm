@@ -13,52 +13,29 @@
     {{ block.super }}
 {% endblock javascript%}
 {% block content %}
-<div class="container">
+<div class="container activity-chart">
     <div class="row">
-        <div id="group-chart"></div>
-        {% for user in user_ids%}
-            <div id="user-chart-{{user}}"></div>
-        
-        {% endfor %}
-        
-    </div>
-    <div class="row">
-    </br>
-        <!-- {% for edit in activity%}
-            <h3>{{edit.date}}</h3>
-            <h4><a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/{{edit.resourceid}}">{{edit.name}}</a></h4>
-            {% for field in edit.log%}
-            {% if field.edittype == 'update'%}
-                <div class="arches-timeline-icon edited">
-                    <i class="fa fa-pencil"></i>
-                </div>
-            {% endif %}
-            {% if field.edittype == 'insert'%}
-                <div class="arches-timeline-icon added">
-                    <i class="fa fa-plus"></i>
-                </div>
-            {% endif %}
-            {% if field.edittype == 'create'%}
-                <div class="arches-timeline-icon">
-                    <i class="fa fa-check"></i>
-                </div>
-            {% endif %}
-            {% if field.edittype == 'delete'%}
-                <div class="arches-timeline-icon deleted">
-                    <i class="fa fa-minus"></i>
-                </div>
-            {% endif %}
+        <button type="button" class="btn btn-primary dropdown-toggle dropdown-actions-button" data-toggle="dropdown">
+            Users Actions
+            <i class="fa fa-chevron-down"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-actions-menu" role="menu">
+            <li><a href="javascript:void(0);" class="select-action" data-action="create">Create</a></li>
+            <li><a href="javascript:void(0);" class="select-action" data-action="update">Update</a></li>
+            <li><a href="javascript:void(0);" class="select-action" data-action="insert">Insert</a></li>
+            <li><a href="javascript:void(0);" class="select-action" data-action="delete">Delete</a></li>
+        </ul>
 
-                <div>{{field.edittype}} <strong>{{field.attributeentitytypeid}}</strong></div>
-                <div>
-                    {% if field.edittype == 'update'%}
-                        from {{field.oldvalue}} to
-                    {% endif %}
-                    {{field.newvalue}}
-                </div>
-            {% endfor %}
-            <br><br>
-        {% endfor %} -->
+        <p class="chart-title">Users activity</a>
+        <div id="group-chart"></div>
+        <br><br><br>
+        {% for user in user_ids%}
+            <div class="user-chart-container">
+                <a class="chart-title" href="/admin/auth/user/{{user.id}}/user_activity/">{{user.name}}</a>
+                <div id="user-chart-{{user.id}}" class="user-chart"></div>
+                <br><br><br>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock content %}
