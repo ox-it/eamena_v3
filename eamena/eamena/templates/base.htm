@@ -109,10 +109,14 @@
                 'blueimp-helper': 'https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/js/blueimp-helper.min',
                 'gmjs': 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBPUB3B5aiHQDVyIuhDqDp500IUCIEDdtM',
                 'CalHeatMap': 'https://cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min',
+                'Highcharts': 'https://code.highcharts.com/highcharts.src',
             },
             shim: {
                 'openlayers': {
                     exports: 'ol'
+                },
+                'Highcharts': {
+                    exports: 'Highcharts'
                 }
             }
         });
