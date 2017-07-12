@@ -32,7 +32,7 @@ from arches.app.views.concept import get_preflabel_from_valueid
 from arches.app.views.concept import get_preflabel_from_conceptid
 from arches.app.views.resources import get_related_resources
 from arches.app.search.search_engine_factory import SearchEngineFactory
-from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested
+from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested, GeoShape
 from django.contrib.gis.geos import GEOSGeometry
 import binascii
 from arches.app.utils.encrypt import Crypter
@@ -49,7 +49,6 @@ def resource_manager(request, resourcetypeid='', form_id='default', resourceid='
     return arches.app.views.resources.resource_manager(request, resourcetypeid, form_id, resourceid)
 
 def map_layers(request, entitytypeid='all', get_centroids=False):
-    print("MAP LAYERS")
     data = []
 
     geom_param = request.GET.get('geom', None)
@@ -64,6 +63,17 @@ def map_layers(request, entitytypeid='all', get_centroids=False):
     
     se = SearchEngineFactory().create()
     query = Query(se, limit=limit)
+
+    # filter based on user's group geometries
+    locationfilter = Bool()
+    for group in request.user.groups.all():
+        if group.geom:
+            geojson = group.geom.geojson
+            geojson_as_dict = JSONDeserializer().deserialize(geojson)
+            geoshape = GeoShape(field='geometry', type=geojson_as_dict['type'], coordinates=geojson_as_dict['coordinates'])
+            locationfilter.should(geoshape)
+    
+    query.add_query(locationfilter)
 
     args = { 'index': 'maplayers' }
     if entitytypeid != 'all':
@@ -84,8 +94,8 @@ def map_layers(request, entitytypeid='all', get_centroids=False):
         if get_centroids:
             item['_source']['geometry'] = item['_source']['properties']['centroid']
             item['_source'].pop('properties', None)
+        
         elif geom_param != None:
-            print("WE HAVE SOME GEOM")
             item['_source']['geometry'] = item['_source']['properties'][geom_param]
             item['_source']['properties'].pop('extent', None)
             item['_source']['properties'].pop(geom_param, None)
@@ -101,6 +111,7 @@ def map_layers(request, entitytypeid='all', get_centroids=False):
             # Set a param to indicate the user's permissions for this resource
             can_access = canUserAccessResource(request.user, item['_source']['id'])
             item['_source']['properties']['can_access'] = can_access
+        
         geojson_collection['features'].append(item['_source'])
 
     return JSONResponse(geojson_collection)
