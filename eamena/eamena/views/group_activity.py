@@ -41,8 +41,10 @@ def group_activity(request, groupid):
         users = User.objects.filter(groups__id=groupid)
         for user in users:
             user_ids.append(user.id)
-            ret_summary[user.id] = {'id': user.id, 'name': str(user), 'data': {}}
+            ret_summary[user.id] = {'id': user.id, 'name': str(user), 'startDate': "",'data': {}}
             for log in models.EditLog.objects.filter(userid = user.id).values().order_by('-timestamp', 'attributeentitytypeid'):
+                ret_summary[user.id]['startDate'] = str(log['timestamp'].date())
+                
                 if str(log['timestamp'].date()) not in ret_summary[user.id]['data']:
                     ret_summary[user.id]['data'][str(log['timestamp'].date())] = {}
                 
@@ -53,7 +55,6 @@ def group_activity(request, groupid):
 
                 ret_summary[user.id]['data'][str(log['timestamp'].date())][log['resourceid']][log['edittype']] = 1;
 
-    logging.warning(' -= -= log : %s ', user_ids)
     return render_to_response('group_activity.htm', {
             'user_ids': user_ids,
             'activity_summary': json.dumps(ret_summary),
