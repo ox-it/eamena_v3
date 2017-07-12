@@ -23,8 +23,14 @@
     <div class="row">
     </br>
         {% for edit in activity%}
-            <h3>{{edit.date}}</h3>
-            <h4><a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/{{edit.resourceid}}">{{edit.name}}</a></h4>
+            <h3 id="date-{{edit.date}}">{{edit.date}}</h3>
+            
+                <h4>{% if edit.resourceid %}
+                    <a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/{{edit.resourceid}}">{{edit.name}}</a>
+                    {% else %}
+                    <p>{{edit.name}}</p>
+                    {% endif %}
+                </h4>
             {% for field in edit.log%}
             {% if field.edittype == 'update'%}
                 <div class="arches-timeline-icon edited">
