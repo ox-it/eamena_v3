@@ -40,7 +40,7 @@ def group_activity(request, groupid):
     if groupid != '':
         users = User.objects.filter(groups__id=groupid)
         for user in users:
-            user_ids.append(user.id)
+            user_ids.append({'id': user.id, 'name': str(user)})
             ret_summary[user.id] = {'id': user.id, 'name': str(user), 'startDate': "",'data': {}}
             for log in models.EditLog.objects.filter(userid = user.id).values().order_by('-timestamp', 'attributeentitytypeid'):
                 ret_summary[user.id]['startDate'] = str(log['timestamp'].date())
