@@ -63,6 +63,8 @@ require([
 
     var data = {};
     var startDate = "";
+    // search in every date then in every resource then in every action type
+    // and add the actions for this date
     Object.keys(activitySummary).forEach(function (dateData) {
         var sumEntries = 0;
         Object.keys(activitySummary[dateData]).forEach(function (resourceData) {
@@ -72,6 +74,7 @@ require([
         });
         var d = new Date(dateData);
         data[d.getTime()] = sumEntries;
+        // find the starting date for the chart
         if (!startDate || startDate > d.getTime()) {
             startDate = d.getTime();
         }
@@ -80,6 +83,7 @@ require([
     today = today.getTime();
     var chartData = [];
     var i = 0;
+    // create the data array in the format needed by Highcharts
     for (var iDate = startDate; iDate <= today; iDate += 3600000 * 24) {
          var chartValue = data[iDate] ? [iDate, data[iDate]] : [iDate, 0];
          chartData.push(chartValue);
