@@ -49,6 +49,7 @@ require([
             }]
         };
 
+        // find the starting date for the charts
         Object.keys(activitySummary).forEach(function (userData) {
             Object.keys(activitySummary[userData].data).forEach(function (dateData) {
                 var userStartDate = new Date(activitySummary[userData].startDate);
@@ -59,6 +60,8 @@ require([
             });
         });
         
+        // for every user, then every date, then every, resource
+        // add the actions of type action
         Object.keys(activitySummary).forEach(function (userData) {
             var data = {};
             Object.keys(activitySummary[userData].data).forEach(function (dateData) {
@@ -77,6 +80,8 @@ require([
             today = today.getTime();
             var chartData = [];
             var i = 0;
+            // create the data array in the format needed by Highcharts adding zeros
+            // where there is no data
             for (var iDate = startDate; iDate <= today; iDate += 3600000 * 24) {
                  var chartValue = data[iDate] ? [iDate, data[iDate]] : [iDate, 0];
                  chartData.push(chartValue);
@@ -100,6 +105,7 @@ require([
     drawCharts('update');
     $('.dropdown-actions-button').html('Actions: update <i class="fa fa-chevron-down"></i>')
     
+    // event listeners for the action type selection button - menu
     $('.dropdown-actions-button').on('click', function(evt) {
         $('.dropdown-actions-menu').toggleClass('open');
         if ($('.dropdown-actions-menu').hasClass('open')) {
