@@ -30,6 +30,8 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
 
+import logging
+
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
     min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
@@ -39,7 +41,8 @@ def home_page(request):
             'active_page': 'Search',
             'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
             'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
-            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data())
+            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
+            'group_options': settings.SEARCH_GROUP_ROOTS
         }, 
         context_instance=RequestContext(request))
 
@@ -48,7 +51,10 @@ def search_results(request):
     results = query.search(index='entity', doc_type='') 
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
+    group_search = request.GET.get('groupSearch', '')
 
+    term_filter = request.GET.get('termFilter', '')
+            
     all_entity_ids = ['_all']
     if request.GET.get('include_ids', 'false') == 'false':
         all_entity_ids = ['_none']
@@ -71,39 +77,39 @@ def build_search_results_dsl(request):
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
 
-    if 'filters' in temporal_filters:
-        for temporal_filter in temporal_filters['filters']:
-            date_type = ''
-            date = ''
-            date_operator = ''
-            for node in temporal_filter['nodes']:
-                if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
-                    date_operator = node['value']
-                elif node['entitytypeid'] == 'date':
-                    date = node['value']
-                else:
-                    date_type = node['value']
-
-
-            date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
-
-            if date_operator == '1': # equals query
-                range = Range(field='dates.value', gte=date_value, lte=date_value)
-            elif date_operator == '0': # greater than query 
-                range = Range(field='dates.value', lt=date_value)
-            elif date_operator == '2': # less than query
-                range = Range(field='dates.value', gt=date_value)
-            
-            nested = Nested(path='dates', query=range)
-            if 'inverted' not in temporal_filters:
-                temporal_filters['inverted'] = False
-
-            if temporal_filters['inverted']:
-                boolfilter.must_not(nested)
-            else:
-                boolfilter.must(nested)
-
-            query.add_filter(boolfilter)
+    # if 'filters' in temporal_filters:
+    #     for temporal_filter in temporal_filters['filters']:
+    #         date_type = ''
+    #         date = ''
+    #         date_operator = ''
+    #         for node in temporal_filter['nodes']:
+    #             if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
+    #                 date_operator = node['value']
+    #             elif node['entitytypeid'] == 'date':
+    #                 date = node['value']
+    #             else:
+    #                 date_type = node['value']
+    # 
+    # 
+    #         date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
+    # 
+    #         if date_operator == '1': # equals query
+    #             range = Range(field='dates.value', gte=date_value, lte=date_value)
+    #         elif date_operator == '0': # greater than query 
+    #             range = Range(field='dates.value', lt=date_value)
+    #         elif date_operator == '2': # less than query
+    #             range = Range(field='dates.value', gt=date_value)
+    #         
+    #         nested = Nested(path='dates', query=range)
+    #         if 'inverted' not in temporal_filters:
+    #             temporal_filters['inverted'] = False
+    # 
+    #         if temporal_filters['inverted']:
+    #             boolfilter.must_not(nested)
+    #         else:
+    #             boolfilter.must(nested)
+    # 
+    #         query.add_filter(boolfilter)
     #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
 

@@ -16,11 +16,12 @@ define(['jquery',
         return Backbone.View.extend({
 
             initialize: function(options) { 
+                this.index = options.index;
                 var self = this;
-                var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
+                var date_picker = $('.resource_time_filter_widget'+self.index+' .datetimepicker').datetimepicker({pickTime: false});
                 
                 date_picker.on('dp.change', function(evt){
-                    $('#date').trigger('change'); 
+                    $('.resource_time_filter_widget'+self.index+' #date').trigger('change'); 
                 });
 
                 ko.observableArray.fn.get = function(entitytypeid, key) {
@@ -34,7 +35,7 @@ define(['jquery',
                     return ret
                 }
 
-                this.slider = new Slider('input.slider', {});
+                this.slider = new Slider('.resource_time_filter_widget'+self.index+' input.slider', {});
                 this.slider.on('slideStop', function(evt){
                     // if ther user has the slider at it's min and max, then essentially they don't want to filter by year
                     if(self.slider.getAttribute('min') === evt.value[0] && self.slider.getAttribute('max') === evt.value[1]){
@@ -44,12 +45,13 @@ define(['jquery',
                     }
                 });                
 
-                this._rawdata = ko.toJSON(JSON.parse($('#timefilterdata').val()));
+                this._rawdata = ko.toJSON(JSON.parse($('.resource_time_filter_widget'+self.index+' #timefilterdata').val()));
                 this.viewModel = JSON.parse(this._rawdata);
 
                 this.expanded = ko.observable(false);
                 this.expanded.subscribe(function(status){
-                    self.toggleFilterSection($('#time-filter'), status)
+                    // self.toggleFilterSection($('#time-filter'), status)
+                    self.toggleFilterSection($('.resource_time_filter_widget'+self.index+'#time-filter'), status)
                 });
 
                 this.query = {
@@ -95,7 +97,8 @@ define(['jquery',
                 }, this);
 
                 this.time_filter_branchlist = new BranchList({
-                    el: $('#time-filter')[0],
+                    // el: $('#time-filter')[0],
+                    el: $.find('.resource_time_filter_widget'+self.index+'#time-filter')[0],
                     data: this.viewModel,
                     dataKey: 'date_operators',
                     validateBranch: function (nodes) {
