@@ -29,6 +29,9 @@ def canUserAccessResource(user, resourceid, action='view'):
     # Get the geometry for resource
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
+    if not report_info:
+        return True
+        
     geometry = JSONSerializer().serialize(report_info['_source']['geometry'])
     
     if geometry is 'null':
