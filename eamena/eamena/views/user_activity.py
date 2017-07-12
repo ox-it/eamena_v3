@@ -46,10 +46,11 @@ def user_activity(request, userid):
             ret[index]['log'].append(log)
             try:
                 resource = se.search(index='resource', id=log['resourceid'])
-                ret[index]['name'] = resource['_source']['primaryname']
                 ret[index]['resourceid'] = log['resourceid']
+                ret[index]['name'] = resource['_source']['primaryname']
             except:
                 print("Item does not exist")
+                ret[index]['name'] = "deleted item"
     
             if str(log['timestamp'].date()) not in ret_summary:
                 ret_summary[str(log['timestamp'].date())] = {}

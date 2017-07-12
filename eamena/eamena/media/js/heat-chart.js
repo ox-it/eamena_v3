@@ -37,6 +37,18 @@ require([
                     }
                 },
                 threshold: null
+            },
+            series:{
+                allowPointSelect: true,
+                point: {
+                    events:{
+                        select: function(e) {
+                            if ($("#date-" + new Date(e.target.x).toISOString().slice(0, 10)).length) {
+                                window.location.hash="date-" + new Date(e.target.x).toISOString().slice(0, 10);
+                            }
+                        }
+                    }
+                }
             }
         },
         series: [{
