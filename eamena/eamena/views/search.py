@@ -53,7 +53,7 @@ def search_results(request):
     results = query.search(index='entity', doc_type='')
     
     for result in results['hits']['hits']:
-        result['can_access'] = canUserAccessResource(request.user, result['_id'])
+        result['can_edit'] = canUserAccessResource(request.user, result['_id'], 'edit')
     
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
@@ -85,9 +85,7 @@ def build_search_results_dsl(request):
     for group in request.user.groups.all():
         if group.geom:
             geojson = group.geom.geojson
-            # logging.warning("GEO JSON FOR GROUP -%s", geojson)
             geojson_as_dict = JSONDeserializer().deserialize(geojson)
-            logging.warning("GEO JSON -%s", geojson_as_dict)
             geoshape = GeoShape(field='geometries.value', type=geojson_as_dict['type'], coordinates=geojson_as_dict['coordinates'])
             
             nested = Nested(path='geometries', query=geoshape)

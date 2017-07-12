@@ -5,8 +5,6 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested
 
-
-# from arches.app.models import AuthGroup
 from django.contrib.auth.models import Group
 
 if not hasattr(Group, 'area'):
@@ -19,7 +17,15 @@ class EamenaAuthGroup(Group):
     class Meta:
         proxy = True
 
-def canUserAccessResource(user, resourceid):
+def canUserAccessResource(user, resourceid, action='view'):
+    """
+    Should the given user be allowed to access the resource in the way given by action
+    Access is determined by the user's membership of groups and the geometries associated to those groups
+    user: the django user
+    resourceid: the resource being accessed
+    action: either 'view', or 'edit'
+    """
+    
     # Get the geometry for resource
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
@@ -28,9 +34,13 @@ def canUserAccessResource(user, resourceid):
     if geometry is 'null':
         return True
         
+    groups = user.groups
+    if action is 'edit':
+        groups = groups.filter(name__startswith="edit")
+        
     site_geom = GEOSGeometry(geometry)
     
-    for group in user.groups.all():
+    for group in groups.all():
         if group.geom:
             group_geom = GEOSGeometry(group.geom)
             if group_geom.contains(site_geom):
