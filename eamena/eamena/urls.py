@@ -23,6 +23,7 @@ uuid_regex = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-
 
 urlpatterns = patterns('',
     url(r'^search$', 'eamena.views.search.home_page', name="search_home"),
+    url(r'^search/export$', 'eamena.views.search.export_results', name="search_results_export"),
     url(r'^search/resources$', 'eamena.views.search.search_results', name="search_results"),
     url(r'^reports/(?P<resourceid>%s)$' % uuid_regex , 'eamena.views.resources.report', name='report'),
     url(r'^resources/(?P<resourcetypeid>[0-9a-zA-Z_.]*)/(?P<form_id>[a-zA-Z_-]*)/(?P<resourceid>%s|())$' % uuid_regex, 'eamena.views.resources.resource_manager', name="resource_manager"),
