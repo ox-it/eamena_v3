@@ -126,7 +126,10 @@ define([
 
             this.map.on('click', function(e) {
                 var clickFeature = self.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
-                    return feature;
+                    //return the first arches feature
+                    if(feature.get('arches_marker') || feature.get('arches_cluster')) {
+                        return feature;
+                    }
                 });
                 self.trigger('mapClicked', e, clickFeature);
             });
@@ -147,8 +150,12 @@ define([
             var coords = this.map.getCoordinateFromPixel(pixels);
             var point = new ol.geom.Point(coords);
             var format = ol.coordinate.createStringXY(4);
+            console.log('mouse event');
             var overFeature = this.map.forEachFeatureAtPixel(pixels, function (feature, layer) {
-                return feature;
+                //return the first actual marker, but ignore any other geometries under the cursor (most likely )
+                if(feature.get('arches_marker') || feature.get('arches_cluster')) {
+                    return feature;
+                }
             });
             
             coords = point.transform("EPSG:3857", "EPSG:4326").getCoordinates();
