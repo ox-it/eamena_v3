@@ -23,9 +23,16 @@ import urllib,json
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
+from django.http import HttpResponseNotFound
+from django.db.models import Max, Min
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.auth.decorators import permission_required
+from django.views.decorators.csrf import csrf_exempt
+
 from arches.app.models import models
 from arches.app.models.concept import Concept
 import arches
+from arches.app.models.resource import Resource
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 from arches.app.utils.JSONResponse import JSONResponse
 from arches.app.views.concept import get_preflabel_from_valueid
@@ -33,20 +40,92 @@ from arches.app.views.concept import get_preflabel_from_conceptid
 from arches.app.views.resources import get_related_resources
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Query, Terms, Bool, Match, Nested, GeoShape
-from django.contrib.gis.geos import GEOSGeometry
 import binascii
 from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
 from datetime import datetime
+from eamena.models import forms
 
 from eamena.models.group import canUserAccessResource
 
+@permission_required('edit')
+@csrf_exempt
 def resource_manager(request, resourcetypeid='', form_id='default', resourceid=''):
     can_edit = canUserAccessResource(request.user, resourceid, 'edit');
     if not can_edit:
         raise PermissionDenied
+        
+    if resourceid != '':
+        resource = Resource(resourceid)
+    elif resourcetypeid != '':
+        resource = Resource({'entitytypeid': resourcetypeid})
+
+    if form_id == 'default':
+        form_id = resource.form_groups[0]['forms'][0]['id']
     
-    return arches.app.views.resources.resource_manager(request, resourcetypeid, form_id, resourceid)
+    if canUserAccessResource(request.user, resourceid, 'delete'):
+        # add the delete form
+        manage_groups = [x for x in resource.form_groups if x['id'] == 'manage-resource']
+        if len(manage_groups) > 0:
+            manage_group = manage_groups[0]
+            manage_group['forms'].append(forms.DeleteResourceForm.get_info())
+
+    form = resource.get_form(form_id)
+
+    if request.method == 'DELETE':
+        if not canUserAccessResource(request.user, resourceid, 'delete'):
+            raise PermissionDenied
+            
+        resource.delete_index()
+        se = SearchEngineFactory().create()
+        realtionships = resource.get_related_resources(return_entities=False)
+        for realtionship in realtionships:
+            se.delete(index='resource_relations', doc_type='all', id=realtionship.resourcexid)
+            realtionship.delete()
+        resource.delete()
+        return JSONResponse({ 'success': True })
+
+    if request.method == 'POST':
+        data = JSONDeserializer().deserialize(request.POST.get('formdata', {}))
+        form.update(data, request.FILES)
+
+        with transaction.atomic():
+            if resourceid != '':
+                resource.delete_index()
+            resource.save(user=request.user)
+            resource.index()
+            resourceid = resource.entityid
+
+            return redirect('resource_manager', resourcetypeid=resourcetypeid, form_id=form_id, resourceid=resourceid)
+
+    min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
+    
+    if request.method == 'GET':
+        if form != None:
+            
+            lang = request.GET.get('lang', request.LANGUAGE_CODE)
+            form.load(lang)
+            return render_to_response('resource-manager.htm', {
+                    'form': form,
+                    'formdata': JSONSerializer().serialize(form.data),
+                    'form_template': 'views/forms/' + form_id + '.htm',
+                    'form_id': form_id,
+                    'resourcetypeid': resourcetypeid,
+                    'resourceid': resourceid,
+                    'main_script': 'resource-manager',
+                    'active_page': 'ResourceManger',
+                    'resource': resource,
+                    'resource_name': resource.get_primary_name(),
+                    'resource_type_name': resource.get_type_name(),
+                    'form_groups': resource.form_groups,
+                    'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
+                    'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
+                    'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
+                },
+                context_instance=RequestContext(request))
+        else:
+            return HttpResponseNotFound('<h1>Arches form not found.</h1>')
+
 
 def map_layers(request, entitytypeid='all', get_centroids=False):
     data = []

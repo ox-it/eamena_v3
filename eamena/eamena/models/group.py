@@ -40,7 +40,9 @@ def canUserAccessResource(user, resourceid, action='view'):
     groups = user.groups
     if action is 'edit':
         groups = groups.filter(name__startswith="edit")
-        
+    elif action is 'delete' or action is 'export':
+        groups = groups.filter(name__startswith="editplus")
+
     site_geom = GEOSGeometry(geometry)
     
     for group in groups.all():
