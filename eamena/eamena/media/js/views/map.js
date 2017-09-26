@@ -150,7 +150,6 @@ define([
             var coords = this.map.getCoordinateFromPixel(pixels);
             var point = new ol.geom.Point(coords);
             var format = ol.coordinate.createStringXY(4);
-            console.log('mouse event');
             var overFeature = this.map.forEachFeatureAtPixel(pixels, function (feature, layer) {
                 //return the first actual marker, but ignore any other geometries under the cursor (most likely )
                 if(feature.get('arches_marker') || feature.get('arches_cluster')) {
