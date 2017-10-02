@@ -5,6 +5,11 @@ Elasticsearch and the large amount of data mean that at least 2GB ram is needed,
 
 To do this, stop the machine with ```docker-machine stop default```, then open the virtualbox Application and edit the 'default' VM's settings.
 
+This can also be set at the time of creating the docker-machine as follows:
+```
+docker-machine create --driver=virtualbox --virtualbox-memory=2048 default
+```
+
 ## 2. Copy the data files to the working directory
 Extract the Archive.
 
