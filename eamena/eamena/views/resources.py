@@ -36,6 +36,8 @@ from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
 from datetime import datetime
 
+import os
+
 
 def report(request, resourceid):
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
@@ -280,6 +282,8 @@ def report(request, resourceid):
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
 
+    path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
+    old_reports = os.listdir(path)
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
@@ -289,6 +293,7 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+            'old_reports': old_reports
         },
         context_instance=RequestContext(request))        

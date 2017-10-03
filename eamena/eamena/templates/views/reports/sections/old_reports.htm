@@ -1,0 +1,56 @@
+{% load i18n %}
+<!-- Old reports -->
+<div class="block-level-v2 block-description" style="background: #f9f9f9; border-top: 1px solid #dcdcdc; padding-bottom: 80px;">
+    <div class="container">
+        <div>
+            <!-- Section Header -->
+            <div class="">
+                <i class="center-icon rounded-x fa fa-exchange"></i>
+                <div class="">
+                    <h2 class="arches-report-section-header">
+                        {% trans "Old reports" %}{% if old_reports|length > 0 %}({{old_reports|length}}){% endif %}
+                    </h2>  
+                </div> 
+            </div>
+            <!-- Anchor for in=page navigation from "report options" menu -->
+            <a href="evaluation" id="evaluation" style=""></a>
+            <!-- Content -->
+            <div class="row">
+                <!-- Spacer -->
+                <div class="hidden-sm hidden-md hidden-lg margin-bottom-20"></div>
+                <div class="col-xs-12">
+                    <div class="right-inner arches-box-grey-border margin-bottom-40">
+                        <div class="row">
+                            <!-- Section Content -->
+                            <div class="col-sm-12 arches-report-group-spacer">
+                                <!-- Spacer -->
+                                <div class="arches-report-spacer hidden-xs"></div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <dl> 
+                                            {% for old_report in old_reports %}
+                                                <span class="arches-report-subsection-item">
+                                                    <a href="/media/pdf_reports/{{ report_info.source.primaryname }}/{{old_report}}" title="{% trans "View Report" %}">
+                                                        {{old_report}}{% if not forloop.last %}, {% endif %}
+                                                    </a>
+                                                </span> 
+                                                {% empty %}
+                                                    <dd class="arches-report-subsection-item">
+                                                        {% trans "None" %}
+                                                    </dd>
+                                            {% endfor %} 
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Section Content -->
+                        </div>
+                        <hr class="devider margin-top-10" style="margin-bottom: 5px;">
+                    </div>
+                </div>
+            </div>   
+            <!-- End Content -->
+        </div>
+    </div> 
+</div>    
+<!-- End Old reports -->
