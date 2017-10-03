@@ -307,7 +307,8 @@ define([
                         self.mapFilter.query.filter.geometry.coordinates().length === 0) {
                         params.no_filters = true;
                     }
-
+                    params.termFilterGroup = ko.toJSON(["No group"]);
+                    params.termFilterAndOr = ko.toJSON(["and"]);
                     params.include_ids = self.isNewQuery;
                     return $.param(params).split('+').join('%20');
                 },
