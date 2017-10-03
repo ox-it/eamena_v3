@@ -283,7 +283,10 @@ def report(request, resourceid):
         related_resource_dict[entitytypeidkey].append(related_resource)
 
     path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
-    old_reports = os.listdir(path)
+    if os.path.isdir(path):
+        old_reports = os.listdir(path)
+    else :
+        old_reports = []
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
