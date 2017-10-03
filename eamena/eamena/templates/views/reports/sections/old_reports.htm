@@ -8,7 +8,7 @@
                 <i class="center-icon rounded-x fa fa-exchange"></i>
                 <div class="">
                     <h2 class="arches-report-section-header">
-                        {% trans "Old reports" %}{% if old_reports|length > 0 %}({{old_reports|length}}){% endif %}
+                        {% trans "Old reports" %}
                     </h2>  
                 </div> 
             </div>
@@ -21,19 +21,28 @@
                 <div class="col-xs-12">
                     <div class="right-inner arches-box-grey-border margin-bottom-40">
                         <div class="row">
+                            <!-- Section Header -->
+                            <div class="col-sm-4">
+                                <h3 class="arches-report-subsection">
+                                    {% trans "Saved reports" %} {% if old_reports|length > 0 %}({{old_reports|length}}){% endif %}
+                                </h3>
+                            </div>
+                            <!-- End Section Header -->
+
                             <!-- Section Content -->
-                            <div class="col-sm-12 arches-report-group-spacer">
+                            <div class="col-sm-8 arches-report-group-spacer">
                                 <!-- Spacer -->
                                 <div class="arches-report-spacer hidden-xs"></div>
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <dl> 
                                             {% for old_report in old_reports %}
-                                                <span class="arches-report-subsection-item">
+                                                <dd class="arches-report-subsection-item">
                                                     <a href="/media/pdf_reports/{{ report_info.source.primaryname }}/{{old_report}}" title="{% trans "View Report" %}">
-                                                        {{old_report}}{% if not forloop.last %}, {% endif %}
+                                                        {{old_report}}
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                                                     </a>
-                                                </span> 
+                                                </dd> 
                                                 {% empty %}
                                                     <dd class="arches-report-subsection-item">
                                                         {% trans "None" %}
