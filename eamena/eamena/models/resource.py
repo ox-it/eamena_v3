@@ -24,6 +24,19 @@ from eamena.models import forms
 from django.utils.translation import ugettext as _
 from arches.app.models.entity import Entity
 
+from reportlab.pdfgen import canvas
+# from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter, A4
+# from reportlab.lib.units import inch
+from StringIO import StringIO
+
+import os
+import errno
+import datetime
+
+import logging
+import json
+
 class Resource(ArchesResource):
     def __init__(self, *args, **kwargs):
         super(Resource, self).__init__(*args, **kwargs)
@@ -120,8 +133,29 @@ class Resource(ArchesResource):
                     forms.DeleteResourceForm.get_info()
                 ]
             })
-            
-            
+
+
+    def save_pdf(self, resource):
+        title = resource.child_entities[0].value
+        d = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filename = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, d+".pdf")
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        buffer = StringIO()
+        p = canvas.Canvas(buffer,pagesize=letter)
+        p.drawString(0 ,0 ,JSONSerializer().serialize(resource))
+        p.showPage()
+        p.save() 
+        pdf=buffer.getvalue()
+        buffer.close() 
+        with open(filename, "wb") as f:
+                f.write(pdf)
+
 
     def get_primary_name(self):
         displayname = super(Resource, self).get_primary_name()
