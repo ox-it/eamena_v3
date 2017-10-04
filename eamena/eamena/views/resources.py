@@ -37,9 +37,16 @@ from arches.app.utils.spatialutils import getdates
 from datetime import datetime
 
 import os
+from eamena.testpdf import render_to_pdf
 
+
+import logging
+
+    
 
 def report(request, resourceid):
+    logging.warning("Viewing Report. User=%s", request.user)
+    logging.warning("STATIC_URL = %s", settings.STATIC_URL_VAL)
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     page = request.GET.get('page', 1)
     se = SearchEngineFactory().create()
@@ -281,6 +288,33 @@ def report(request, resourceid):
         if entitytypeidkey == 'INFORMATION_RESOURCE':
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
+
+#     return render_to_pdf('resource-report_archive.htm', {
+#         'geometry': JSONSerializer().serialize(result),
+# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+#         'resourceid': resourceid,
+#         'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
+#         'report_info': report_info,
+#         'related_resource_dict': related_resource_dict,
+#         'main_script': 'resource-report',
+#         'active_page': 'ResourceReport',
+#         # 'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+#     },
+#     request)
+
+    return render_to_response('resource-report_archive.htm', {
+            'geometry': JSONSerializer().serialize(result),
+#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+            'resourceid': resourceid,
+            'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
+            'report_info': report_info,
+            'related_resource_dict': related_resource_dict,
+            'main_script': 'archive-resource-report',
+            'active_page': 'ResourceReport',
+            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+        },
+        context_instance=RequestContext(request))        
+
 
     path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
     if os.path.isdir(path):
