@@ -19,6 +19,7 @@
 
 	{% block css %}
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
         <link rel="stylesheet" href="{% static 'plugins/line-icons/line-icons.css' %}">
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/octicons/2.1.2/octicons.min.css">
@@ -76,6 +77,7 @@
     <script src="{{ STATIC_URL }}js/views/crypto/components/enc-base64.js"></script>
     <script src="{{ STATIC_URL }}js/views/crypto/components/mode-cfb.js"></script>
     <script src="{{ STATIC_URL }}js/views/crypto/rollups/aes.js"></script>
+    
 
     {% block pre_require_js %}
     {% endblock pre_require_js %}
@@ -109,7 +111,8 @@
                 'blueimp-gallery': 'https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/js/blueimp-gallery',
                 'blueimp-jquery': 'http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery',
                 'blueimp-helper': 'https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/js/blueimp-helper.min',
-                'gmjs': 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBPUB3B5aiHQDVyIuhDqDp500IUCIEDdtM'
+                'gmjs': 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBPUB3B5aiHQDVyIuhDqDp500IUCIEDdtM',
+                'leaflet': 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet'
             },
             shim: {
                 'openlayers': {

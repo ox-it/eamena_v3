@@ -29,8 +29,19 @@ RESOURCE_MODEL = {'default': 'eamena.models.resource.Resource'}
 
 BING_KEY=''
 
+STATIC_URL_VAL = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../media/')) + '/'
 
+STATIC_URL = '/media/'
+# STATIC_URL = 'http://docker.default:8000/media/'
 
+ABSOLUTE_STATIC_URL = 'http://docker.default:8000/media/'
+
+os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+WKHTMLTOPDF_CMD = '/usr/local/bin/runwkhtmltopdf.sh'
+# WKHTMLTOPDF_CMD = 'xvfb-run --server-args="-screen 0, 1024x768x24" wkhtmltopdf'
+# WKHTMLTOPDF_CMD_OPTIONS = {
+#     'quiet':False
+# }
 
 #Below are the Amazon S3 Bitbucket credentials
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
