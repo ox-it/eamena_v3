@@ -290,7 +290,7 @@ def report(request, resourceid):
         related_resource_dict[entitytypeidkey].append(related_resource)
 
     return render_to_pdf('resource-report_archive.htm', {
-        'geometry': JSONSerializer().serialize(result),
+        'geometry': geometry,
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
         'resourceid': resourceid,
         'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
@@ -298,12 +298,13 @@ def report(request, resourceid):
         'related_resource_dict': related_resource_dict,
         'main_script': 'archive-resource-report',
         'active_page': 'ResourceReport',
-        # 'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+        # 'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
     },
     request)
 
     return render_to_response('resource-report_archive.htm', {
-            'geometry': JSONSerializer().serialize(result),
+            'geometry': geometry,
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
             'resourceid': resourceid,
             'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
@@ -311,7 +312,8 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'archive-resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+            'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
         },
         context_instance=RequestContext(request))        
 
