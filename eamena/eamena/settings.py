@@ -32,16 +32,15 @@ BING_KEY=''
 STATIC_URL_VAL = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../media/')) + '/'
 
 STATIC_URL = '/media/'
-# STATIC_URL = 'http://docker.default:8000/media/'
 
+# Used for generating pdfs, this should match the absolute url for the deployment
 ABSOLUTE_STATIC_URL = 'http://docker.default:8000/media/'
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+
+# On docker the command must be wrapped to enable correct rendering.
+# This setting should probably be omitted when hosted on a Mac
 WKHTMLTOPDF_CMD = '/usr/local/bin/runwkhtmltopdf.sh'
-# WKHTMLTOPDF_CMD = 'xvfb-run --server-args="-screen 0, 1024x768x24" wkhtmltopdf'
-# WKHTMLTOPDF_CMD_OPTIONS = {
-#     'quiet':False
-# }
 
 #Below are the Amazon S3 Bitbucket credentials
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -72,6 +71,8 @@ ENCODING_KEY =''
 
 EAMENA_RESOURCES = ['HERITAGE_RESOURCE_GROUP.E27'] #Specify which resource types should take on the identifier EAMENA-. All other resource types will take on an identifier beginning with their truncated EntityType, e.g. ACTOR for ACTOR.E39, INFORMATION for INFORMATION_RESOURCE.E73
 ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag, e.g. 7 -> EAMENA-0000001. MUST BE GIVEN, AND BE 2 OR OVER.
+
+
 
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
 
