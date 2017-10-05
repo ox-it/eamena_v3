@@ -34,7 +34,7 @@ STATIC_URL_VAL = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(_
 STATIC_URL = '/media/'
 
 # Used for generating pdfs, this should match the absolute url for the deployment
-ABSOLUTE_STATIC_URL = 'http://docker.default:8000/media/'
+ABSOLUTE_STATIC_URL = 'http://127.0.0.1:8000/media/'
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
