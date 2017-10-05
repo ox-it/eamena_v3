@@ -291,19 +291,19 @@ def report(request, resourceid):
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
 
-#     return render_to_pdf('resource-report_archive.htm', {
-#         'geometry': geometry,
-# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
-#         'resourceid': resourceid,
-#         'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
-#         'report_info': report_info,
-#         'related_resource_dict': related_resource_dict,
-#         'main_script': 'archive-resource-report',
-#         'active_page': 'ResourceReport',
-#         'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-#         'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-#     },
-#     request)
+    return render_to_pdf('resource-report_archive.htm', {
+        'geometry': geometry,
+#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+        'resourceid': resourceid,
+        'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
+        'report_info': report_info,
+        'related_resource_dict': related_resource_dict,
+        'main_script': 'archive-resource-report',
+        'active_page': 'ResourceReport',
+        'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
+    },
+    request)
 
     return render_to_response('resource-report_archive.htm', {
             'geometry': geometry,
