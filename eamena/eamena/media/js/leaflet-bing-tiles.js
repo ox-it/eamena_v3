@@ -1,3 +1,7 @@
+// Based on https://github.com/davidrleonard/leaflet-bing-tiles
+//
+// Modified to be an AMD and to be compatible with the phantomjs browser which is used to render html to pdf
+
 /**
  * Create a new Bing Maps layer.
  *
@@ -15,7 +19,7 @@
  */
 define(['leaflet', 'jquery', 'es6-promise'], function(L, $, Promise) {
     
-    $("#log-container").append("<div>Promise is a " + typeof(Promise) +  "</div></br>")
+    // $("#log-container").append("<div>" + "Log debug info like this to see it in the generated pdf" +  "</div>")
     
     //polyfill Promise for phantomjs
     window.Promise = Promise;
@@ -85,13 +89,10 @@ define(['leaflet', 'jquery', 'es6-promise'], function(L, $, Promise) {
             
             // Start initializing the Bing URL metadata asap so we're ready for Leaflet
             // to request tiles with `createTile`
-            $("#log-container").append("<div>" + typeof(this._initMeta) + "</div>")
 
             // this._initMeta();
-            this._initMeta.call(this);
-            
-            $("#log-container").append("<div>post _initMeta" +  "</div></br>")
-            
+            this._initMeta();
+                        
             // for https://github.com/Leaflet/Leaflet/issues/137
             if (!L.Browser.android) {
                 this.on('tileunload', this._onTileRemove)
@@ -198,7 +199,6 @@ define(['leaflet', 'jquery', 'es6-promise'], function(L, $, Promise) {
             
             return fetch(PointMetaDataUrl)
             .then(function(response) {
-                $("#log-container").append("<div>" + reponse +  "</div>")
                 return response.json();
             })
             .catch(console.error.bind(console))
@@ -289,11 +289,7 @@ define(['leaflet', 'jquery', 'es6-promise'], function(L, $, Promise) {
             if (this._dingMeta && this._fetch) {
                 fetchPromise = this._fetch;
             } else {
-                $("#log-container").append("<div>this._startMetadataFetch is a " + typeof(this._startMetadataFetch) + "</div>")
-                $("#log-container").append("<div>function.prototype.bind is a " + typeof(this._startMetadataFetch.bind) + "</div>")
-                
                 var boundFetch = this._startMetadataFetch.bind(this);
-                $("#log-container").append("<div>boundFetch is a " + typeof(boundFetch) + "</div>")
                 
                 fetchPromise = this._fetch = boundFetch();
             }
@@ -308,7 +304,6 @@ define(['leaflet', 'jquery', 'es6-promise'], function(L, $, Promise) {
         
         _handleMetadataLoaded: function(metadata) {
             if (metadata.statusCode !== 200) {
-                $('#log-container').append("<div>ERROR: " + JSON.stringify(metadata, null, '   ') + "</div>");
                 throw new Error('Bing Imagery Metadata error: \n' + JSON.stringify(metadata, null, '  '))
             }
             var resource = metadata.resourceSets[0].resources[0]

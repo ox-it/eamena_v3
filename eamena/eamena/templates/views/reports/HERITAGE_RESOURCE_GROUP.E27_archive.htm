@@ -19,17 +19,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 {% load staticfiles %}
 {% load i18n %}
 
-{% include 'views/reports/title.htm' %}
-
-
-
-
 
 <div id="report-body" class="report-body" >
     
-    <div id="lmap-container" style="height:400px">
-        
-    </div>
+    <div id="log-container"></div>
+    <div id="lmap-container" style="height:600px;width:1024px"></div>
+    <input type="hidden" id="resource_geometry" value='{{ geometry }}' />
     
     {% if false %}
         <!--=== Map Block ===-->
