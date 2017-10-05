@@ -285,6 +285,22 @@ define([
                 };                             
             });
 
+            // take the input lat/long and add to map by making a feature from wkt. Credits @mradamcox: https://github.com/mradamcox/ead/commit/a86540958075ec82812714484e58bd0e9c9ba3de
+            this.$el.find('#add-lat-long').on('click', function() {
+                var latdd = $('#latinput').val();
+                var longdd = $('#longinput').val();
+                var wkt = 'POINT('+longdd+' '+latdd+')';
+                var format = new ol.format.WKT();
+                var feature = format.readFeature(wkt, {
+                    dataProjection: 'EPSG:4326',
+                    featureProjection: 'EPSG:3857'
+                });
+                bulkAddFeatures([feature]);
+                $("#inventory-home").click();
+                $('.coord-input').val("");
+            });
+
+
             var formatConstructors = [
                 ol.format.GPX,
                 ol.format.GeoJSON,
