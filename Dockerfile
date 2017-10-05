@@ -37,9 +37,6 @@ tar xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
 chown root:root wkhtmltox/bin/wkhtmltopdf && \
 cp wkhtmltox/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 
-# add an entry to hosts so that the files can be retrieved by phantomjs running locally
-RUN echo '127.0.0.1 docker.default' >> /etc/hosts
-
 # put the runner script in /usr/local/bin
 ADD ./scripts/runwkhtmltopdf.sh /usr/local/bin/runwkhtmltopdf.sh
 RUN chmod a+x /usr/local/bin/runwkhtmltopdf.sh
