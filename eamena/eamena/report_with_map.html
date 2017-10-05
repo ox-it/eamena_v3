@@ -1,0 +1,1311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+
+
+<head>
+    <title>eamena</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=500, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/leaflet.css">
+        <link rel="stylesheet" href="http://docker.default:8000/media/plugins/line-icons/line-icons.css">
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/octicons/2.1.2/octicons.min.css">
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2-bootstrap.min.css" type="text/css">
+        <link rel="stylesheet" href="http://docker.default:8000/media/css/main.css">
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/css/blueimp-gallery.min.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="http://docker.default:8000/media/css/plugins/bootstrap-image-gallery.min.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="http://docker.default:8000/media/plugins/openlayers/ol.css">
+        <link rel="stylesheet" href="http://docker.default:8000/media/css/arches.css">
+        {# <link rel="stylesheet" href="http://docker.default:8000/media/css/leaflet.css">#}
+    
+
+</head> 
+
+<body class="scroll-y" style="direction:  ltr; " > 
+
+    <div class="wrapper">
+    	
+            
+
+
+<div class="header">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="container">
+            
+            <!-- Topbar Message -->
+
+            <!-- Topbar Navigation -->
+            <ul class="loginbar pull-right">
+                
+                
+                 <div class="arches-loginbar pull-left">
+                    
+                    <a href="http://www.archesproject.org" class="">
+                        <img src="http://docker.default:8000/media/img/PoweredByArches.png" class="powered-by-arches">&nbsp; 
+                            </a>
+                    
+                </div>
+                
+
+
+
+
+                <li class="loginbar pull-right">
+<!--                     <i class="fa fa-globe"></i>
+                    <a>Languages</a> -->
+                    
+                    <form action="/i18n/setlang/" method="post" id="languageform">
+                    <input type='hidden' name='csrfmiddlewaretoken' value='AWEeczNKl2cYd3ip5oo7HEhq6k9gTUYh' />
+                      <input name="next" type="hidden" value="/reports/07bd1237-8d29-4787-896a-c62be46fc3e6" />
+                      <select name="language">
+
+<!--                     <ul class="lenguages"> -->
+                    
+                        <li class="active">
+                            <option value="en-US"><a href="javascript:void(0);">ENGLISH<i class="fa fa-check"></i></a> </option>
+                        </li>
+                    
+                        <li class="active">
+                            <option value="ar"><a href="javascript:void(0);">ARABIC<i class="fa fa-check"></i></a> </option>
+                        </li>
+                    
+                      </select>&nbsp; 
+                    <input type="submit" value="Change" />
+                    </form>
+<!--                     </ul> -->
+                </li>
+               
+                <li><a href="javascript:void(0);" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-content="Documentation coming soon.">Help</a></li>&nbsp; 
+
+                <li>
+                    <a id="auth-link" href="/auth/?next=/reports/07bd1237-8d29-4787-896a-c62be46fc3e6&logout=true">Welcome ahaith - Logout</a>
+                </li>&nbsp; 
+                
+            </ul>
+            <!-- End Topbar Navigation -->
+        </div>
+    </div>
+    <!-- End Topbar -->
+
+    <!-- Navbar -->
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="fa fa-bars"></span>
+                </button>
+                <a class="navbar-brand" href="/index.htm">
+                    <img id="logo-header" class="arches-logo" src="http://docker.default:8000/media/img/eamena_logo.jpg" alt="Logo">
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-responsive-collapse">
+                <ul class="nav navbar-nav">
+                    
+                    <!-- Home -->
+                    <li class="">
+                        <a href="/index.htm">
+                            Home
+                        </a>
+                    </li>
+                    <!-- End Home -->
+
+                    <!-- New Search-->
+                    <li class="">
+                        <a href="/search">
+                            Search
+                        </a>
+                    </li>
+                    <!-- End Search-->
+
+                    <!-- Map-->
+                    <li class="">
+                        <a href="/map">
+                            Map View
+                        </a>
+                    </li>
+                    <!-- End Map-->
+
+                    
+                    <!-- Resource Editor-->
+                    <li class="dropdown ">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            Resource Manager
+                        </a>
+                        <ul class="dropdown-menu">
+                            
+                                <li><a href="/resources/HERITAGE_RESOURCE_GROUP.E27/summary/"><i class="fa fa-university"></i>Heritage Resource E27</a></li>
+                            
+                                <li><a href="/resources/ACTOR.E39/actor-summary/"><i class="fa fa-group"></i>Person/Organization</a></li>
+                            
+                                <li><a href="/resources/INFORMATION_RESOURCE.E73/information-resource-summary/"><i class="fa fa-file-text-o"></i>Information Resource</a></li>
+                            
+                        </ul>
+                    </li>
+                    <!-- End Resource Editor -->
+
+                     <!-- RDM-->
+                    <li class=" ">
+                        <a href="/rdm/">
+                            RDM
+                        </a>
+                    </li>
+                    <!-- End RDM-->
+                    
+
+
+                </ul>
+            </div><!--/navbar-collapse-->
+        </div>    
+    </div>            
+    <!-- End Navbar -->
+
+</div>
+
+
+         
+
+		
+        <!--=== Breadcrumbs ===-->
+<!--         <div class="breadcrumbs">
+            <div class="container">
+
+                <h1 class="pull-left arches-breadcrumb-title">Reference Data Manager (RDM)</h1>
+                <ul class="pull-right breadcrumb">
+                    <li><a href="/index.htm">Home</a></li>
+                    <li><a href="">Reference Data Manager</a></li>
+                </ul>
+            </div>
+        </div> -->
+        <!--=== End Breadcrumbs ===-->
+        
+
+        
+        
+
+        <!--=== Content Part ===-->
+        
+    
+<!--
+ARCHES - a program developed to inventory and manage immovable cultural heritage.
+Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+
+
+<!--
+ARCHES - a program developed to inventory and manage immovable cultural heritage.
+Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+
+<!--=== Report Title ===-->
+<div class="breadcrumbs report-breadcrumb">
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Project Name (screens small and bigger)-->
+            <div class="hidden-sm hidden-xs col-sm-12">
+                <h1 class="pull-left arches-breadcrumb-title"><i class="fa "></i>EAMENA-0087195</h1>
+                                
+                <div class="header-btn-wrapper">
+                    <a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/07bd1237-8d29-4787-896a-c62be46fc3e6" class="info-link edit-link report-header-link btn btn-primary">
+                        <i class="fa fa-edit"></i><span> Edit</span>
+                    </a>
+                </div>
+                
+            </div>
+
+            <!-- Project Name (screens extra small)-->
+             <div class="hidden-md hidden-lg">
+                <h1 class="arches-breadcrumb-title margin-left-15 margin-bottom-0" style="margin-top: -5px; margin-bottom: 0;"><i class="fa "></i>EAMENA-0087195</h1>
+                <ul class="list-inline up-ul margin-left-15">
+                    <li>
+                        <i class="arches-search-link fa fa-folder-open"></i>
+                        <a href="#report" class="info-link related-resources-graph"><span class="arches-search-link">Resource Report</span></a>
+                    </li>
+
+                    <li data-bind="visible: geometries().length > 0">
+                        <i class="arches-search-link fa fa-map-marker"></i>
+                        <a href="#map" class="info-link navigate-map"><span class="arches-search-link">Map</span></a>
+                    </li>
+
+                    
+                    <li>
+                        <i class="arches-search-link fa fa-edit"></i>
+                        <a href="/resources/HERITAGE_RESOURCE_GROUP.E27/default/07bd1237-8d29-4787-896a-c62be46fc3e6" class="info-link edit-link"><span class="arches-search-link">Edit</span></a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr class="margin-top-minus-10 margin-bottom-10" style="border-width: 0px;">
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+<!--=== End Report Title ===-->
+
+
+
+
+
+<div id="report-body" class="report-body" >
+    
+    <div id="log-container">
+        
+    </div>
+    <div id="lmap-container" style="height:400px; width:500px;">
+        
+    </div>
+    
+    
+
+
+    <!--=== Resource Description Section ===-->
+    <div class="block-description" style="padding-top: 30px;" id="report">
+        <div class="container">
+
+            <!-- Resource Report Container -->
+            <div>
+
+                <!-- Section Header -->
+                <div class="">
+                    <i class="center-icon rounded-x fa fa-folder-open"></i>
+                    <div class="">
+                        <h2 class="arches-report-section-header">Heritage Resource E27</h2>
+                    </div> 
+                </div>
+
+                <!-- Anchor for in=page navigation from "report options" menu -->
+                <a href="overview" id="overview" style="top: 250px;"></a>
+
+
+                <!-- Resource Description Content -->
+                <div class="row">
+                    
+                    <!-- Spacer -->
+                    <div class="hidden-sm hidden-md hidden-lg margin-bottom-20"></div>
+
+                    <!-- Resource Summary Info -->
+                    <div class="col-xs-12">
+                        <div class="right-inner arches-box-grey-border">
+                            
+                            <!-- Resource Summary Info -->
+                            <div class="row">
+
+                                <!-- Section sub-header -->
+                                <div class="col-sm-4">
+                                    <h3 class="arches-report-subsection">Resource Summary</h3>
+                                </div>
+                                <!-- End Section sub-header -->
+
+                                <!-- Section Content -->
+                                <div class="col-sm-8">
+
+                                    <!-- Spacer -->
+                                    <div class="arches-report-spacer hidden-xs"></div>
+
+                                    <div class="arches-report-subsection-content">
+                                       <!-- Arches ID for HR.E27 -->
+                                        
+<!--
+ARCHES - a program developed to inventory and manage immovable cultural heritage.
+Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Resource ID</h5>
+            </dt>
+                    <dd class="arches-report-subsection-item">
+                              EAMENA-0087195
+                    </dd>
+            <dt>
+        </dl>
+    </div>
+</div>
+                                        <!-- Resource Names-->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Names</h5>
+            </dt>
+
+            
+                
+                    <dd class="arches-report-subsection-item">
+                        Qb-NS03-g <span class="arches-report-subsection-item-type">( Alternative Reference )</span>
+                    </dd>
+                            
+            
+
+        </dl>
+    </div>
+</div>
+                                        <!-- Overall Site Certainty -->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Overall Site Certainty</h5>
+            </dt>
+
+            
+                
+                    <dd class="arches-report-subsection-item">
+                        High 
+                    </dd>
+                            
+            
+
+        </dl>
+    </div>
+</div>
+                                        <!-- Site Function and related certainties -->
+                                        
+<div class="row">
+    <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Site function(s)</h5>
+            </dt>
+            
+                
+                    <dd class="arches-report-subsection-item">
+                     Agricultural/Pastoral<span class="arches-report-subsection-item-type"> ( Function)</span>
+                     High<span class="arches-report-subsection-item-type"> ( Certainty)</span>
+                    </dd>
+                    
+                    <dd class="arches-report-subsection-item">
+                     Defensive/Fortification<span class="arches-report-subsection-item-type"> ( Function)</span>
+                     High<span class="arches-report-subsection-item-type"> ( Certainty)</span>
+                    </dd>
+                    
+                    <dd class="arches-report-subsection-item">
+                     Domestic<span class="arches-report-subsection-item-type"> ( Function)</span>
+                     High<span class="arches-report-subsection-item-type"> ( Certainty)</span>
+                    </dd>
+                                
+            
+
+        </dl>
+
+    </div>
+</div>
+                                        <!-- Cultural Periods -->
+                                        
+<div class="row">
+    <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Cultural periods</h5>
+            </dt>
+    
+    
+
+            
+
+
+                
+                    <dd class="arches-report-subsection-item">
+                         Late Roman (Tripolitania/North Tunisia/Central Tunisia/Algeria)<span class="arches-report-subsection-item-type"> ( Period )</span>
+                      Possible <span class="arches-report-subsection-item-type"> ( Certainty )</span>
+                    </dd>
+                                
+            
+    
+
+            
+
+
+                
+                    <dd class="arches-report-subsection-item">
+                         Byzantine (Tripolitania/North Tunisia/Central Tunisia)<span class="arches-report-subsection-item-type"> ( Period )</span>
+                      Possible <span class="arches-report-subsection-item-type"> ( Certainty )</span>
+                    </dd>
+                                
+            
+    
+
+            
+
+
+                
+                    <dd class="arches-report-subsection-item">
+                         Vandal (Tripolitania, North/Central Tunisia)<span class="arches-report-subsection-item-type"> ( Period )</span>
+                      Possible <span class="arches-report-subsection-item-type"> ( Certainty )</span>
+                    </dd>
+                                
+            
+    
+
+            
+    
+
+            
+    
+
+            
+    
+
+            
+    
+
+            
+      
+      
+        </dl>
+
+    </div>
+</div>
+                                        <!-- Time Spans -->
+<!--                                         
+<div class="row">
+    <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Time span</h5>
+            </dt>
+    
+    
+    
+            
+    
+    
+            
+    
+    
+            
+    
+    
+            
+    
+    
+            
+    
+    
+            
+    
+    
+            
+    
+    
+            
+      
+      
+        </dl>
+
+    </div>
+</div> -->
+
+                                    </div>
+                                </div>
+                                <!-- End Section Content-->
+
+                            </div>
+                            <!-- End Names/Type Section -->
+
+
+                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
+
+
+                            <!-- Classification -->
+                            <div class="row">
+
+                                <!-- Section sub-header -->
+                                <div class="col-sm-4">
+                                    <h3 class="arches-report-subsection">Classification</h3>
+                                </div>
+                                <!-- End Section sub-header -->
+
+                                 <!-- Section Content -->
+                                <div class="col-sm-8">
+
+                                    <!-- Spacer -->
+                                    <div class="arches-report-spacer hidden-xs"></div>
+
+                                    <div class="arches-report-subsection-content">
+                                       <!-- Feature forms-->
+                                        
+<div class="row">
+    <div class="col-xs-12">
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Feature forms within Heritage Resource</h5>
+            </dt>
+       
+        </dl>
+
+    </div>
+</div>
+                                    </div>
+                                     <div class="arches-report-subsection-content">
+                                       <!-- Feature interpretations-->
+                                        
+<div class="row">
+    <div class="col-xs-12">
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Feature intepretations within Heritage Resource</h5>
+            </dt>
+       
+        </dl>
+
+    </div>
+</div>
+                                    </div>
+                                <!-- End Section Content-->
+
+                                </div>
+                            </div>
+                            <!-- End Classification Section -->
+
+
+                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
+
+
+                            <!-- Descriptions -->
+                            <div class="row">
+
+                                <!-- Section sub-header -->
+                                <div class="col-sm-4">
+                                    <h3 class="arches-report-subsection">Condition</h3>
+                                </div>
+                                <!-- End Section sub-header -->
+
+                                 <!-- Section Content -->
+                                <div class="col-sm-8">
+
+                                    <!-- Spacer -->
+                                    <div class="arches-report-spacer hidden-xs"></div>
+
+                                    <div class="arches-report-subsection-content">
+
+                                        <!-- Condition State -->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Overall condition of resource</h5>
+            </dt>
+
+            
+            
+            
+            
+                            
+
+            
+                            
+
+            
+                            
+
+            
+                
+                    <dd class="arches-report-subsection-item">
+                        Fair 
+                    </dd>
+
+    
+                            
+
+                
+            
+                
+            
+
+        </dl>
+    </div>
+</div>
+
+                                    </div>
+                                     <div class="arches-report-subsection-content">
+
+                                        <!-- Disturbance extent -->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Overall disturbance extent</h5>
+            </dt>
+
+            
+            
+            
+            
+                            
+
+            
+                            
+
+            
+                            
+
+            
+                
+                    <dd class="arches-report-subsection-item">
+                        Unknown 
+                    </dd>
+
+    
+                            
+
+                
+            
+                
+            
+
+        </dl>
+    </div>
+</div>
+
+                                    </div>
+                                     <div class="arches-report-subsection-content">
+
+                                        <!-- Disturbance type -->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Types of disturbances affecting the resource</h5>
+            </dt>
+
+            
+                    
+            
+
+        </dl>
+    </div>
+</div>
+
+                                    </div>  
+                                     <div class="arches-report-subsection-content">
+
+                                        <!-- Threat type-->
+                                        
+<div class="row">
+     <div class="col-xs-12">
+        <dl>
+            <dt>
+                <h5 id="" class="arches-report-subsection-title">Threat(s) to the resource</h5>
+            </dt>
+
+            
+                    
+            
+
+        </dl>
+    </div>
+</div>
+
+                                    </div>                                                                              
+                                </div>
+                                <!-- End Section Content-->
+
+                            </div>
+                            <!-- End Condition Section -->
+
+
+                            <hr class="devider margin-top-10" style="margin-bottom: 5px;"></hr>
+
+
+                        </div>
+                    </div>
+                    <!-- End Project Information -->
+                    
+                </div>   
+            </div>
+            <!-- End Project Summary -->
+        </div>
+    </div>
+    <!-- End Resource Description Section -->
+
+
+
+    
+
+    
+
+    
+<!-- Related Resources -->
+
+<div class="block-level-v2 block-description" style="background: #f9f9f9; border-top: 1px solid #dcdcdc; padding-bottom: 80px;">
+    <div class="container">
+
+        <div>
+
+            <!-- Section Header -->
+            <div class="">
+                <i class="center-icon rounded-x fa fa-exchange"></i>
+                <div class="">
+                    <h2 class="arches-report-section-header">Related Resources <span> <i id ="plusminus"  class="fa fa-plus-square"></i></span></h2>  
+                
+                </div> 
+            </div>
+
+            <!-- Anchor for in=page navigation from "report options" menu -->
+            <a href="evaluation" id="evaluation" style=""></a>
+
+            <!-- Content -->
+            <div class="row" id ="tobehidden" style="display: none;">
+                
+                <!-- Spacer -->
+                <div class="hidden-sm hidden-md hidden-lg margin-bottom-20"></div>
+
+                <!-- Related Resources -->
+                <div class="col-xs-12">
+                    <div class="right-inner arches-box-grey-border margin-bottom-40">
+
+
+    
+
+
+                        <!-- Related Heritage Resources E27 -->
+                        <div class="row">
+
+                            <!-- Section Header -->
+                            <div class="col-sm-4">
+                                <h3 class="arches-report-subsection">
+                                    Related Heritage Resources E27
+                                    
+                                        
+                                    
+                                </h3>
+                            </div>
+                        
+                            <!-- End Section Header -->
+
+                            <!-- Section Content -->
+                            <div class="col-sm-8 arches-report-group-spacer">
+
+                                <!-- Spacer -->
+                                <div class="arches-report-spacer hidden-xs"></div>
+                            
+                                <!-- resource groups -->
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <dl>                               
+                                            
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                             
+                                        
+                                        </dl>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+<!--                                 <div class="row">
+                                    <div class="col-xs-12">
+                                            <span class="step-links">
+                                                
+                                        
+                                                <span class="current">
+                                                    Page  of .
+                                                </span>
+                                        
+                                                
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            <!-- End Section Content-->
+                            
+                        </div>
+                        <!-- End Related Heritage Resources E27 Section -->
+                        
+
+                        
+
+                        <hr class="devider margin-top-10" style="margin-bottom: 5px;">
+
+
+
+
+
+                        <!-- Related Actors -->
+                        <div class="row">
+
+                            <!-- Section Header -->
+                            <div class="col-sm-4">
+                                <h3 class="arches-report-subsection">Related People/Organisations</h3>
+                            </div>
+                            <!-- End Section Header -->
+
+                            <!-- Section Content -->
+                            <div class="col-sm-8 arches-report-group-spacer">
+
+                                <!-- Spacer -->
+                                <div class="arches-report-spacer hidden-xs"></div>
+
+                                <!-- related actors -->
+                                <div class="row">
+                                    <div class="col-xs-12">
+
+                                        <dl> 
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                             
+                                        </dl>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Section Content-->
+                        </div>
+                        <!-- End Related Actors Section -->
+
+
+                        <hr class="devider margin-top-10" style="margin-bottom: 5px;">
+
+
+                        <!-- Related Information Objects -->
+                        <div class="row">
+
+                            <!-- Section Header -->
+                            <div class="col-sm-4">
+                                <h3 class="arches-report-subsection">Related Information Resources</h3>
+                            </div>
+                            <!-- End Section Header -->
+
+                            <!-- Section Content -->
+                            <div class="col-sm-8 arches-report-group-spacer" style="padding-left: 22px;">
+
+                                <!-- Spacer -->
+                                <div class="arches-report-spacer hidden-xs"></div>
+                                
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    Shared Data (Number: 1) 
+                                                </h5>
+                                            </dt>
+
+                                            
+                                                <dd class="arches-report-subsection-item">
+                                                    <span class="arches-report-subsection-item-type">
+                                                        Data contributed by: 
+                                                    </span>
+
+                                                    <a href="/reports/53a420d1-d4d6-4bfd-914c-7970b07778d2" title="View Report">
+                                                        Building the Countryside: A Regional Perspective on the Architecture and Settlement of Rural Tripolitania (1st c. BC - 7th c. AD) - University of Oxford - Sheldrick, N.
+                                                    </a>
+
+
+                                                </dd>
+
+                                                 
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               
+                               <!-- End List of Related Resources (Shared Data)-->
+
+                                
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    Bibliography
+                                                </h5>
+                                            </dt>
+
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                             
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               
+                               <!-- End List of Related Resources (Bibliography)-->
+                                
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    Maps
+                                                </h5>
+                                            </dt>
+
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                             
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               
+                               <!-- End List of Related Resources (Maps)--> 
+                               
+
+                                <div class="row">
+                               
+                                    <div class="col-xs-12">
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title">
+                                                    Imagery
+                                                </h5>
+                                            </dt>
+
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                             
+                          
+                                        </dl>
+                                    </div>
+                                </div>
+                               
+                               <!-- End List of Related Resources (Satellite)--> 
+                                <div class="row">
+                                    <div class="col-xs-12">
+
+                                        <dl>
+                                            <dt>
+                                                <h5 class="arches-report-subsection-title arches-report-spacer">
+                                                    Other Images
+                                                </h5>
+                                            </dt>
+
+                                            <!-- Links for Image Gallery Supply Image in the href, thumbnails in the img tags -->
+                                            
+                                                    <dd class="arches-report-subsection-item">
+                                                        None
+                                                    </dd>                                                        
+                                            
+                                            
+                                        </dl>
+                                    </div>
+                                </div>
+                             <!-- End List of Related Resources (Image)--->
+                            </div>
+                            <!-- End Section Content-->
+                        </div>
+                        <!-- End Related Information Objects Section -->
+
+                    </div>
+                </div>
+                <!-- End Related Historic Resources -->
+            </div>   
+        </div>
+    </div> 
+</div>    
+<!-- End Related Resource Container -->
+
+
+</div>
+
+
+
+
+        <!--=== End Content Part ===-->
+
+
+
+    </div><!--/wrapper-->
+
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.js"></script>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+    <script src="http://docker.default:8000/media/js/views/crypto/components/core-min.js"></script>
+    <script src="http://docker.default:8000/media/js/views/crypto/components/cipher-core.js"></script>
+    <script src="http://docker.default:8000/media/js/views/crypto/components/enc-base64.js"></script>
+    <script src="http://docker.default:8000/media/js/views/crypto/components/mode-cfb.js"></script>
+    <script src="http://docker.default:8000/media/js/views/crypto/rollups/aes.js"></script>
+    
+
+    
+    
+    <script>
+        require.config({
+            waitSeconds : 30,
+            baseUrl: 'http://docker.default:8000/media/js',
+            paths: {
+                'plugins': 'http://docker.default:8000/media/plugins',
+                'async': 'http://cdnjs.cloudflare.com/ajax/libs/requirejs-async/0.1.1/async',
+                'jquery': 'http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min',
+                'select2': 'http://cdnjs.cloudflare.com/ajax/libs/select2/3.5.1/select2.min',
+                'bootstrap': 'http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min',
+                'jquery-ui': 'http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
+                'flexslider': 'http://cdnjs.cloudflare.com/ajax/libs/flexslider/2.2.2/jquery.flexslider-min',
+                'openlayers': 'http://docker.default:8000/media/plugins/openlayers/ol',
+                'easing': 'http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min',
+                'backbone': 'http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+                // 'underscore': 'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min',
+                'underscore': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min',
+                'jquery-validate': 'http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min',
+                'd3': 'http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min',
+                'dropzone': 'http://cdnjs.cloudflare.com/ajax/libs/dropzone/3.8.4/dropzone-amd-module.min',
+                'summernote': 'http://cdnjs.cloudflare.com/ajax/libs/summernote/0.5.10/summernote.min',
+                'knockout': 'http://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min',
+                //'knockout': 'http://knockoutjs.com/downloads/knockout-3.3.0.debug',
+                'knockout-mapping': 'http://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min',
+                'moment': 'http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min',
+                'bootstrap-datetimepicker': 'http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min',
+                'shp': 'https://raw.githubusercontent.com/wavded/js-shapefile-to-geojson/master/shapefile',
+                'blueimp-gallery': 'https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/js/blueimp-gallery',
+                'blueimp-jquery': 'http://blueimp.github.io/Gallery/js/jquery.blueimp-gallery',
+                'blueimp-helper': 'https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.15.2/js/blueimp-helper.min',
+                'gmjs': 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBPUB3B5aiHQDVyIuhDqDp500IUCIEDdtM',
+                'leaflet': 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/leaflet-src',
+                'es6-promise':'https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise'
+            },
+            shim: {
+                'openlayers': {
+                    exports: 'ol'
+                }
+            }
+            
+        });
+
+        // application wide require calls
+        require(["jquery"], function($) {
+            var jQuery = $;
+
+            // put values here that should be accessible application wide
+            define('arches', [], function () {
+                return {
+                    urls: {
+                        home: "/index.htm",
+                        media: "http://docker.default:8000/media/",
+                        uploadedfiles: "https://.s3.amazonaws.com/",
+                        concept_tree: "/concepts/tree",
+                        dropzone_files: "/resources///07bd1237-8d29-4787-896a-c62be46fc3e6",
+                        concept: "/concepts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                        concept_search: "/concepts/search",
+                        concept_manage_parents: "/concepts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/manage_parents/",
+                        from_sparql_endpoint: "/concepts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/from_sparql_endpoint",
+                        search_sparql_endpoint: "/concepts/search_sparql_endpoint",
+                        confirm_delete: "/concepts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa/confirm_delete/",
+                        edit_history: "/resources/history/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                        search_terms: "/search/terms",
+                        search_results: "/search/resources",
+                        search_results_export: "/search/export",
+                        map_layers: "/resources/layers/",
+                        map_markers: "/resources/markers/",
+                        reports: "/reports/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa".replace('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', ''),
+                        buffer: "/buffer/",
+                        related_resources: "/resources/related/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa".replace('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', ''),
+                        get_admin_areas: "/get_admin_areas",
+                    },  
+                    mapDefaults: {
+                        x: 3000000,
+                        y: 2200000,
+                        zoom: 4,
+                        minZoom: 0,
+                        maxZoom: 19,
+                        extent: ''
+                    },
+                    resourceMarker: {
+                        font: 'octicons',
+                        icon: '\uf060',
+                        defaultColor: '#C4171D'
+                    },
+                    bingKey: "Au0r8adxU5_QadMZ0jI_sXcD22g0bvF8boPtlWUVwBt4GKBVz3vL-93egN-_cibi",
+                    bingLayers: [
+                    {
+                        id: 'Aerial',
+                        name: "Bing Imagery",
+                        icon: "http://docker.default:8000/media/img/map/Bing_Sat.png"
+                    },
+                    {
+                        id: 'Road',
+                        name: " Bing Streets",
+                        icon: "http://docker.default:8000/media/img/map/Bing_Streets.png"
+                    }],
+                    editor:   true ,
+                };
+            });
+
+            define('resource-types', [], function () {
+                var resourceTypes = {
+                    
+                    "HERITAGE_RESOURCE_GROUP.E27": {
+                        id: "HERITAGE_RESOURCE_GROUP.E27",
+                        icon: "fa fa-university",
+                        name: "Heritage Resource E27",
+                        defaultDescription: "No name available",
+                        descriptionNode: "NAME.E41",
+                        categories: [
+                            
+                            "Resource"
+                            
+                        ],
+                        color: "#FFC53D",
+                        strokeColor: "#d9b562",
+                        fillColor: "#eedbad"
+                    },
+                    
+                    "ACTOR.E39": {
+                        id: "ACTOR.E39",
+                        icon: "fa fa-group",
+                        name: "Person/Organization",
+                        defaultDescription: "No description available",
+                        descriptionNode: "ACTOR_APPELLATION.E82",
+                        categories: [
+                            
+                            "Resource"
+                            
+                        ],
+                        color: "#a44b0f",
+                        strokeColor: "#a7673d",
+                        fillColor: "#c8b2a3"
+                    },
+                    
+                    "INFORMATION_RESOURCE.E73": {
+                        id: "INFORMATION_RESOURCE.E73",
+                        icon: "fa fa-file-text-o",
+                        name: "Information Resource",
+                        defaultDescription: "No description available",
+                        descriptionNode: "TITLE.E41,CATALOGUE_ID.E42,IMAGERY_CREATOR_APPELLATION.E82,TILE_SQUARE_DETAILS.E44,CONTRIBUTOR_APPELLATION.E82,SHARED_DATA_SOURCE_APPELLATION.E82,SHARED_DATA_SOURCE_AFFILIATION.E82,SHARED_DATA_SOURCE_CREATOR_APPELLATION.E82",
+                        categories: [
+                            
+                            "Resource"
+                            
+                        ],
+                        color: "#8D45F8",
+                        strokeColor: "#9367d5",
+                        fillColor: "#c3b5d8"
+                    },
+                    
+                };
+
+                return resourceTypes;;
+            });
+
+            require(["plugins/scroll-to-top", "views/simple-search", "bootstrap", "jquery-ui"], function (scrollToTop, SimpleSearch) {
+                var search = new SimpleSearch({ el: $('#simple-search')[0] });                
+                var scrollableElement;
+                
+                    scrollableElement = $('#report-body'); 
+                
+
+                scrollToTop.init(scrollableElement);
+                // include all base_page instances here that page scripts may need access to
+                // NOTE: this module should only ever be required from within main page scripts
+                define('base_page', [], function () {
+                    return {
+                        search: search,
+                        scrollToTop: scrollToTop
+                    };
+                });
+
+                
+                    // main page script require
+                    require(["archive-resource-report"]);
+                
+
+                $('[data-toggle="popover"]').popover();
+            });
+        });
+    </script>
+
+	
+<script>
+    require()['jquery', 'leaflet', 'leaflet-bin-layer.min'], function () {
+        L.map('lmap-container', {
+            attributionControl:false,
+            zoomControl:false,
+            zoom: 15,
+        });
+        // add map tiles
+        L.tilelayer.bing('Au0r8adxU5_QadMZ0jI_sXcD22g0bvF8boPtlWUVwBt4GKBVz3vL-93egN-_cibi').addTo(map);
+    }
+</script>
+
+
+    
+</body>
+
+</html> 
