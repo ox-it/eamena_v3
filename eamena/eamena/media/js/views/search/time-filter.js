@@ -19,7 +19,7 @@ define(['jquery',
                 this.index = options.index;
                 var self = this;
                 var timeFilterClass = ".arches-time-filter";
-                if (self.index) {
+                if ( typeof self.index !== 'undefined') {
                     timeFilterClass = '.resource_time_filter_widget'+self.index
                 }
                 var date_picker = $(timeFilterClass+' .datetimepicker').datetimepicker({pickTime: false});
