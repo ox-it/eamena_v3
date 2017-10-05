@@ -140,8 +140,8 @@ class Resource(ArchesResource):
     def save_pdf(self):
         title = self.child_entities[0].value
         d = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        filename = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, d+".pdf")
-        # filename = title+ "_" +d+".pdf"
+        filename = settings.ARCHIVED_PDF_FILENAME(title, datetime.datetime.now())
+        filepath = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, filename)
         buffer = StringIO()
         p = canvas.Canvas(buffer,pagesize=letter)
         p.drawString(0 ,0 ,JSONSerializer().serialize(self))
@@ -152,14 +152,14 @@ class Resource(ArchesResource):
 
         # create the folder if it doesn't exist. save the file to the server
         ###########
-        if not os.path.exists(os.path.dirname(filename)):
+        if not os.path.exists(os.path.dirname(filepath)):
             try:
-                os.makedirs(os.path.dirname(filename))
+                os.makedirs(os.path.dirname(filepath))
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
 
-        with open(filename, "wb") as f:
+        with open(filepath, "wb") as f:
              f.write(pdf)
         ###########
 
@@ -177,7 +177,7 @@ class Resource(ArchesResource):
         oldReportResource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', informationResoucreType['id'])
         oldReportResource.set_entity_value('TITLE.E41', title+ " saved at " +d)
         oldReportResource.set_entity_value('DESCRIPTION.E62', 'Saved report, date: '+d)
-        oldReportResource.set_entity_value('FILE_PATH.E62', filename)
+        oldReportResource.set_entity_value('FILE_PATH.E62', filepath)
         oldReportResource.save()
         oldReportResource.index()
         relationship = self.create_resource_relationship(oldReportResource.entityid, relationship_type_id=relationshipType['id'])
