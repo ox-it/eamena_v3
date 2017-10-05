@@ -43,15 +43,14 @@ import os
 
 import logging
 
-def report(request, resourceid):
-    
-    if request.user.is_anonymous:
-        redirect('/auth')
+def _build_report_info(resourceid, lang=None):
 
-    logging.warning("Viewing Report. User=%s", request.user)
-    logging.warning("STATIC_URL = %s", settings.STATIC_URL_VAL)
-    lang = request.GET.get('lang', request.LANGUAGE_CODE)
-    page = request.GET.get('page', 1)
+    # TODO pass this from the view?
+    # lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    
+    # Unused?
+    # page = request.GET.get('page', 1)
+    
     se = SearchEngineFactory().create()
     report_info = se.search(index='resource', id=resourceid)
     primaryname = se.search(index='entity', id = resourceid)
@@ -63,20 +62,7 @@ def report(request, resourceid):
     del report_info['_source']
     del report_info['_type']            
     
-    geometry = JSONSerializer().serialize(report_info['source']['geometry'])
-    GeoCrypt = Crypter(settings.ENCODING_KEY)
-    iv, encrypted = GeoCrypt.encrypt(geometry, GeoCrypt.KEY)
-    ciphertext = binascii.b2a_base64(encrypted).rstrip()
-    if geometry !='null':
-        result = {
-          'editor': 'true' if 'edit' in request.user.user_groups else 'false',
-          'key': GeoCrypt.KEY,
-          'iv': iv,
-          'ciphertext': ciphertext
-          
-        }
-    else:
-        result = None
+
 
     if report_info['type'] == "INFORMATION_RESOURCE.E73": # These clauses produce subtypes for Imagery, Shared Dataset and Cartography Info Resources, with the aim of producing different Report pages for each of these Resource Types
         report_info['subtype'] = ''
@@ -292,50 +278,100 @@ def report(request, resourceid):
             entitytypeidkey = '%s_%s' % (entitytypeidkey, information_resource_type)
         related_resource_dict[entitytypeidkey].append(related_resource)
 
-    return render_to_pdf('resource-report_archive.htm', {
+    geometry = JSONSerializer().serialize(report_info['source']['geometry'])
+
+#     return render_to_pdf('resource-report_archive.htm', {
+#         'geometry': geometry,
+# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+#         'resourceid': resourceid,
+#         'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
+#         'report_info': report_info,
+#         'related_resource_dict': related_resource_dict,
+#         'main_script': 'archive-resource-report',
+#         'active_page': 'ResourceReport',
+#         'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+#         'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
+#     },
+#     request)
+
+    return {
         'geometry': geometry,
-#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
-        'resourceid': resourceid,
-        'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
         'report_info': report_info,
-        'related_resource_dict': related_resource_dict,
-        'main_script': 'archive-resource-report',
-        'active_page': 'ResourceReport',
-        'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-    },
-    request)
+        'related_resource_dict': related_resource_dict
+    }
 
-    return render_to_response('resource-report_archive.htm', {
-            'geometry': geometry,
-#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
-            'resourceid': resourceid,
-            'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
-            'report_info': report_info,
-            'related_resource_dict': related_resource_dict,
-            'main_script': 'archive-resource-report',
-            'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-            'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-        },
-        context_instance=RequestContext(request))        
+def report(request, resourceid):
+    if request.user.is_anonymous:
+        redirect('/auth')
+
+    logging.warning("Viewing Report. User=%s", request.user)
+    logging.warning("STATIC_URL = %s", settings.STATIC_URL_VAL)
+    
+    lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    
+    info = _build_report_info(resourceid, lang=lang)
+    
+    #encrypt geometry
+    GeoCrypt = Crypter(settings.ENCODING_KEY)
+    iv, encrypted = GeoCrypt.encrypt(info['geometry'], GeoCrypt.KEY)
+    ciphertext = binascii.b2a_base64(encrypted).rstrip()
+    if info['geometry'] !='null':
+        result = {
+          'editor': 'true' if 'edit' in request.user.user_groups else 'false',
+          'key': GeoCrypt.KEY,
+          'iv': iv,
+          'ciphertext': ciphertext
+        }
+    else:
+        result = None
+    
+#     return render_to_response('resource-report_archive.htm', {
+#             'geometry': report_info.geometry,
+# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+#             'resourceid': report_info.resourceid,
+#             'report_template': 'views/reports/' + report_info.report_info['type'] + '_archive.htm',
+#             'report_info': report_info.report_info,
+#             'related_resource_dict': report_info.related_resource_dict,
+#             'main_script': 'archive-resource-report',
+#             'active_page': 'ResourceReport',
+#             'BingDates': getdates(report_info.report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+#             'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
+#         },
+#         context_instance=RequestContext(request))        
 
 
-    path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
-    if os.path.isdir(path):
-        old_reports = os.listdir(path)
-    else :
-        old_reports = []
+    # path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
+    # if os.path.isdir(path):
+    #     old_reports = os.listdir(path)
+    # else :
+    #     old_reports = []
+    
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
             'resourceid': resourceid,
-            'report_template': 'views/reports/' + report_info['type'] + '.htm',
-            'report_info': report_info,
-            'related_resource_dict': related_resource_dict,
+            'report_template': 'views/reports/' + info['report_info']['type'] + '.htm',
+            'report_info': info['report_info'],
+            'related_resource_dict': info['related_resource_dict'],
             'main_script': 'resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-            'old_reports': old_reports
+            'BingDates': getdates(info['report_info']['source']['geometry']), # Retrieving the dates of Bing Imagery
         },
         context_instance=RequestContext(request))        
+
+def _generate_pdf_report(resourceid):
+    info = _build_report_info(resourceid)
+    
+    pdf_response = render_to_pdf('resource-report_archive.htm', {
+        'geometry': info['geometry'],
+        #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
+        'resourceid': resourceid,
+        'report_template': 'views/reports/' + info['report_info']['type'] + '_archive.htm',
+        'report_info': info['report_info'],
+        'related_resource_dict': info['related_resource_dict'],
+        'main_script': 'archive-resource-report',
+        'active_page': 'ResourceReport',
+        'BingDates': getdates(info['report_info']['source']['geometry']), # Retrieving the dates of Bing Imagery
+        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
+        },
+        request)
