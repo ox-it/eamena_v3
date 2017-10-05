@@ -23,6 +23,8 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializ
 from eamena.models import forms
 from django.utils.translation import ugettext as _
 from arches.app.models.entity import Entity
+from arches.app.models.concept import Concept
+from django.forms.models import model_to_dict
 
 from reportlab.pdfgen import canvas
 # from django.http import HttpResponse
@@ -139,13 +141,7 @@ class Resource(ArchesResource):
         title = resource.child_entities[0].value
         d = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, d+".pdf")
-        if not os.path.exists(os.path.dirname(filename)):
-            try:
-                os.makedirs(os.path.dirname(filename))
-            except OSError as exc: # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-
+        # filename = title+ "_" +d+".pdf"
         buffer = StringIO()
         p = canvas.Canvas(buffer,pagesize=letter)
         p.drawString(0 ,0 ,JSONSerializer().serialize(resource))
@@ -153,9 +149,39 @@ class Resource(ArchesResource):
         p.save() 
         pdf=buffer.getvalue()
         buffer.close() 
-        with open(filename, "wb") as f:
-                f.write(pdf)
 
+        # create the folder if it doesn't exist. save the file to the server
+        ###########
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        with open(filename, "wb") as f:
+             f.write(pdf)
+        ###########
+
+        se = SearchEngineFactory().create()
+        oldReportResource = Resource()
+        oldReportResource.entitytypeid = 'INFORMATION_RESOURCE.E73'
+        
+        resourceTypes = Concept().get_e55_domain('INFORMATION_RESOURCE_TYPE.E55')
+        rType = (r for r in resourceTypes if r["text"] == "Bibliography").next()
+        informationResoucreType = (r for r in rType['children'] if r["text"] == "Published Report").next()
+
+        relationshipTypes = Concept().get_e55_domain('ARCHES_RESOURCE_CROSS-REFERENCE_RELATIONSHIP_TYPES.E55'),
+        relationshipType = (r for r in relationshipTypes[0] if r["text"] == "Heritage Resource - Information Resource").next()
+        
+        oldReportResource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', informationResoucreType['id'])
+        oldReportResource.set_entity_value('TITLE.E41', title+ " saved at " +d)
+        oldReportResource.set_entity_value('DESCRIPTION.E62', 'Saved report, date: '+d)
+        oldReportResource.set_entity_value('FILE_PATH.E62', filename)
+        oldReportResource.save()
+        oldReportResource.index()
+        relationship = self.create_resource_relationship(oldReportResource.entityid, relationship_type_id=relationshipType['id'])
+        se.index_data(index='resource_relations', doc_type='all', body=model_to_dict(relationship), idfield='resourcexid')
 
     def get_primary_name(self):
         displayname = super(Resource, self).get_primary_name()
