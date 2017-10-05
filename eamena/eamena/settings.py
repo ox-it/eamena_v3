@@ -76,6 +76,9 @@ ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag
 
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
 
+def ARCHIVED_PDF_FILENAME(resourceName, date):
+    return "archived__" +resourceName+ "_" +date.strftime('%Y-%m-%d_%H-%M-%S') + ".pdf"
+
 def RESOURCE_TYPE_CONFIGS():
     return {
         'HERITAGE_RESOURCE_GROUP.E27': {

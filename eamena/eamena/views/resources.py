@@ -38,6 +38,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 
 from eamena.testpdf import render_to_pdf
+import os
 
 
 import logging
@@ -320,6 +321,11 @@ def report(request, resourceid):
         context_instance=RequestContext(request))        
 
 
+    path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
+    if os.path.isdir(path):
+        old_reports = os.listdir(path)
+    else :
+        old_reports = []
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
 #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
@@ -329,6 +335,7 @@ def report(request, resourceid):
             'related_resource_dict': related_resource_dict,
             'main_script': 'resource-report',
             'active_page': 'ResourceReport',
-            'BingDates': getdates(report_info['source']['geometry']) # Retrieving the dates of Bing Imagery
+            'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
+            'old_reports': old_reports
         },
         context_instance=RequestContext(request))        
