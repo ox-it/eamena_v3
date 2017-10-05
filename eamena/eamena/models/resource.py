@@ -137,14 +137,14 @@ class Resource(ArchesResource):
             })
 
 
-    def save_pdf(self, resource):
-        title = resource.child_entities[0].value
+    def save_pdf(self):
+        title = self.child_entities[0].value
         d = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, d+".pdf")
         # filename = title+ "_" +d+".pdf"
         buffer = StringIO()
         p = canvas.Canvas(buffer,pagesize=letter)
-        p.drawString(0 ,0 ,JSONSerializer().serialize(resource))
+        p.drawString(0 ,0 ,JSONSerializer().serialize(self))
         p.showPage()
         p.save() 
         pdf=buffer.getvalue()
