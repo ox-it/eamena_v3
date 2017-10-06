@@ -25,7 +25,7 @@ def render_to_pdf(template_src, context_dict):
         template=template,
         filename='report.pdf',
         context=context,
-        cmd_options={'javascript-delay':2000}
+        cmd_options={'javascript-delay':5000}
     )
     
     return response
