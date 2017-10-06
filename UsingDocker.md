@@ -60,5 +60,5 @@ log into the arches container then run
 . /web_root/ENV/bin/activate
 cd /web_root/arches/eamena
 python manage.py packages -o remove_resources
-python manage.py packages -o load_resources /web_root/EAMENA_Data.json
+python manage.py packages -o load_resources -s /web_root/EAMENA_Data.json
 ```
