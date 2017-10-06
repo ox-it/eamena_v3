@@ -21,11 +21,23 @@ define([
                     'editing': ko.observable(editing), 
                     'nodes': ko.observableArray(self.defaults)
                 });
+                
                 var geom = feature.getGeometry();
                 if (editing) {
                     self.removeEditedBranch();
                 }
                 geom.transform(ol.proj.get('EPSG:3857'), ol.proj.get('EPSG:4326'));
+                if (geom.getLayout() === 'XYZ'){ //Dragged&dropped KMLs have XYZ layouts which are read by default by the ol WKT parser. This routine pops the Z values out and flattens the layout to XY
+                    var FlatCoordinates = [];
+                    FlatCoordinates[0] = [];
+                    _.each(geom.getCoordinates()[0], function(coordinate_set){
+                            if (coordinate_set.length === 3){
+                                coordinate_set.pop();
+                                FlatCoordinates[0].push(coordinate_set);
+                            }
+                    });
+                    geom.setCoordinates(FlatCoordinates, 'XY');
+                }
                 _.each(branch.nodes(), function(node) {
                     if (node.entitytypeid() === self.dataKey) {
                         node.value(wkt.writeGeometry(geom));
@@ -34,6 +46,7 @@ define([
                 self.viewModel.branch_lists.push(branch);
                 self.trigger('change', 'geometrychange', branch);
                 self.trigger('geometrychange', feature, wkt.writeGeometry(geom));
+                
             };
             var object = JSON.parse($('#formdata').val());
             var datesall =[];
@@ -142,7 +155,9 @@ define([
             }
 
             var refreshFreatureOverlay = function () {
-                featureOverlay.getSource().clear();
+                featureOverlay.getSource().forEachFeature(function(feature) {
+                     featureOverlay.getSource().removeFeature(feature);
+                });
                 _.each(self.getBranchLists(), function(branch) {
                     var geom = wkt.readGeometry(getGeomNode(branch).value());
                     geom.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
