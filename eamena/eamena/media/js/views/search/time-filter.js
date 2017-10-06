@@ -47,6 +47,7 @@ define(['jquery',
                     }else{
                         self.query.filter.year_min_max(evt.value);
                     }
+                    self.trigger('change');
                 });                
 
                 this._rawdata = ko.toJSON(JSON.parse($(timeFilterClass+' #timefilterdata').val()));
@@ -111,6 +112,7 @@ define(['jquery',
                 });
 
                 this.time_filter_branchlist.on('change', function(){
+                    self.trigger('change');
                     self.query.filter.filters.removeAll();
                     _.each(this.getData(), function(item){
                         self.query.filter.filters.push(item);
