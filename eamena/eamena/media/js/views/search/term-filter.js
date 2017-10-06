@@ -123,7 +123,10 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
                     $(el).addClass('inverted');
                     $(el).find('.fa-minus').show();
                 }
-                data.inverted = $(el).hasClass('inverted');
+                if (data.inverted != $(el).hasClass('inverted')) {
+                    data.inverted = $(el).hasClass('inverted');
+                    self.trigger('change');
+                }
 
                 // filter-flag types don't rebuild the array and hence don't trigger a an updated search
                 // instead they listen to choice-selected events and use that
