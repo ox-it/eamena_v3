@@ -44,6 +44,9 @@ import logging
 
 def _build_report_info(resourceid, lang=None):
 
+
+    logging.warning("Building report info for %s", resourceid)
+    logging.warning("lang = %s", lang)
     # TODO pass this from the view?
     # lang = request.GET.get('lang', request.LANGUAGE_CODE)
     
@@ -345,6 +348,7 @@ def report(request, resourceid):
     #     old_reports = os.listdir(path)
     # else :
     #     old_reports = []
+    # return _generate_pdf_report(resourceid)
     
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
@@ -360,7 +364,8 @@ def report(request, resourceid):
         context_instance=RequestContext(request))        
 
 def _generate_pdf_report(resourceid):
-    info = _build_report_info(resourceid)
+    
+    info = _build_report_info(resourceid, 'en')
     
     pdf_response = render_to_pdf('resource-report_archive.htm', {
         'geometry': info['geometry'],
@@ -372,6 +377,8 @@ def _generate_pdf_report(resourceid):
         'main_script': 'archive-resource-report',
         'active_page': 'ResourceReport',
         'BingDates': getdates(info['report_info']['source']['geometry']), # Retrieving the dates of Bing Imagery
-        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-        },
-        request)
+        'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL,
+        'BingKey': settings.BING_KEY
+        })
+        
+    return pdf_response

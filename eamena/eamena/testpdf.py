@@ -1,6 +1,6 @@
 import cStringIO as StringIO
 from django.template.loader import get_template
-from django.template import RequestContext
+from django.template import Context, RequestContext
 
 from wkhtmltopdf.views import PDFTemplateView, PDFTemplateResponse
 
@@ -9,9 +9,9 @@ from wkhtmltopdf.views import PDFTemplateView, PDFTemplateResponse
 #     filename = 'report.pdf'
 #     template_name = 'resource-report.htm'
 
-def render_to_pdf(template_src, context_dict, req):
+def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
-    context = RequestContext(req, context_dict)
+    context = Context(context_dict)
     # html = template.render(context)
     # result = StringIO.StringIO()
     
@@ -21,7 +21,7 @@ def render_to_pdf(template_src, context_dict, req):
     # return HttpResponse('We had some errors<pre>%s</pre> % escape(html)')
     
     response = PDFTemplateResponse(
-        request=req,
+        request=None,
         template=template,
         filename='report.pdf',
         context=context,
