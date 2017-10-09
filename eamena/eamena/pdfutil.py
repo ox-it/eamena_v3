@@ -1,9 +1,8 @@
 import cStringIO as StringIO
 from django.template.loader import get_template
 from django.template import Context, RequestContext
-
 from wkhtmltopdf.views import PDFTemplateView, PDFTemplateResponse
-
+import logging
 
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
@@ -18,3 +17,4 @@ def render_to_pdf(template_src, context_dict):
     )
     
     return response
+
