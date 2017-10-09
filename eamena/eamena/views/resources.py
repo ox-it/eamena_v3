@@ -36,8 +36,9 @@ from arches.app.utils.encrypt import Crypter
 from arches.app.utils.spatialutils import getdates
 from datetime import datetime
 
+from eamena.pdfutil import render_to_pdf
 import os
-from eamena.testpdf import render_to_pdf
+
 
 
 import logging
@@ -47,10 +48,8 @@ def _build_report_info(resourceid, lang=None):
 
     logging.warning("Building report info for %s", resourceid)
     logging.warning("lang = %s", lang)
-    # TODO pass this from the view?
-    # lang = request.GET.get('lang', request.LANGUAGE_CODE)
     
-    # Unused?
+    # Unused
     # page = request.GET.get('page', 1)
     
 def report(request, resourceid):
@@ -283,20 +282,6 @@ def report(request, resourceid):
 
     geometry = JSONSerializer().serialize(report_info['source']['geometry'])
 
-#     return render_to_pdf('resource-report_archive.htm', {
-#         'geometry': geometry,
-# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
-#         'resourceid': resourceid,
-#         'report_template': 'views/reports/' + report_info['type'] + '_archive.htm',
-#         'report_info': report_info,
-#         'related_resource_dict': related_resource_dict,
-#         'main_script': 'archive-resource-report',
-#         'active_page': 'ResourceReport',
-#         'BingDates': getdates(report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-#         'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-#     },
-#     request)
-
     return {
         'geometry': geometry,
         'report_info': report_info,
@@ -328,31 +313,8 @@ def report(request, resourceid):
     else:
         result = None
     
-#     return render_to_response('resource-report_archive.htm', {
-#             'geometry': report_info.geometry,
-# #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
-#             'resourceid': report_info.resourceid,
-#             'report_template': 'views/reports/' + report_info.report_info['type'] + '_archive.htm',
-#             'report_info': report_info.report_info,
-#             'related_resource_dict': report_info.related_resource_dict,
-#             'main_script': 'archive-resource-report',
-#             'active_page': 'ResourceReport',
-#             'BingDates': getdates(report_info.report_info['source']['geometry']), # Retrieving the dates of Bing Imagery
-#             'ABSOLUTE_STATIC_URL': settings.ABSOLUTE_STATIC_URL
-#         },
-#         context_instance=RequestContext(request))        
-
-
-    # path = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", primaryname['_source']['primaryname'])
-    # if os.path.isdir(path):
-    #     old_reports = os.listdir(path)
-    # else :
-    #     old_reports = []
-    # return _generate_pdf_report(resourceid)
-    
     return render_to_response('resource-report.htm', {
             'geometry': JSONSerializer().serialize(result),
-#             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
             'resourceid': resourceid,
             'report_template': 'views/reports/' + info['report_info']['type'] + '.htm',
             'report_info': info['report_info'],
@@ -369,7 +331,6 @@ def _generate_pdf_report(resourceid):
     
     pdf_response = render_to_pdf('resource-report_archive.htm', {
         'geometry': info['geometry'],
-        #             'geometry': JSONSerializer().serialize(report_info['source']['geometry']),
         'resourceid': resourceid,
         'report_template': 'views/reports/' + info['report_info']['type'] + '_archive.htm',
         'report_info': info['report_info'],

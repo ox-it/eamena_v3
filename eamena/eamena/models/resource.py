@@ -27,14 +27,7 @@ from arches.app.models.concept import Concept
 from django.forms.models import model_to_dict
 from threading import Timer
 from eamena.views.resources import _generate_pdf_report
-
-# from reportlab.pdfgen import canvas
-# from django.http import HttpResponse
-# from reportlab.lib.pagesizes import letter, A4
-# from reportlab.lib.units import inch
 from StringIO import StringIO
-
-from eamena.testpdf import render_to_pdf
 
 import os
 import errno
@@ -159,18 +152,9 @@ class Resource(ArchesResource):
         filename = settings.ARCHIVED_PDF_FILENAME(title, datetime.datetime.now())
         filepath = os.path.join(settings.STATICFILES_DIRS[0], "pdf_reports", title, filename)
         
-        # buffer = StringIO()
-        # p = canvas.Canvas(buffer,pagesize=letter)
-        # p.drawString(0 ,0 ,JSONSerializer().serialize(self))
-        # p.showPage()
-        # p.save() 
-        # pdf=buffer.getvalue()
-        # buffer.close() 
         pdf_response = _generate_pdf_report(self.entityid)
-        # # create the folder if it doesn't exist. save the file to the server
-        # ###########
         
-        # in local dev, create the directory
+        # in local dev, create the directory if necessary
         if settings.DEFAULT_FILE_STORAGE != 'storages.backends.s3boto3.S3Boto3Storage':
             if not os.path.exists(os.path.dirname(filepath)):
                 try:
