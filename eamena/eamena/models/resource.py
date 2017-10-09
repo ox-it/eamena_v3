@@ -25,7 +25,7 @@ from django.utils.translation import ugettext as _
 from arches.app.models.entity import Entity
 from arches.app.models.concept import Concept
 from django.forms.models import model_to_dict
-
+from threading import Timer
 from eamena.views.resources import _generate_pdf_report
 
 # from reportlab.pdfgen import canvas
@@ -141,8 +141,19 @@ class Resource(ArchesResource):
                 ]
             })
 
+    def index(self):
+        super(Resource, self).index()
+        try:
+            if self.entitytypeid == "HERITAGE_RESOURCE_GROUP.E27":
+                t = Timer(5.0, self.save_pdf)
+                t.start()
+        except Exception as e:
+            logging.error("Couldn't save pdf: %s", e)
 
     def save_pdf(self):
+        
+        logging.warning("SAVING PDF REPORT");
+        
         title = self.child_entities[0].value
         d = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         filename = settings.ARCHIVED_PDF_FILENAME(title, datetime.datetime.now())
@@ -158,13 +169,16 @@ class Resource(ArchesResource):
         pdf_response = _generate_pdf_report(self.entityid)
         # # create the folder if it doesn't exist. save the file to the server
         # ###########
-        # if not os.path.exists(os.path.dirname(filepath)):
-        #     try:
-        #         os.makedirs(os.path.dirname(filepath))
-        #     except OSError as exc: # Guard against race condition
-        #         if exc.errno != errno.EEXIST:
-        #             raise
-        # 
+        
+        # in local dev, create the directory
+        if settings.DEFAULT_FILE_STORAGE != 'storages.backends.s3boto3.S3Boto3Storage':
+            if not os.path.exists(os.path.dirname(filepath)):
+                try:
+                    os.makedirs(os.path.dirname(filepath))
+                except OSError as exc: # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
+        
         with open(filepath, "wb") as f:
              f.write(pdf_response.rendered_content)
         # ###########
