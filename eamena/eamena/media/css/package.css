@@ -132,4 +132,22 @@
 	overflow-y: scroll; 
 }
 
+.activity-chart .group-chart-container {
+	text-align: center;
+}
+
+.activity-chart .user-chart-container {
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+.activity-chart .chart-title {
+	font-size: 1.5em;
+}
+
+.activity-chart .dropdown-menu.dropdown-actions-menu {
+	top: inherit;
+	left: inherit;
+}
 /* Report page section end */

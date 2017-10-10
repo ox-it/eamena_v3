@@ -29,13 +29,29 @@ define([
                 geom.transform(ol.proj.get('EPSG:3857'), ol.proj.get('EPSG:4326'));
                 if (geom.getLayout() === 'XYZ'){ //Dragged&dropped KMLs have XYZ layouts which are read by default by the ol WKT parser. This routine pops the Z values out and flattens the layout to XY
                     var FlatCoordinates = [];
-                    FlatCoordinates[0] = [];
-                    _.each(geom.getCoordinates()[0], function(coordinate_set){
-                            if (coordinate_set.length === 3){
-                                coordinate_set.pop();
-                                FlatCoordinates[0].push(coordinate_set);
-                            }
-                    });
+                    if ($.isArray(geom.getCoordinates()[0])) {
+                        if ($.isArray(geom.getCoordinates()[0][0])) { //Polygons
+                            FlatCoordinates[0] = []; 
+                            _.each(geom.getCoordinates()[0], function(coordinate_set){ 
+                                    if (coordinate_set.length === 3){
+                                        coordinate_set.pop();
+                                        FlatCoordinates[0].push(coordinate_set);
+                                    }
+                            });
+                        }else{ //Polylines
+                            _.each(geom.getCoordinates(), function(coordinate_set){ 
+                                    if (coordinate_set.length === 3){
+                                        coordinate_set.pop();
+                                        FlatCoordinates.push(coordinate_set);
+                                    }
+                            });
+                        }
+                    }else{ //Points
+                        FlatCoordinates = geom.getCoordinates();
+                        FlatCoordinates.pop();
+                        console.log(FlatCoordinates);
+                       
+                    }
                     geom.setCoordinates(FlatCoordinates, 'XY');
                 }
                 _.each(branch.nodes(), function(node) {
@@ -284,6 +300,22 @@ define([
                     $("#datescontainer").hide()
                 };                             
             });
+
+            // take the input lat/long and add to map by making a feature from wkt. Credits @mradamcox: https://github.com/mradamcox/ead/commit/a86540958075ec82812714484e58bd0e9c9ba3de
+            this.$el.find('#add-lat-long').on('click', function() {
+                var latdd = $('#latinput').val();
+                var longdd = $('#longinput').val();
+                var wkt = 'POINT('+longdd+' '+latdd+')';
+                var format = new ol.format.WKT();
+                var feature = format.readFeature(wkt, {
+                    dataProjection: 'EPSG:4326',
+                    featureProjection: 'EPSG:3857'
+                });
+                bulkAddFeatures([feature]);
+                $("#inventory-home").click();
+                $('.coord-input').val("");
+            });
+
 
             var formatConstructors = [
                 ol.format.GPX,
