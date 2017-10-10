@@ -291,12 +291,12 @@ define([
                 queryString: function(){
                     var params = {
                         page: self.searchResults.page(),
-                        termFilter: ko.toJSON(self.termFilter.query.filter.terms()),
-                        temporalFilter: ko.toJSON({
+                        termFilter: ko.toJSON([self.termFilter.query.filter.terms()]),
+                        temporalFilter: ko.toJSON([{
                             year_min_max: self.timeFilter.query.filter.year_min_max(),
                             filters: self.timeFilter.query.filter.filters(),
                             inverted: self.timeFilter.query.filter.inverted()
-                        }),
+                        }]),
                         spatialFilter: ko.toJSON(self.mapFilter.query.filter),
                         mapExpanded: self.mapFilter.expanded(),
                         timeExpanded: self.timeFilter.expanded()

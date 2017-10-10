@@ -19,7 +19,7 @@ define(['jquery',
                 this.index = options.index;
                 var self = this;
                 var timeFilterClass = ".arches-time-filter";
-                if (self.index) {
+                if ( typeof self.index !== 'undefined') {
                     timeFilterClass = '.resource_time_filter_widget'+self.index
                 }
                 var date_picker = $(timeFilterClass+' .datetimepicker').datetimepicker({pickTime: false});
@@ -47,6 +47,7 @@ define(['jquery',
                     }else{
                         self.query.filter.year_min_max(evt.value);
                     }
+                    self.trigger('change');
                 });                
 
                 this._rawdata = ko.toJSON(JSON.parse($(timeFilterClass+' #timefilterdata').val()));
@@ -111,11 +112,12 @@ define(['jquery',
                 });
 
                 this.time_filter_branchlist.on('change', function(){
+                    self.trigger('change');
                     self.query.filter.filters.removeAll();
                     _.each(this.getData(), function(item){
                         self.query.filter.filters.push(item);
                     })                
-                })
+                });
 
                 //ko.applyBindings(this.query.filter, $('#time-filter')[0]);
             },

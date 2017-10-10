@@ -42,13 +42,15 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
                     data: function (term, page) {
                         return {
                             q: term, // search term
-                            group_root_node: self.termFilterGroup,
+                            group_root_node: self.termFilterGroup || 'No group',
                             page_limit: 30
                         };
                     },
                     results: function (data, page) {
                         var value = $('div.resource_search_widget'+this.index).find('.select2-input').val();
-
+                        if (!value) {
+                            value = $('div.resource_search_widget').find('.select2-input').val();
+                        }
                         // this result is being hidden by a style in arches.css 
                         // .select2-results li:first-child{
                         //     display:none;
@@ -123,7 +125,10 @@ define(['jquery', 'backbone', 'arches', 'select2', 'knockout'], function ($, Bac
                     $(el).addClass('inverted');
                     $(el).find('.fa-minus').show();
                 }
-                data.inverted = $(el).hasClass('inverted');
+                if (data.inverted != $(el).hasClass('inverted')) {
+                    data.inverted = $(el).hasClass('inverted');
+                    self.trigger('change');
+                }
 
                 // filter-flag types don't rebuild the array and hence don't trigger a an updated search
                 // instead they listen to choice-selected events and use that
