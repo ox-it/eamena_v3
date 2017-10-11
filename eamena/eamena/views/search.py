@@ -37,6 +37,10 @@ from arches.app.utils.data_management.resources.exporter import ResourceExporter
 
 from eamena.models.group import canUserAccessResource
 
+from arches.app.views.resources import get_related_resources
+
+import logging
+
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
     min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
@@ -46,7 +50,8 @@ def home_page(request):
             'active_page': 'Search',
             'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
             'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
-            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data())
+            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
+            'group_options': settings.SEARCH_GROUP_ROOTS
         }, 
         context_instance=RequestContext(request))
 
@@ -66,6 +71,13 @@ def search_results(request):
     elif request.GET.get('no_filters', '') == '':
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
+    
+    lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    start = request.GET.get('start', 0)
+    for hit in results['hits']['hits']:
+        related_resources = get_related_resources(hit['_id'], lang, start=start, limit=15)
+        hit['related_resources'] = related_resources
+    
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
 def build_search_results_dsl(request, action='view'):
@@ -102,39 +114,39 @@ def build_search_results_dsl(request, action='view'):
 
     boolfilter.must(locationfilter)
 
-    if 'filters' in temporal_filters:
-        for temporal_filter in temporal_filters['filters']:
-            date_type = ''
-            date = ''
-            date_operator = ''
-            for node in temporal_filter['nodes']:
-                if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
-                    date_operator = node['value']
-                elif node['entitytypeid'] == 'date':
-                    date = node['value']
-                else:
-                    date_type = node['value']
-
-
-            date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
-
-            if date_operator == '1': # equals query
-                range = Range(field='dates.value', gte=date_value, lte=date_value)
-            elif date_operator == '0': # greater than query 
-                range = Range(field='dates.value', lt=date_value)
-            elif date_operator == '2': # less than query
-                range = Range(field='dates.value', gt=date_value)
-            
-            nested = Nested(path='dates', query=range)
-            if 'inverted' not in temporal_filters:
-                temporal_filters['inverted'] = False
-
-            if temporal_filters['inverted']:
-                boolfilter.must_not(nested)
-            else:
-                boolfilter.must(nested)
-
-            query.add_filter(boolfilter)
+    # if 'filters' in temporal_filters:
+    #     for temporal_filter in temporal_filters['filters']:
+    #         date_type = ''
+    #         date = ''
+    #         date_operator = ''
+    #         for node in temporal_filter['nodes']:
+    #             if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
+    #                 date_operator = node['value']
+    #             elif node['entitytypeid'] == 'date':
+    #                 date = node['value']
+    #             else:
+    #                 date_type = node['value']
+    # 
+    # 
+    #         date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
+    # 
+    #         if date_operator == '1': # equals query
+    #             range = Range(field='dates.value', gte=date_value, lte=date_value)
+    #         elif date_operator == '0': # greater than query 
+    #             range = Range(field='dates.value', lt=date_value)
+    #         elif date_operator == '2': # less than query
+    #             range = Range(field='dates.value', gt=date_value)
+    #         
+    #         nested = Nested(path='dates', query=range)
+    #         if 'inverted' not in temporal_filters:
+    #             temporal_filters['inverted'] = False
+    # 
+    #         if temporal_filters['inverted']:
+    #             boolfilter.must_not(nested)
+    #         else:
+    #             boolfilter.must(nested)
+    # 
+    #         query.add_filter(boolfilter)
             
     query.add_filter(locationfilter)
     

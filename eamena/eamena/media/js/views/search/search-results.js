@@ -40,10 +40,14 @@ define(['jquery',
 
                 this.total = ko.observable();
                 this.results = ko.observableArray();
+                this.relatedresults = ko.observableArray();
                 this.page = ko.observable(1);
                 this.paginator = ko.observable();
 
                 ko.applyBindings(this, $('#search-results-list')[0]);
+                if ($('#related-search-results-list')[0]) {
+                    ko.applyBindings(this, $('#related-search-results-list')[0]);
+                }
                 ko.applyBindings(this, $('#search-results-count')[0]);
                 ko.applyBindings(this, $('#paginator')[0]);
                 ko.bindingHandlers.popover = {
@@ -107,12 +111,14 @@ define(['jquery',
             },
 
             updateResults: function(results){
+                var relatedResourcesIds = [];
                 var self = this;
                 this.paginator(results);
                 var data = $('div[name="search-result-data"]').data();
                 
                 this.total(data.results.hits.total);
                 self.results.removeAll();
+                self.relatedresults.removeAll();
                 
                 $.each(data.results.hits.hits, function(){
                     var description = resourceTypes[this._source.entitytypeid].defaultDescription;
@@ -140,8 +146,32 @@ define(['jquery',
                         typeName: resourceTypes[this._source.entitytypeid].name,
                         can_edit: this.can_edit
                     });
+                    $.each(this.related_resources.related_resources, function(){
+                        $.each(this.child_entities, function(i, entity){
+                            _.each(descriptionNode, function(node){
+                                if (entity.entitytypeid === node){
+                                    description_array.push(entity.value);
+                                }
+                            });
+                        
+                        })
+                        if (description_array.length > 0) {
+                            description = description_array.join();
+                        }
+                        if (relatedResourcesIds.indexOf(this.entityid) == -1) {
+                            relatedResourcesIds.push(this.entityid);
+                            self.relatedresults.push({
+                                primaryname: this.primaryname,
+                                resourceid: this.entityid,
+                                entitytypeid: this.entitytypeid,
+                                description: description,
+                                geometries: ko.observableArray(this.geometries),
+                                typeIcon: resourceTypes[this.entitytypeid].icon,
+                                typeName: resourceTypes[this.entitytypeid].name
+                            });
+                        }
+                    });
                 });
-
                 return data;
             },
 
