@@ -118,7 +118,7 @@ define(['jquery',
                     _.each(this.getData(), function(item){
                         self.query.filter.filters.push(item);
                     })                
-                })
+                });
 
                 //ko.applyBindings(this.query.filter, $('#time-filter')[0]);
             },
