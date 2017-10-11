@@ -40,10 +40,12 @@ define(['jquery',
 
                 this.total = ko.observable();
                 this.results = ko.observableArray();
+                this.relatedresults = ko.observableArray();
                 this.page = ko.observable(1);
                 this.paginator = ko.observable();
 
                 ko.applyBindings(this, $('#search-results-list')[0]);
+                ko.applyBindings(this, $('#related-search-results-list')[0]);
                 ko.applyBindings(this, $('#search-results-count')[0]);
                 ko.applyBindings(this, $('#paginator')[0]);
                 ko.bindingHandlers.popover = {
@@ -139,8 +141,31 @@ define(['jquery',
                         typeIcon: resourceTypes[this._source.entitytypeid].icon,
                         typeName: resourceTypes[this._source.entitytypeid].name
                     });
+                    $.each(this.related_resources.related_resources, function(){
+                        $.each(this.child_entities, function(i, entity){
+                            _.each(descriptionNode, function(node){
+                                if (entity.entitytypeid === node){
+                                    description_array.push(entity.value);
+                                }
+                            });
+                        
+                        })
+                        if (description_array.length > 0) {
+                            description = description_array.join();
+                        }
+                        
+                        self.relatedresults.push({
+                            primaryname: this.primaryname,
+                            resourceid: this.entityid,
+                            entitytypeid: this.entitytypeid,
+                            description: description,
+                            geometries: ko.observableArray(this.geometries),
+                            typeIcon: resourceTypes[this.entitytypeid].icon,
+                            typeName: resourceTypes[this.entitytypeid].name
+                        });
+                    });
                 });
-
+                self.relatedresults = _.uniq(self.relatedresults);
                 return data;
             },
 
