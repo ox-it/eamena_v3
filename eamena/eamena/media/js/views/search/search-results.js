@@ -45,7 +45,9 @@ define(['jquery',
                 this.paginator = ko.observable();
 
                 ko.applyBindings(this, $('#search-results-list')[0]);
-                ko.applyBindings(this, $('#related-search-results-list')[0]);
+                if ($('#related-search-results-list')[0]) {
+                    ko.applyBindings(this, $('#related-search-results-list')[0]);
+                }
                 ko.applyBindings(this, $('#search-results-count')[0]);
                 ko.applyBindings(this, $('#paginator')[0]);
                 ko.bindingHandlers.popover = {
