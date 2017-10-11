@@ -111,12 +111,14 @@ define(['jquery',
             },
 
             updateResults: function(results){
+                var relatedResourcesIds = [];
                 var self = this;
                 this.paginator(results);
                 var data = $('div[name="search-result-data"]').data();
                 
                 this.total(data.results.hits.total);
                 self.results.removeAll();
+                self.relatedresults.removeAll();
                 
                 $.each(data.results.hits.hits, function(){
                     var description = resourceTypes[this._source.entitytypeid].defaultDescription;
@@ -155,19 +157,20 @@ define(['jquery',
                         if (description_array.length > 0) {
                             description = description_array.join();
                         }
-                        
-                        self.relatedresults.push({
-                            primaryname: this.primaryname,
-                            resourceid: this.entityid,
-                            entitytypeid: this.entitytypeid,
-                            description: description,
-                            geometries: ko.observableArray(this.geometries),
-                            typeIcon: resourceTypes[this.entitytypeid].icon,
-                            typeName: resourceTypes[this.entitytypeid].name
-                        });
+                        if (relatedResourcesIds.indexOf(this.entityid) == -1) {
+                            relatedResourcesIds.push(this.entityid);
+                            self.relatedresults.push({
+                                primaryname: this.primaryname,
+                                resourceid: this.entityid,
+                                entitytypeid: this.entitytypeid,
+                                description: description,
+                                geometries: ko.observableArray(this.geometries),
+                                typeIcon: resourceTypes[this.entitytypeid].icon,
+                                typeName: resourceTypes[this.entitytypeid].name
+                            });
+                        }
                     });
                 });
-                self.relatedresults = _.uniq(self.relatedresults);
                 return data;
             },
 
