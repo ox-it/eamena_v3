@@ -78,7 +78,6 @@ def search_results(request):
         related_resources = get_related_resources(hit['_id'], lang, start=start, limit=15)
         related_resources_ids = [r['entityid'] for r in related_resources['related_resources']]
         all_related_resource_ids.extend(related_resources_ids)
-        hit['related_resources'] = related_resources
     
         #remove duplicates
         all_related_resource_ids = list(set(all_related_resource_ids))
