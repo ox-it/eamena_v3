@@ -293,6 +293,7 @@ define([
                         page: self.searchResults.page(),
                         termFilter: ko.toJSON([self.termFilter.query.filter.terms()]),
                         termFilterCombineWithPrev: ko.toJSON([false]),
+                        searchRelatedResources: false,
                         temporalFilter: ko.toJSON([{
                             year_min_max: self.timeFilter.query.filter.year_min_max(),
                             filters: self.timeFilter.query.filter.filters(),
