@@ -49,7 +49,17 @@ def home_page(request):
         context_instance=RequestContext(request))
 
 def search_results(request):
+
     query = build_search_results_dsl(request)
+    
+    search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
+    
+    if search_related_resources:
+        logging.warning("Searching in related resources")
+        related_resources_from_prev_query = request.session['related-resource-ids']
+        ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
+        query.add_filter(ids_filter)
+        
     results = query.search(index='entity', doc_type='') 
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
@@ -63,9 +73,19 @@ def search_results(request):
     
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     start = request.GET.get('start', 0)
+    all_related_resource_ids = []
     for hit in results['hits']['hits']:
         related_resources = get_related_resources(hit['_id'], lang, start=start, limit=15)
+        related_resources_ids = [r['entityid'] for r in related_resources['related_resources']]
+        all_related_resource_ids.extend(related_resources_ids)
         hit['related_resources'] = related_resources
+    
+        #remove duplicates
+        all_related_resource_ids = list(set(all_related_resource_ids))
+
+    if not search_related_resources:
+        #Store in session for next related resources search
+        request.session['related-resource-ids'] = all_related_resource_ids
     
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
