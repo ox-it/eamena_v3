@@ -229,12 +229,14 @@ button.btn-default.advanced-search {
 	margin-top: -12px;
 	z-index: 100;
 }
+
 .toggle-combine-prev.toggle-combine-off,
 .toggle-related-resources.toggle-related-off {
 	border-right: 10px solid grey;
 }
 .toggle-combine-prev.toggle-combine-on,
 .toggle-related-resources.toggle-related-on  {
+
 	border-left: 10px solid grey;
 }
 .prev-combine-box .term-search {
