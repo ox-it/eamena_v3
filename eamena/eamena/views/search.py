@@ -30,6 +30,8 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
 
+from arches.app.views.resources import get_related_resources
+
 import logging
 
 def home_page(request):
@@ -47,20 +49,43 @@ def home_page(request):
         context_instance=RequestContext(request))
 
 def search_results(request):
+
     query = build_search_results_dsl(request)
+    
+    search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
+    
+    if search_related_resources:
+        logging.warning("Searching in related resources")
+        related_resources_from_prev_query = request.session['related-resource-ids']
+        ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
+        query.add_filter(ids_filter)
+        
     results = query.search(index='entity', doc_type='') 
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
-    group_search = request.GET.get('groupSearch', '')
 
-    term_filter = request.GET.get('termFilter', '')
-            
     all_entity_ids = ['_all']
     if request.GET.get('include_ids', 'false') == 'false':
         all_entity_ids = ['_none']
     elif request.GET.get('no_filters', '') == '':
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
+    
+    lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    start = request.GET.get('start', 0)
+    all_related_resource_ids = []
+    for hit in results['hits']['hits']:
+        related_resources = get_related_resources(hit['_id'], lang, start=start, limit=15)
+        related_resources_ids = [r['entityid'] for r in related_resources['related_resources']]
+        all_related_resource_ids.extend(related_resources_ids)
+    
+        #remove duplicates
+        all_related_resource_ids = list(set(all_related_resource_ids))
+
+    if not search_related_resources:
+        #Store in session for next related resources search
+        request.session['related-resource-ids'] = all_related_resource_ids
+    
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
 def build_search_results_dsl(request):
