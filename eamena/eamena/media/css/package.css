@@ -232,6 +232,13 @@ button.btn-default.advanced-search {
 .toggle-combine-prev.toggle-combine-off {
 	border-right: 10px solid grey;
 }
+.toggle-combine-off .toggle-active {
+	display: none;
+}
+.toggle-combine-on .toggle-inactive {
+	display: none;
+}
+
 .toggle-combine-prev.toggle-combine-on {
 	border-left: 10px solid grey;
 }
@@ -262,7 +269,7 @@ button.btn-default.advanced-search {
 	margin-left: 50px;
 }
 .prev-combine-box .select2-container.resource_search_widget0 {
-    margin-left: 55px;
+    margin-left: 54px;
 }
 .prev-combine-box + .prev-combine-box .select2-container {
 	margin-left: 0px;
