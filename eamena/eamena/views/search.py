@@ -48,6 +48,22 @@ def home_page(request):
         }, 
         context_instance=RequestContext(request))
 
+def get_related_resource_ids(resourceids, lang, limit=1000, start=0):
+    se = SearchEngineFactory().create()
+    query = Query(se, limit=limit, start=start)
+    query.add_filter(Terms(field='entityid1', terms=resourceids).dsl, operator='or')
+    query.add_filter(Terms(field='entityid2', terms=resourceids).dsl, operator='or')
+    resource_relations = query.search(index='resource_relations', doc_type='all')
+    
+    entityids = set()
+    for relation in resource_relations['hits']['hits']:
+        entityids.add(relation['_source']['entityid1'])
+        entityids.add(relation['_source']['entityid2'])
+    if len(entityids) > 0:
+        entityids.difference(set(resourceids))
+    
+    return entityids
+
 def search_results(request):
 
     query = build_search_results_dsl(request)
@@ -74,13 +90,10 @@ def search_results(request):
     lang = request.GET.get('lang', request.LANGUAGE_CODE)
     start = request.GET.get('start', 0)
     all_related_resource_ids = []
-    for hit in results['hits']['hits']:
-        related_resources = get_related_resources(hit['_id'], lang, start=start, limit=15)
-        related_resources_ids = [r['entityid'] for r in related_resources['related_resources']]
-        all_related_resource_ids.extend(related_resources_ids)
     
-        #remove duplicates
-        all_related_resource_ids = list(set(all_related_resource_ids))
+    
+    all_related_resource_ids = list(get_related_resource_ids(all_entity_ids, lang, start=0, limit=100))
+    
 
     if not search_related_resources:
         #Store in session for next related resources search
@@ -102,40 +115,6 @@ def build_search_results_dsl(request):
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
 
-    # if 'filters' in temporal_filters:
-    #     for temporal_filter in temporal_filters['filters']:
-    #         date_type = ''
-    #         date = ''
-    #         date_operator = ''
-    #         for node in temporal_filter['nodes']:
-    #             if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
-    #                 date_operator = node['value']
-    #             elif node['entitytypeid'] == 'date':
-    #                 date = node['value']
-    #             else:
-    #                 date_type = node['value']
-    # 
-    # 
-    #         date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
-    # 
-    #         if date_operator == '1': # equals query
-    #             range = Range(field='dates.value', gte=date_value, lte=date_value)
-    #         elif date_operator == '0': # greater than query 
-    #             range = Range(field='dates.value', lt=date_value)
-    #         elif date_operator == '2': # less than query
-    #             range = Range(field='dates.value', gt=date_value)
-    #         
-    #         nested = Nested(path='dates', query=range)
-    #         if 'inverted' not in temporal_filters:
-    #             temporal_filters['inverted'] = False
-    # 
-    #         if temporal_filters['inverted']:
-    #             boolfilter.must_not(nested)
-    #         else:
-    #             boolfilter.must(nested)
-    # 
-    #         query.add_filter(boolfilter)
-    #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
 
     return query
