@@ -92,7 +92,7 @@ def search_results(request):
     all_related_resource_ids = []
     
     
-    all_related_resource_ids = list(get_related_resource_ids(all_entity_ids, lang, start=0, limit=100))
+    all_related_resource_ids = list(get_related_resource_ids(all_entity_ids, lang, start=0, limit=1000000))
     
 
     if not search_related_resources:
