@@ -57,10 +57,15 @@ def get_related_resource_ids(resourceids, lang, limit=1000, start=0):
     
     entityids = set()
     for relation in resource_relations['hits']['hits']:
-        entityids.add(relation['_source']['entityid1'])
-        entityids.add(relation['_source']['entityid2'])
-    if len(entityids) > 0:
-        entityids.difference(set(resourceids))
+        # add the other halves add the relations which are not in the original list of ids
+        from_is_original_result = relation['_source']['entityid1'] in resourceids
+        to_is_original_result = relation['_source']['entityid2'] in resourceids
+        
+        if from_is_original_result:
+            entityids.add(relation['_source']['entityid2'])
+            
+        if to_is_original_result:
+            entityids.add(relation['_source']['entityid1'])
     
     return entityids
 
@@ -71,12 +76,12 @@ def search_results(request):
     search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
     
     if search_related_resources:
-        logging.warning("Searching in related resources")
         related_resources_from_prev_query = request.session['related-resource-ids']
         ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
         query.add_filter(ids_filter)
         
-    results = query.search(index='entity', doc_type='') 
+    results = query.search(index='entity', doc_type='')
+    
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
 
