@@ -131,7 +131,10 @@
 .report-body {
 	overflow-y: scroll; 
 }
+/* Report page end */
 
+
+/* Advanced Search */
 
 .search-block button.btn {
 	padding: 6px 10px;
@@ -278,3 +281,4 @@ button.btn-default.advanced-search {
 .prev-combine-box + .search-box-container .select2-choices {
 	border-left: #5cb85c solid 4px;
 }
+/* Advanced Search end*/
