@@ -33,8 +33,14 @@ from arches.app.utils.data_management.resources.exporter import ResourceExporter
 
 from arches.app.views.resources import get_related_resources
 
+import csv
 import logging
 
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+    
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
     min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
