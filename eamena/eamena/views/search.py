@@ -29,6 +29,7 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializ
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
+from arches.app.utils.data_management.resources.exporter import ResourceExporter
 
 from arches.app.views.resources import get_related_resources
 
@@ -53,10 +54,10 @@ def get_related_resource_ids(resourceids, lang, limit=1000, start=0):
     query = Query(se, limit=limit, start=start)
     query.add_filter(Terms(field='entityid1', terms=resourceids).dsl, operator='or')
     query.add_filter(Terms(field='entityid2', terms=resourceids).dsl, operator='or')
-    resource_relations = query.search(index='resource_relations', doc_type='all')
+    resource_relations = query.search(  index='resource_relations', doc_type='all')
     
     entityids = set()
-    for relation in resource_relations['hits']['hits']:
+    for relation in resource_relations['hits']['hits']: 
         # add the other halves add the relations which are not in the original list of ids
         from_is_original_result = relation['_source']['entityid1'] in resourceids
         to_is_original_result = relation['_source']['entityid2'] in resourceids
@@ -123,3 +124,32 @@ def build_search_results_dsl(request):
     query.dsl.update({'sort': sorting})
 
     return query
+
+def export_results(request):
+    dsl = build_search_results_dsl(request)
+    
+    search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
+    
+    if search_related_resources:
+        related_resources_from_prev_query = request.session['related-resource-ids']
+        ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
+        dsl.add_filter(ids_filter)
+    
+    
+    search_results = dsl.search(index='entity', doc_type='')
+
+    response = None
+    format = request.GET.get('export', 'csv')
+    exporter = ResourceExporter(format)
+    results = exporter.export(search_results['hits']['hits'])
+    
+    related_resources = [{'id1':rr.entityid1, 'id2':rr.entityid2, 'type':rr.relationshiptype} for rr in models.RelatedResource.objects.all()] 
+    csv_name = 'resource_relationships.csv'
+    dest = StringIO()
+    csvwriter = csv.DictWriter(dest, delimiter=',', fieldnames=['id1','id2','type'])
+    csvwriter.writeheader()
+    for csv_record in related_resources:
+        csvwriter.writerow({k:v.encode('utf8') for k,v in csv_record.items()})
+    results.append({'name':csv_name, 'outputfile': dest})
+    zipped_results = exporter.zip_response(results, '{0}_{1}_export.zip'.format(settings.PACKAGE_NAME, format))
+    return zipped_results
