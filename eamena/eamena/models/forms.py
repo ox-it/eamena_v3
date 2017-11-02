@@ -61,7 +61,7 @@ class SummaryForm(ResourceForm):
         self.update_nodes('SITE_ID.E42', data)
         # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
         # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        # self.update_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', data)
+        # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
     
     def load(self, lang):
         if self.resource:
@@ -108,9 +108,9 @@ class SummaryForm(ResourceForm):
             #     'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
             #     'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
             # }
-            # self.data['SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'] = {
-            #     'branch_lists': self.get_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'),
-            #     'domains': {'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55')}
+            # self.data['ARCHAEOLOGY_CERTAINTY_VALUE.I6'] = {
+            #     'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6'),
+            #     'domains': {'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')}
             # }
 
 class EvidenceAssessmentForm(ResourceForm):
@@ -118,7 +118,7 @@ class EvidenceAssessmentForm(ResourceForm):
     def get_info():
         return {
             'id': 'evidence-assessment',
-            'icon': 'fa-spinner',
+            'icon': 'fa-flag',
             'name': _('Archeology/Evidence Assessment'),
             'class': EvidenceAssessmentForm
         }
@@ -132,7 +132,7 @@ class EvidenceAssessmentForm(ResourceForm):
         # self.update_nodes('SITE_ID.E42', data)
         self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
         self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        self.update_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', data)
+        self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
     
     def load(self, lang):
         if self.resource:
@@ -178,9 +178,9 @@ class EvidenceAssessmentForm(ResourceForm):
                 'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
                 'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
             }
-            self.data['SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'] = {
-                'branch_lists': self.get_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'),
-                'domains': {'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55')}
+            self.data['ARCHAEOLOGY_CERTAINTY_VALUE.I6'] = {
+                'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6'),
+                'domains': {'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')}
             }
 
 class ExternalReferenceForm(ResourceForm):
