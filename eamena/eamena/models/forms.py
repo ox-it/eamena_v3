@@ -54,14 +54,14 @@ class SummaryForm(ResourceForm):
 
     def update(self, data, files):
         self.update_nodes('NAME.E41', data)
-        self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
-        self.update_nodes('CULTURAL_PERIOD.E55', data)
-        self.update_nodes('TIME-SPAN_PHASE.E52', data)
+        # self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
+        # self.update_nodes('CULTURAL_PERIOD.E55', data)
+        # self.update_nodes('TIME-SPAN_PHASE.E52', data)
         self.update_nodes('ASSESSMENT_TYPE.E55', data)
         self.update_nodes('SITE_ID.E42', data)
-        self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
-        self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        self.update_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', data)
+        # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
+        # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
+        # self.update_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', data)
     
     def load(self, lang):
         if self.resource:
@@ -69,27 +69,23 @@ class SummaryForm(ResourceForm):
                 'branch_lists': self.get_nodes('NAME.E41'),
                 'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
             }
-            self.data['SITE_FUNCTION_TYPE.E55'] = {
-                'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
-                'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
-                 }
-            }
-            self.data['SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'] = {
-                'branch_lists': self.get_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'),
-                'domains': {'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55')}
-            }
-            self.data['CULTURAL_PERIOD.E55'] = {
-                'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
-                'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
-                }
-            }
-            self.data['TIME-SPAN_PHASE.E52'] = {
-                'branch_lists': self.get_nodes('TIME-SPAN_PHASE.E52'),
-                'domains': {
-                    'TO_DATE.E55' : Concept().get_e55_domain('TO_DATE.E55'),
-                    'FROM_DATE.E55' : Concept().get_e55_domain('FROM_DATE.E55'),
-                }
-            }
+            # self.data['SITE_FUNCTION_TYPE.E55'] = {
+            #     'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
+            #     'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
+            #      }
+            # }
+            # self.data['CULTURAL_PERIOD.E55'] = {
+            #     'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
+            #     'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
+            #     }
+            # }
+            # self.data['TIME-SPAN_PHASE.E52'] = {
+            #     'branch_lists': self.get_nodes('TIME-SPAN_PHASE.E52'),
+            #     'domains': {
+            #         'TO_DATE.E55' : Concept().get_e55_domain('TO_DATE.E55'),
+            #         'FROM_DATE.E55' : Concept().get_e55_domain('FROM_DATE.E55'),
+            #     }
+            # }
 
             self.data['ASSESSMENT_TYPE.E55'] = {
                 'branch_lists': datetime_nodes_to_dates(self.get_nodes('ASSESSMENT_TYPE.E55')),
@@ -103,6 +99,76 @@ class SummaryForm(ResourceForm):
                 'branch_lists': self.get_nodes('SITE_ID.E42'),
                 'domains': {}
             }
+            # self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
+            #     'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
+            #     'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
+            # }
+            # 
+            # self.data['SITE_OVERALL_SHAPE_TYPE.E55'] = {
+            #     'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
+            #     'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
+            # }
+            # self.data['SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'] = {
+            #     'branch_lists': self.get_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'),
+            #     'domains': {'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55')}
+            # }
+
+class EvidenceAssessmentForm(ResourceForm):
+    @staticmethod
+    def get_info():
+        return {
+            'id': 'evidence-assessment',
+            'icon': 'fa-spinner',
+            'name': _('Archeology/Evidence Assessment'),
+            'class': EvidenceAssessmentForm
+        }
+
+    def update(self, data, files):
+        # self.update_nodes('NAME.E41', data)
+        self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
+        self.update_nodes('CULTURAL_PERIOD.E55', data)
+        self.update_nodes('TIME-SPAN_PHASE.E52', data)
+        # self.update_nodes('ASSESSMENT_TYPE.E55', data)
+        # self.update_nodes('SITE_ID.E42', data)
+        self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
+        self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
+        self.update_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55', data)
+    
+    def load(self, lang):
+        if self.resource:
+            # self.data['NAME.E41'] = {
+            #     'branch_lists': self.get_nodes('NAME.E41'),
+            #     'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
+            # }
+            self.data['SITE_FUNCTION_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
+                'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
+                 }
+            }
+            self.data['CULTURAL_PERIOD.E55'] = {
+                'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
+                'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
+                }
+            }
+            self.data['TIME-SPAN_PHASE.E52'] = {
+                'branch_lists': self.get_nodes('TIME-SPAN_PHASE.E52'),
+                'domains': {
+                    'TO_DATE.E55' : Concept().get_e55_domain('TO_DATE.E55'),
+                    'FROM_DATE.E55' : Concept().get_e55_domain('FROM_DATE.E55'),
+                }
+            }
+            # self.data['ASSESSMENT_TYPE.E55'] = {
+            #     'branch_lists': datetime_nodes_to_dates(self.get_nodes('ASSESSMENT_TYPE.E55')),
+            #     'domains': {
+            #         'ASSESSMENT_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_TYPE.E55'),
+            #         'ASSESSOR_NAME_TYPE.E55' : Concept().get_e55_domain('ASSESSOR_NAME_TYPE.E55'),
+            #     }
+            # }
+            # 
+            # self.data['SITE_ID.E42'] = {
+            #     'branch_lists': self.get_nodes('SITE_ID.E42'),
+            #     'domains': {}
+            # }
             self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
                 'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
                 'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
@@ -112,7 +178,10 @@ class SummaryForm(ResourceForm):
                 'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
                 'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
             }
-
+            self.data['SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55'),
+                'domains': {'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55')}
+            }
 
 class ExternalReferenceForm(ResourceForm):
     @staticmethod

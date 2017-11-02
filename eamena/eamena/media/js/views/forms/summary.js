@@ -8,7 +8,6 @@ define(['jquery',
         return BaseForm.extend({
             initialize: function() {
                 BaseForm.prototype.initialize.apply(this);                
-                
                 var self = this;
                 var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
                 date_picker.on('dp.change', function(evt){
@@ -45,50 +44,6 @@ define(['jquery',
                     }
                 }));
 
-
-                this.addBranchList(new BranchList({
-                    el: this.$el.find('#subjects-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_FUNCTION_TYPE.E55',
-                    rules: true,
-                    validateBranch: function (nodes) {
-                        return this.validateHasValues(nodes);
-                    }
-                }));
-
-      
-                this.addBranchList(new BranchList({
-                    el: this.$el.find('#overall-certainty-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55',
-                    rules: true,
-                    validateBranch: function (nodes) {
-                         return this.validateHasValues(nodes);
-                    }
-                }));
-                                
-                               
-                this.addBranchList(new BranchList({
-                     el: this.$el.find('#culturalperiod-section')[0],
-                     data: this.data,
-                     dataKey: 'CULTURAL_PERIOD.E55',
-                     rules: true,
-                     validateBranch: function (nodes) {
-                           return this.validateHasValues(nodes);
-                     }
-                }));
-         
-                this.addBranchList(new BranchList({
-                     el: this.$el.find('#phase-section')[0],
-                     data: this.data,
-                     dataKey: 'TIME-SPAN_PHASE.E52',
-                     validateBranch: function (nodes) {
-                          return true;
-                          return this.validateHasValues(nodes);
-                     }
-                }));
-                               
-
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#assessment-section')[0],
                     data: this.data,
@@ -98,38 +53,6 @@ define(['jquery',
                         return this.validateHasValues(nodes);
                     }
                 }));
-                               
-                this.addBranchList(new BranchList({
-                    el: this.$el.find('#site_ID-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_ID.E42',
-                    validateBranch: function (nodes) {
-                          return this.validateHasValues(nodes);
-                    }
-                }));
-                  
-                this.addBranchList(new BranchList({
-                    el: this.$el.find('#sitemorph-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_MORPHOLOGY_TYPE.E55',
-                    rules: true,
-                    validateBranch: function (nodes) {
-                         return this.validateHasValues(nodes);
-                    }
-                }));
-                               
-                this.addBranchList(new BranchList({
-                    el: this.$el.find('#siteshape-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_OVERALL_SHAPE_TYPE.E55',
-                    rules: true,
-                    validateBranch: function (nodes) {
-                         return this.validateHasValues(nodes);
-                    }                                         
-                }));
-                               
-
-                               
             }
         });
     }
