@@ -64,6 +64,10 @@ ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag
 
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
 
+ADDITIONAL_RESOURCE_GRAPH_LOCATIONS = (
+     os.path.join(PACKAGE_ROOT, 'additional_resource_graphs'),
+)
+
 def RESOURCE_TYPE_CONFIGS():
     return {
         'HERITAGE_RESOURCE_GROUP.E27': {
