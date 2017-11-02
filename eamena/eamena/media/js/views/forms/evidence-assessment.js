@@ -29,7 +29,7 @@ define(['jquery',
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#overall-certainty-section')[0],
                     data: this.data,
-                    dataKey: 'SITE_OVERALL_ARCHAEOLOGICAL_CERTAINTY_TYPE.E55',
+                    dataKey: 'ARCHAEOLOGY_CERTAINTY_VALUE.I6',
                     rules: true,
                     validateBranch: function (nodes) {
                          return this.validateHasValues(nodes);
