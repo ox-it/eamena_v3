@@ -53,6 +53,16 @@ define(['jquery',
                         return this.validateHasValues(nodes);
                     }
                 }));
+                
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#site_ID-section')[0],
+                    data: this.data,
+                    dataKey: 'SITE_ID.E42',
+                    validateBranch: function (nodes) {
+                          return this.validateHasValues(nodes);
+                    }
+                }));
+
             }
         });
     }
