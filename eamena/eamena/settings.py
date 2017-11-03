@@ -159,6 +159,10 @@ BUSISNESS_DATA_FILES = (
     os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'sample.arches')),
 )
 
+EXTEND_ONTOLOGY_SQL = (
+    os.path.join(ROOT_DIR, 'management', 'commands', 'package_utils', 'add_classes.sql')
+)
+
 APP_NAME = 'eamena'
 
 LOGGING = {
