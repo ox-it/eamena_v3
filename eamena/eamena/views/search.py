@@ -29,7 +29,18 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializ
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.search.elasticsearch_dsl_builder import Bool, Match, Query, Nested, Terms, GeoShape, Range
 from django.utils.translation import ugettext as _
+from arches.app.utils.data_management.resources.exporter import ResourceExporter
 
+from arches.app.views.resources import get_related_resources
+
+import csv
+import logging
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+    
 def home_page(request):
     lang = request.GET.get('lang', settings.LANGUAGE_CODE)
     min_max_dates = models.Dates.objects.aggregate(Min('val'), Max('val'))
@@ -39,13 +50,45 @@ def home_page(request):
             'active_page': 'Search',
             'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
             'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
-            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data())
+            'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
+            'group_options': settings.SEARCH_GROUP_ROOTS
         }, 
         context_instance=RequestContext(request))
 
+def get_related_resource_ids(resourceids, lang, limit=1000, start=0):
+    se = SearchEngineFactory().create()
+    query = Query(se, limit=limit, start=start)
+    query.add_filter(Terms(field='entityid1', terms=resourceids).dsl, operator='or')
+    query.add_filter(Terms(field='entityid2', terms=resourceids).dsl, operator='or')
+    resource_relations = query.search(  index='resource_relations', doc_type='all')
+    
+    entityids = set()
+    for relation in resource_relations['hits']['hits']: 
+        # add the other halves add the relations which are not in the original list of ids
+        from_is_original_result = relation['_source']['entityid1'] in resourceids
+        to_is_original_result = relation['_source']['entityid2'] in resourceids
+        
+        if from_is_original_result:
+            entityids.add(relation['_source']['entityid2'])
+            
+        if to_is_original_result:
+            entityids.add(relation['_source']['entityid1'])
+    
+    return entityids
+
 def search_results(request):
+
     query = build_search_results_dsl(request)
-    results = query.search(index='entity', doc_type='') 
+    
+    search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
+    
+    if search_related_resources:
+        related_resources_from_prev_query = request.session['related-resource-ids']
+        ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
+        query.add_filter(ids_filter)
+        
+    results = query.search(index='entity', doc_type='')
+    
     total = results['hits']['total']
     page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
 
@@ -55,6 +98,19 @@ def search_results(request):
     elif request.GET.get('no_filters', '') == '':
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
+    
+    lang = request.GET.get('lang', request.LANGUAGE_CODE)
+    start = request.GET.get('start', 0)
+    all_related_resource_ids = []
+    
+    
+    all_related_resource_ids = list(get_related_resource_ids(all_entity_ids, lang, start=0, limit=1000000))
+    
+
+    if not search_related_resources:
+        #Store in session for next related resources search
+        request.session['related-resource-ids'] = all_related_resource_ids
+    
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
 def build_search_results_dsl(request):
@@ -71,40 +127,35 @@ def build_search_results_dsl(request):
     query = build_base_search_results_dsl(request)  
     boolfilter = Bool()
 
-    if 'filters' in temporal_filters:
-        for temporal_filter in temporal_filters['filters']:
-            date_type = ''
-            date = ''
-            date_operator = ''
-            for node in temporal_filter['nodes']:
-                if node['entitytypeid'] == 'DATE_COMPARISON_OPERATOR.E55':
-                    date_operator = node['value']
-                elif node['entitytypeid'] == 'date':
-                    date = node['value']
-                else:
-                    date_type = node['value']
-
-
-            date_value = datetime.strptime(date, '%Y-%m-%d').isoformat()
-
-            if date_operator == '1': # equals query
-                range = Range(field='dates.value', gte=date_value, lte=date_value)
-            elif date_operator == '0': # greater than query 
-                range = Range(field='dates.value', lt=date_value)
-            elif date_operator == '2': # less than query
-                range = Range(field='dates.value', gt=date_value)
-            
-            nested = Nested(path='dates', query=range)
-            if 'inverted' not in temporal_filters:
-                temporal_filters['inverted'] = False
-
-            if temporal_filters['inverted']:
-                boolfilter.must_not(nested)
-            else:
-                boolfilter.must(nested)
-
-            query.add_filter(boolfilter)
-    #  Sorting criterion added to query (AZ 08/02/17)
     query.dsl.update({'sort': sorting})
 
     return query
+
+def export_results(request):
+    dsl = build_search_results_dsl(request)
+    
+    search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
+    
+    if search_related_resources:
+        related_resources_from_prev_query = request.session['related-resource-ids']
+        ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
+        dsl.add_filter(ids_filter)
+    
+    
+    search_results = dsl.search(index='entity', doc_type='')
+
+    response = None
+    format = request.GET.get('export', 'csv')
+    exporter = ResourceExporter(format)
+    results = exporter.export(search_results['hits']['hits'])
+    
+    related_resources = [{'id1':rr.entityid1, 'id2':rr.entityid2, 'type':rr.relationshiptype} for rr in models.RelatedResource.objects.all()] 
+    csv_name = 'resource_relationships.csv'
+    dest = StringIO()
+    csvwriter = csv.DictWriter(dest, delimiter=',', fieldnames=['id1','id2','type'])
+    csvwriter.writeheader()
+    for csv_record in related_resources:
+        csvwriter.writerow({k:v.encode('utf8') for k,v in csv_record.items()})
+    results.append({'name':csv_name, 'outputfile': dest})
+    zipped_results = exporter.zip_response(results, '{0}_{1}_export.zip'.format(settings.PACKAGE_NAME, format))
+    return zipped_results
