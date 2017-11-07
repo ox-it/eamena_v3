@@ -53,16 +53,22 @@ class SummaryForm(ResourceForm):
         }
 
     def update(self, data, files):
+        # self.update_nodes('SITE_ID.E42', data)
+
+        self.update_nodes('HERITAGE_PLACE_TYPE.E55', data)
+
         self.update_nodes('NAME.E41', data)
-        # self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
-        # self.update_nodes('CULTURAL_PERIOD.E55', data)
-        # self.update_nodes('TIME-SPAN_PHASE.E52', data)
-        self.update_nodes('ASSESSMENT_TYPE.E55', data)
-        self.update_nodes('SITE_ID.E42', data)
-        # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
-        # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
-    
+        self.update_nodes('NAME_TYPE.E55', data)
+
+        self.update_nodes('DESIGNATION.E55', data)
+        self.update_nodes('DESIGNATION_TYPE.E55', data)
+        # self.update_nodes('DESIGNATION_FROM_DATE.E49', data)
+        # self.update_nodes('DESIGNATION_TO_DATE.E49', data)
+
+        self.update_nodes('GENERAL_DESCRIPTION.E60', data)
+        self.update_nodes('DESCRIPTION_TYPE.E55', data)
+
+
     def load(self, lang):
         if self.resource:
             self.data['NAME.E41'] = {
