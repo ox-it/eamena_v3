@@ -113,8 +113,22 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         # self.update_nodes('TIME-SPAN_PHASE.E52', data)
         # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
         # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        logging.warning('------> data: %s', JSONResponse(data, indent=4))
         # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
+        
+        logging.warning('------> data: %s', JSONResponse(data, indent=4))
+        for branch in data['ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4']:
+            x = next((item for item in branch['nodes'] if item["entitytypeid"] == "ARCHAEOLOGY_CERTAINTY_VALUE.I6"), None)
+            if not x == None:
+                has_observed = next((item for item in branch['nodes'] if item["entitytypeid"] == "ARCHAEOLOGY_CERTAINTY.S9"), None)
+                if not has_observed:
+                    logging.warning('------> f: %s', 'Add observed field')
+                    branch['nodes'].append({
+                        "entitytypeid": "ARCHAEOLOGY_CERTAINTY.S9",
+                        "label": "label123",
+                        "value": "val123"
+                    });
+                    logging.warning('------> branch: %s', JSONResponse(branch, indent=4))
+                
         self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
     
     def load(self, lang):
