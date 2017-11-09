@@ -59,3 +59,12 @@ Then add the created user to the 'edit' group via the django admin dashboard at 
 navigate to ```http://docker.default:8000``` (substitute your own hostname, or the ip address of your docker machine)
 
 Elasticsearch can be browsed at ```http://docker.default:9200/_plugin/head```
+
+### Importing the smaller data set
+log into the arches container then run 
+```
+. /web_root/ENV/bin/activate
+cd /web_root/arches/eamena
+python manage.py packages -o remove_resources
+python manage.py packages -o load_resources -s /web_root/EAMENA_Data.json
+```

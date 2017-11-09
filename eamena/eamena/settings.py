@@ -64,6 +64,10 @@ ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag
 
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
 
+ADDITIONAL_RESOURCE_GRAPH_LOCATIONS = (
+     os.path.join(PACKAGE_ROOT, 'additional_resource_graphs'),
+)
+
 def RESOURCE_TYPE_CONFIGS():
     return {
         'HERITAGE_RESOURCE_GROUP.E27': {
@@ -155,6 +159,10 @@ BUSISNESS_DATA_FILES = (
     os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'sample.arches')),
 )
 
+EXTEND_ONTOLOGY_SQL = (
+    os.path.join(ROOT_DIR, 'management', 'commands', 'package_utils', 'add_classes.sql')
+)
+
 APP_NAME = 'eamena'
 
 LOGGING = {
@@ -186,6 +194,20 @@ ORDER_REPORT_SECTIONS_BY= {
     'CONDITION_ASSESSMENT.E14': ['DISTURBANCE_DATE_END.E49', 'THREAT_CAUSE_TYPE.E55'],
     'PRODUCTION.E12': ['FEATURE_EVIDENCE_INTERPRETATION_TYPE.E55', 'FEATURE_EVIDENCE_TYPE.E55']
 }
+
+SEARCH_GROUP_ROOTS= [
+    ('NAME.E41', _('Resource Names')),
+    ('SITE_FUNCTION_TYPE.E55', _('Site function')),
+    ('CULTURAL_PERIOD.E55', _('Cultural period')),
+    ('ASSESSMENT_TYPE.E55', _('Assessment')),
+    ('FEATURE_EVIDENCE_ASSIGNMENT.E17', _('Feature form')),
+    ('FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17', _('Feature interpretation')),
+    ('DISTURBANCE_STATE.E3', _('Disturbance assessment')),
+    ('THREAT_STATE.E3', _('Threat assessment')),
+    ('PROTECTION_EVENT.E65', _('Designation')),
+    ('MEASUREMENT_TYPE.E55', _('Measurements')),
+    ('PLACE_ADDRESS.E45', _('Addresses'))
+]
 
 EXPORT_CONFIG = os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'resource_export_mappings.json'))
 
