@@ -31,9 +31,26 @@ from django.utils.translation import ugettext as _
 # from django.forms.models import model_to_dict
 from datetime import datetime
 from arches.app.utils.spatialutils import getdates
+from django.conf import settings
 
 import logging
 from arches.app.utils.JSONResponse import JSONResponse
+
+def add_observed_values(o, data):
+    observed_row = settings.ADD_OBSERVED_NEAR[o]
+    for branch in data[o]:
+        x = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[0]), None)
+        if not x == None:
+            has_observed = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[1]), None)
+            if not has_observed:
+                branch['nodes'].append({
+                    "entityid": "",
+                    "entitytypeid": observed_row[1],
+                    "value": observed_row[2],
+                });
+                # logging.warning('------> add observed: %s', JSONResponse(branch, indent=4))
+    return data
+
 
 def datetime_nodes_to_dates(branch_list):
     for branch in branch_list:
@@ -115,20 +132,8 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
         # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
         
-        logging.warning('------> data: %s', JSONResponse(data, indent=4))
-        for branch in data['ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4']:
-            x = next((item for item in branch['nodes'] if item["entitytypeid"] == "ARCHAEOLOGY_CERTAINTY_VALUE.I6"), None)
-            if not x == None:
-                has_observed = next((item for item in branch['nodes'] if item["entitytypeid"] == "ARCHAEOLOGY_CERTAINTY.S9"), None)
-                if not has_observed:
-                    logging.warning('------> f: %s', 'Add observed field')
-                    branch['nodes'].append({
-                        "entitytypeid": "ARCHAEOLOGY_CERTAINTY.S9",
-                        "label": "label123",
-                        "value": "val123"
-                    });
-                    logging.warning('------> branch: %s', JSONResponse(branch, indent=4))
-                
+        data = add_observed_values('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
+        # logging.warning('------> data after observed: %s', JSONResponse(data, indent=4))
         self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
     
     def load(self, lang):
