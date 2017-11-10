@@ -64,6 +64,7 @@ class Resource(ArchesResource):
                 # forms.RelatedResourcesForm.get_info(),
                 # forms.DescriptionForm.get_info(),
                 # forms.TestWizForm.get_info(),
+                forms.ManMadeForm.get_info(),
             ]
 
 
