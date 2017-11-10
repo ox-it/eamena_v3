@@ -133,8 +133,8 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         data = add_observed_values('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
         # logging.warning('------> data after observed: %s', JSONResponse(data, indent=4))
         self.update_nodes('FUNCTION_BELIEF.I2', data)
+        self.update_nodes('INTERPRETATION_BELIEF.I2', data)
         self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
-        self.update_nodes('FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17', data)
     
 
     
