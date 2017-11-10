@@ -125,24 +125,37 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         }
 
     def update(self, data, files):
-        # self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
         # self.update_nodes('CULTURAL_PERIOD.E55', data)
         # self.update_nodes('TIME-SPAN_PHASE.E52', data)
         # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
         # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
         
         data = add_observed_values('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
         # logging.warning('------> data after observed: %s', JSONResponse(data, indent=4))
+        self.update_nodes('FUNCTION_BELIEF.I2', data)
         self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
+        self.update_nodes('FEATURE_EVIDENCE_INTERPRETATION_ASSIGNMENT.E17', data)
+    
+
+    
     
     def load(self, lang):
         if self.resource:
-            # self.data['SITE_FUNCTION_TYPE.E55'] = {
-            #     'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
-            #     'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
-            #      }
-            # }
+            self.data['FUNCTION_BELIEF.I2'] = {
+                'branch_lists': self.get_nodes('FUNCTION_BELIEF.I2'),
+                'domains': {
+                    'FUNCTION_TYPE.I4' : Concept().get_e55_domain('FUNCTION_TYPE.I4'),
+                    'FUNCTION_CERTAINTY.I6' : Concept().get_e55_domain('FUNCTION_CERTAINTY.I6')
+                 }
+            }
+            self.data['INTERPRETATION_BELIEF.I2'] = {
+                'branch_lists': self.get_nodes('INTERPRETATION_BELIEF.I2'),
+                'domains': {
+                    'INTERPRETATION_TYPE.I4' : Concept().get_e55_domain('INTERPRETATION_TYPE.I4'),
+                    'INTERPRETATION_CERTAINTY.I6': Concept().get_e55_domain('INTERPRETATION_CERTAINTY.I6'),
+                    'INTERPRETATION_NUMBER.E55' : Concept().get_e55_domain('INTERPRETATION_NUMBER.E55'),
+                }
+            }
             # self.data['CULTURAL_PERIOD.E55'] = {
             #     'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
             #     'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
@@ -166,7 +179,9 @@ class ArchaeologicalAssessmentForm(ResourceForm):
             # }
             self.data['ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4'] = {
                 'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4'),
-                'domains': {'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')}
+                'domains': {
+                    'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')
+                }
             }
 
 class ExternalReferenceForm(ResourceForm):

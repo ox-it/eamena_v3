@@ -15,17 +15,24 @@ define(['jquery',
                 //     $(this).find('input').trigger('change'); 
                 // });
                 // 
-                // this.addBranchList(new BranchList({
-                //     el: this.$el.find('#subjects-section')[0],
-                //     data: this.data,
-                //     dataKey: 'SITE_FUNCTION_TYPE.E55',
-                //     rules: true,
-                //     validateBranch: function (nodes) {
-                //         return this.validateHasValues(nodes);
-                //     }
-                // }));
-                // 
-                // 
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#subjects-section')[0],
+                    data: this.data,
+                    dataKey: 'FUNCTION_BELIEF.I2',
+                    rules: true,
+                    validateBranch: function (nodes) {
+                        return this.validateHasValues(nodes);
+                    }
+                }));
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#interpretation-section')[0],
+                    data: this.data,
+                    dataKey: 'INTERPRETATION_BELIEF.I2',
+                    rules: true,
+                    validateBranch: function (nodes) {
+                        return this.validateHasValues(nodes);
+                    }
+                }));
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#overall-certainty-section')[0],
                     data: this.data,
