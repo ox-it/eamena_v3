@@ -184,6 +184,44 @@ class ArchaeologicalAssessmentForm(ResourceForm):
                 }
             }
 
+class ManMadeForm(ResourceForm):
+    @staticmethod
+    def get_info():
+        return {
+            'id': 'man-made',
+            'icon': 'fa-file-text-o',
+            'name': _('Man-made resource (E24)'),
+            'class': ManMadeForm
+
+        }
+
+    def update(self, data, files):
+        logging.warning('------> ManMadeForm update: %s', JSONResponse(data, indent=4))
+        return
+
+    def load(self, lang):
+        data = []
+        # for relatedentity in self.resource.get_related_resources(entitytypeid='INFORMATION_RESOURCE.E73'):
+        #     nodes = relatedentity['related_entity'].flatten()
+        #     dummy_relationship_entity = model_to_dict(relatedentity['relationship'])
+        #     dummy_relationship_entity['entitytypeid'] = 'ARCHES_RESOURCE_CROSS-REFERENCE_RELATIONSHIP_TYPES.E55'
+        #     dummy_relationship_entity['value'] = dummy_relationship_entity['relationshiptype']
+        #     dummy_relationship_entity['label'] = ''
+        #     nodes.append(dummy_relationship_entity)
+        #     data.append({'nodes': nodes, 'relationshiptypelabel': get_preflabel_from_valueid(relatedentity['relationship'].relationshiptype, lang)['value']})
+        
+        self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
+            'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
+            'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
+        }
+        self.data['SITE_OVERALL_SHAPE_TYPE.E55'] = {
+            'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
+            'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
+        }
+
+        return
+
+
 class ExternalReferenceForm(ResourceForm):
     @staticmethod
     def get_info():
