@@ -26,8 +26,9 @@ urlpatterns = patterns('',
     url(r'^search/resources$', 'eamena.views.search.search_results', name="search_results"),
     url(r'^reports/(?P<resourceid>%s)$' % uuid_regex , 'eamena.views.resources.report', name='report'),
     url(r'^admin/auth/user/(?P<userid>[0-9]*)/user_activity/$' , 'eamena.views.user_activity.user_activity', name='user_activity'),
-    url(r'^admin/auth/group/(?P<groupid>[0-9]*)/group_activity/$' , 'eamena.views.group_activity.group_activity', name='user_activity'),
-    
+    url(r'^admin/auth/group/(?P<groupid>[0-9]*)/group_activity/$' , 'eamena.views.group_activity.group_activity', name='group_activity'),
+    url(r'^admin/auth/user/(?P<userid>[0-9]*)/user_activity_data/$' , 'eamena.views.user_activity.user_activity_data', name='user_activity_data'),
+    url(r'^admin/auth/group/(?P<groupid>[0-9]*)/group_activity_data/$' , 'eamena.views.group_activity.group_activity_data', name='group_activity_data'),
     url(r'', include(arches_urls)),
 )
 
