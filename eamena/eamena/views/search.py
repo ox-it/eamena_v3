@@ -78,12 +78,17 @@ def get_related_resource_ids(resourceids, lang, limit=1000, start=0):
 
 def search_results(request):
 
+    lang = request.GET.get('lang', request.LANGUAGE_CODE)
     query = build_search_results_dsl(request)
+    
+    # logging.warning("\n\nQUERY: ----\n%s\n\n", query)
     
     search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
     
     if search_related_resources:
-        related_resources_from_prev_query = request.session['related-resource-ids']
+        results_from_prev_query = request.session['result-resource-ids']
+        related_resources_from_prev_query = list(get_related_resource_ids(results_from_prev_query, lang, start=0, limit=1000000))
+        
         ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
         query.add_filter(ids_filter)
         
@@ -99,17 +104,11 @@ def search_results(request):
         full_results = query.search(index='entity', doc_type='', start=0, limit=1000000, fields=[])
         all_entity_ids = [hit['_id'] for hit in full_results['hits']['hits']]
     
-    lang = request.GET.get('lang', request.LANGUAGE_CODE)
     start = request.GET.get('start', 0)
-    all_related_resource_ids = []
     
-    
-    all_related_resource_ids = list(get_related_resource_ids(all_entity_ids, lang, start=0, limit=1000000))
-    
-
     if not search_related_resources:
-        #Store in session for next related resources search
-        request.session['related-resource-ids'] = all_related_resource_ids
+        # Store in session for next related resources search
+        request.session['result-resource-ids'] = all_entity_ids
     
     return get_paginator(results, total, page, settings.SEARCH_ITEMS_PER_PAGE, all_entity_ids)
 
@@ -137,7 +136,9 @@ def export_results(request):
     search_related_resources = JSONDeserializer().deserialize(request.GET.get('searchRelatedResources'))
     
     if search_related_resources:
-        related_resources_from_prev_query = request.session['related-resource-ids']
+        results_from_prev_query = request.session['result-resource-ids']
+        related_resources_from_prev_query = list(get_related_resource_ids(results_from_prev_query, lang, start=0, limit=1000000))
+
         ids_filter = Terms(field='entityid', terms=related_resources_from_prev_query)
         dsl.add_filter(ids_filter)
     
