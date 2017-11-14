@@ -94,7 +94,10 @@
                       </button>
                       <ul class="dropdown-menu" role="menu">
                           {% for type in resource_types %}
-                              <li><a href="#" class="resource-type-item" data-value='{{type.0}}'>{{type.1}}</a></li>
+                              <li>
+                                  <a href="#" class="resource-type-item" data-value='{{type.0}}'>{{type.1}}
+                                  <i class="fa fa-check" style="margin-right: 7px;"></i></a>
+                              </li>
                           {% endfor %}
                       </ul>
                   </span>

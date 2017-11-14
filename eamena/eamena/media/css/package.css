@@ -277,3 +277,13 @@ button.btn-default.advanced-search {
 .prev-combine-box + .search-box-container .select2-choices {
 	border-left: #5cb85c solid 4px;
 }
+
+/* start styling resource type filters*/
+.resource-type li .fa{
+	display: none;
+	float: right;
+}
+.resource-type li.select .fa{
+	display: block;
+}
+/* end styling resource type filters*/
