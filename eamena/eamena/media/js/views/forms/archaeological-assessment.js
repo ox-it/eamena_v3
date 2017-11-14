@@ -42,8 +42,16 @@ define(['jquery',
                          return this.validateHasValues(nodes);
                     }
                 }));
-                                
-                               
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#function-actor')[0],
+                    data: this.data,
+                    dataKey: 'FUNCTION_AND_INTERPRETATION_ACTOR.E39',
+                    rules: false,
+                    validateBranch: function (nodes) {
+                         return this.validateHasValues(nodes);
+                    }
+                }));
+
                 // this.addBranchList(new BranchList({
                 //      el: this.$el.find('#culturalperiod-section')[0],
                 //      data: this.data,
