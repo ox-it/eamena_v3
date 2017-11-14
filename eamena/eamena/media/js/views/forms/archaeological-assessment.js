@@ -51,7 +51,14 @@ define(['jquery',
                          return this.validateHasValues(nodes);
                     }
                 }));
-
+                var actorList = this.data['FUNCTION_AND_INTERPRETATION_ACTOR.E39'].branch_lists;
+                
+                if (actorList.length) {
+                    $(".show-box").addClass('hidden');
+                    $(".hide-box").addClass('hidden');
+                    $(".edit-actors-row").removeClass('hidden');
+                }
+                
                 // this.addBranchList(new BranchList({
                 //      el: this.$el.find('#culturalperiod-section')[0],
                 //      data: this.data,
@@ -94,7 +101,24 @@ define(['jquery',
                 //                
 
                                
-            }
+            },
+            
+            toggleEditActor: function (e) {
+                if ($(e.target).hasClass("show-box")) {
+                    $(".show-box").addClass('hidden');
+                    $(".hide-box").removeClass('hidden');
+                    $(".edit-actors-row").removeClass('hidden');
+                } else {
+                    $(".show-box").removeClass('hidden');
+                    $(".hide-box").addClass('hidden');
+                    $(".edit-actors-row").addClass('hidden');
+                }
+            },
+            
+            events: {
+                'click .edit-actor': 'toggleEditActor'
+            },
+
         });
     }
 );
