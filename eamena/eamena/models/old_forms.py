@@ -31,25 +31,6 @@ from django.utils.translation import ugettext as _
 # from django.forms.models import model_to_dict
 from datetime import datetime
 from arches.app.utils.spatialutils import getdates
-from django.conf import settings
-
-import logging
-from arches.app.utils.JSONResponse import JSONResponse
-
-def add_observed_values(o, data):
-    observed_row = settings.ADD_OBSERVED_NEAR[o]
-    for branch in data[o]:
-        x = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[0]), None)
-        if not x == None:
-            has_observed = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[1]), None)
-            if not has_observed:
-                branch['nodes'].append({
-                    "entityid": "",
-                    "entitytypeid": observed_row[1],
-                    "value": observed_row[2],
-                });
-                # logging.warning('------> add observed: %s', JSONResponse(branch, indent=4))
-    return data
 
 
 def datetime_nodes_to_dates(branch_list):
@@ -72,90 +53,27 @@ class SummaryForm(ResourceForm):
         }
 
     def update(self, data, files):
-        self.update_nodes('SITE_ID.E42', data)
-        
-        self.update_nodes('HERITAGE_PLACE_TYPE.E55', data)
-        
         self.update_nodes('NAME.E41', data)
-        
-        self.update_nodes('DESIGNATION.E55', data)
-        
-        self.update_nodes('DESCRIPTION_ASSIGNEMENT.E13', data)
-
-
+        # self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
+        # self.update_nodes('CULTURAL_PERIOD.E55', data)
+        # self.update_nodes('TIME-SPAN_PHASE.E52', data)
+        self.update_nodes('ASSESSMENT_TYPE.E55', data)
+        self.update_nodes('SITE_ID.E42', data)
+        # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
+        # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
+        # self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
+    
     def load(self, lang):
         if self.resource:
-            self.data['SITE_ID.E42'] = {
-            'branch_lists': self.get_nodes('SITE_ID.E42'),
-            'domains': {}
-            }
-            
-            self.data['HERITAGE_PLACE_TYPE.E55'] = {
-                'branch_lists': self.get_nodes('HERITAGE_PLACE_TYPE.E55'),
-                'domains': {'HERITAGE_PLACE_TYPE.E55.E55' : Concept().get_e55_domain('HERITAGE_PLACE_TYPE.E55.E55')}
-            }
-            
             self.data['NAME.E41'] = {
                 'branch_lists': self.get_nodes('NAME.E41'),
                 'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
             }
-            
-            self.data['DESIGNATION.E55'] = {
-                'branch_lists': datetime_nodes_to_dates(self.get_nodes('DESIGNATION.E55')),
-                'domains': {
-                    'DESIGNATION.E55' : Concept().get_e55_domain('DESIGNATION.E55'),
-                    'DESIGNATION_TYPE.E55' : Concept().get_e55_domain('DESIGNATION_TYPE.E55'),
-                }
-            }
-            
-            self.data['DESCRIPTION_ASSIGNEMENT.E13'] = {
-                'branch_lists': self.get_nodes('DESCRIPTION_ASSIGNEMENT.E13'),
-                'domains': {'DESCRIPTION_TYPE.E55' : Concept().get_e55_domain('DESCRIPTION_TYPE.E55')}
-            }
-
-
-class ArchaeologicalAssessmentForm(ResourceForm):
-    @staticmethod
-    def get_info():
-        return {
-            'id': 'archaeological-assessment',
-            'icon': 'fa-flag',
-            'name': _('Archeological Assessment'),
-            'class': ArchaeologicalAssessmentForm
-        }
-
-    def update(self, data, files):
-        # self.update_nodes('CULTURAL_PERIOD.E55', data)
-        # self.update_nodes('TIME-SPAN_PHASE.E52', data)
-        # self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
-        # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
-        
-        data = add_observed_values('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
-        # logging.warning('------> data after observed: %s', JSONResponse(data, indent=4))
-        self.update_nodes('FUNCTION_BELIEF.I2', data)
-        self.update_nodes('INTERPRETATION_BELIEF.I2', data)
-        self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
-    
-
-    
-    
-    def load(self, lang):
-        if self.resource:
-            self.data['FUNCTION_BELIEF.I2'] = {
-                'branch_lists': self.get_nodes('FUNCTION_BELIEF.I2'),
-                'domains': {
-                    'FUNCTION_TYPE.I4' : Concept().get_e55_domain('FUNCTION_TYPE.I4'),
-                    'FUNCTION_CERTAINTY.I6' : Concept().get_e55_domain('FUNCTION_CERTAINTY.I6')
-                 }
-            }
-            self.data['INTERPRETATION_BELIEF.I2'] = {
-                'branch_lists': self.get_nodes('INTERPRETATION_BELIEF.I2'),
-                'domains': {
-                    'INTERPRETATION_TYPE.I4' : Concept().get_e55_domain('INTERPRETATION_TYPE.I4'),
-                    'INTERPRETATION_CERTAINTY.I6': Concept().get_e55_domain('INTERPRETATION_CERTAINTY.I6'),
-                    'INTERPRETATION_NUMBER.E55' : Concept().get_e55_domain('INTERPRETATION_NUMBER.E55'),
-                }
-            }
+            # self.data['SITE_FUNCTION_TYPE.E55'] = {
+            #     'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
+            #     'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
+            #      }
+            # }
             # self.data['CULTURAL_PERIOD.E55'] = {
             #     'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
             #     'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
@@ -168,6 +86,19 @@ class ArchaeologicalAssessmentForm(ResourceForm):
             #         'FROM_DATE.E55' : Concept().get_e55_domain('FROM_DATE.E55'),
             #     }
             # }
+
+            self.data['ASSESSMENT_TYPE.E55'] = {
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes('ASSESSMENT_TYPE.E55')),
+                'domains': {
+                    'ASSESSMENT_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_TYPE.E55'),
+                    'ASSESSOR_NAME_TYPE.E55' : Concept().get_e55_domain('ASSESSOR_NAME_TYPE.E55'),
+                }
+            }
+
+            self.data['SITE_ID.E42'] = {
+                'branch_lists': self.get_nodes('SITE_ID.E42'),
+                'domains': {}
+            }
             # self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
             #     'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
             #     'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
@@ -177,119 +108,80 @@ class ArchaeologicalAssessmentForm(ResourceForm):
             #     'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
             #     'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
             # }
-            self.data['ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4'] = {
-                'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4'),
-                'domains': {
-                    'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')
-                }
-            }
+            # self.data['ARCHAEOLOGY_CERTAINTY_VALUE.I6'] = {
+            #     'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6'),
+            #     'domains': {'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')}
+            # }
 
-class ManMadeForm(ResourceForm):
+class EvidenceAssessmentForm(ResourceForm):
     @staticmethod
     def get_info():
         return {
-            'id': 'man-made',
-            'icon': 'fa-file-text-o',
-            'name': _('Man-made resource (E24)'),
-            'class': ManMadeForm
-
+            'id': 'evidence-assessment',
+            'icon': 'fa-flag',
+            'name': _('Archeology/Evidence Assessment'),
+            'class': EvidenceAssessmentForm
         }
+
     def update(self, data, files):
-        logging.warning('------> ManMadeForm update1: %s', JSONResponse(data['SITE_MORPHOLOGY_TYPE.E55'][0]['nodes'][0]['value'], indent=4))
-        # filedict = {}
-        se = SearchEngineFactory().create()
-        # for name in files:
-        #     for f in files.getlist(name):
-        #         filedict[f.name] = f
-
-    # for newfile in data.get('new-files', []):
-        resource = Resource()
-        # resource.entitytypeid = 'MAN_MADE_RESOURCE.E24'
-        
-        resource.entitytypeid = 'HERITAGE_RESOURCE_GROUP.E27'
-        resource.set_entity_value('NAME.E41', 'test name')
-        resource.set_entity_value('SITE_MORPHOLOGY_TYPE.E55', data['SITE_MORPHOLOGY_TYPE.E55'][0]['nodes'][0]['value'])
-        
-        # if 'image' in filedict[newfile['id']].content_type:
-        #     resource.set_entity_value('CATALOGUE_ID.E42', newfile['title'])
-        # else:
-        #     resource.set_entity_value('TITLE.E41', newfile['title'])
-        # if newfile.get('description') and len(newfile.get('description')) > 0:
-        #     #  resource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', newfile['description_type']['value'])
-        #     resource.set_entity_value('DESCRIPTION.E62', newfile.get('description'))
-        # resource.set_entity_value('FILE_PATH.E62', filedict[newfile['id']])            
-        # thumbnail = generate_thumbnail(filedict[newfile['id']])
-        # if thumbnail != None:
-        #     resource.set_entity_value('THUMBNAIL.E62', thumbnail)
-        resource.save()
-        resource.index()
-        # if self.resource.entityid == '':
-        #     self.resource.save()
-        # relationship = self.resource.create_resource_relationship(resource.entityid, relationship_type_id=newfile['relationshiptype']['value'])
-        # se.index_data(index='resource_relations', doc_type='all', body=model_to_dict(relationship), idfield='resourcexid')
-
-
-        # edited_file = data.get('current-files', None)
-        # if edited_file:
-        #     title = ''
-        #     title_type = ''
-        #     description = ''
-        #     description_type = ''
-        #     is_image = False
-        #     for node in edited_file.get('nodes'):
-        #         if node['entitytypeid'] == 'TITLE.E41' and node.get('value') != '':
-        #             title = node.get('value')
-        #         if node['entitytypeid'] == 'CATALOGUE_ID.E42' and node.get('value') != '':
-        #             title = node.get('value')
-        #             is_image = True
-        #         elif node['entitytypeid'] == 'INFORMATION_RESOURCE_TYPE.E55':
-        #             title_type = node.get('value')
-        #         elif node['entitytypeid'] == 'DESCRIPTION.E62':
-        #             description = node.get('value')
-        #         elif node['entitytypeid'] == 'ARCHES_RESOURCE_CROSS-REFERENCE_RELATIONSHIP_TYPES.E55':
-        #             resourcexid = node.get('resourcexid')            
-        #             entityid1 = node.get('entityid1')
-        #             entityid2 = node.get('entityid2')
-        #             relationship = RelatedResource.objects.get(pk=resourcexid)
-        #             relationship.relationshiptype = node.get('value')
-        #             relationship.save()
-        #             se.delete(index='resource_relations', doc_type='all', id=resourcexid)
-        #             se.index_data(index='resource_relations', doc_type='all', body=model_to_dict(relationship), idfield='resourcexid')
-        # 
-        #     relatedresourceid = entityid2 if self.resource.entityid == entityid1 else entityid1
-        #     relatedresource = Resource().get(relatedresourceid)
-        #     relatedresource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', title_type)
-        #     relatedresource.set_entity_value('CATALOGUE_ID.E42', title) if is_image == True else relatedresource.set_entity_value('TITLE.E41', title)
-        #     if description != '':
-        #         # relatedresource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', description_type)
-        #         relatedresource.set_entity_value('DESCRIPTION.E62', description)
-        #     relatedresource.save()
-        #     relatedresource.index()
-
-        return
-
+        # self.update_nodes('NAME.E41', data)
+        self.update_nodes('SITE_FUNCTION_TYPE.E55', data)
+        self.update_nodes('CULTURAL_PERIOD.E55', data)
+        self.update_nodes('TIME-SPAN_PHASE.E52', data)
+        # self.update_nodes('ASSESSMENT_TYPE.E55', data)
+        # self.update_nodes('SITE_ID.E42', data)
+        self.update_nodes('SITE_MORPHOLOGY_TYPE.E55', data)
+        self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
+        self.update_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6', data)
+    
     def load(self, lang):
-        data = []
-        # for relatedentity in self.resource.get_related_resources(entitytypeid='INFORMATION_RESOURCE.E73'):
-        #     nodes = relatedentity['related_entity'].flatten()
-        #     dummy_relationship_entity = model_to_dict(relatedentity['relationship'])
-        #     dummy_relationship_entity['entitytypeid'] = 'ARCHES_RESOURCE_CROSS-REFERENCE_RELATIONSHIP_TYPES.E55'
-        #     dummy_relationship_entity['value'] = dummy_relationship_entity['relationshiptype']
-        #     dummy_relationship_entity['label'] = ''
-        #     nodes.append(dummy_relationship_entity)
-        #     data.append({'nodes': nodes, 'relationshiptypelabel': get_preflabel_from_valueid(relatedentity['relationship'].relationshiptype, lang)['value']})
-        
-        self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
-            'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
-            'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
-        }
-        self.data['SITE_OVERALL_SHAPE_TYPE.E55'] = {
-            'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
-            'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
-        }
+        if self.resource:
+            # self.data['NAME.E41'] = {
+            #     'branch_lists': self.get_nodes('NAME.E41'),
+            #     'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
+            # }
+            self.data['SITE_FUNCTION_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('SITE_FUNCTION_TYPE.E55'),
+                'domains': {'SITE_FUNCTION_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_TYPE.E55'),'SITE_FUNCTION_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('SITE_FUNCTION_CERTAINTY_TYPE.E55')
+                 }
+            }
+            self.data['CULTURAL_PERIOD.E55'] = {
+                'branch_lists': self.get_nodes('CULTURAL_PERIOD.E55'),
+                'domains': {'CULTURAL_PERIOD.E55' : Concept().get_e55_domain('CULTURAL_PERIOD.E55'),'CULTURAL_PERIOD_CERTAINTY_TYPE.E55' : Concept().get_e55_domain('CULTURAL_PERIOD_CERTAINTY_TYPE.E55')
+                }
+            }
+            self.data['TIME-SPAN_PHASE.E52'] = {
+                'branch_lists': self.get_nodes('TIME-SPAN_PHASE.E52'),
+                'domains': {
+                    'TO_DATE.E55' : Concept().get_e55_domain('TO_DATE.E55'),
+                    'FROM_DATE.E55' : Concept().get_e55_domain('FROM_DATE.E55'),
+                }
+            }
+            # self.data['ASSESSMENT_TYPE.E55'] = {
+            #     'branch_lists': datetime_nodes_to_dates(self.get_nodes('ASSESSMENT_TYPE.E55')),
+            #     'domains': {
+            #         'ASSESSMENT_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_TYPE.E55'),
+            #         'ASSESSOR_NAME_TYPE.E55' : Concept().get_e55_domain('ASSESSOR_NAME_TYPE.E55'),
+            #     }
+            # }
+            # 
+            # self.data['SITE_ID.E42'] = {
+            #     'branch_lists': self.get_nodes('SITE_ID.E42'),
+            #     'domains': {}
+            # }
+            self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
+                'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
+            }
 
-        return
-
+            self.data['SITE_OVERALL_SHAPE_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
+                'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
+            }
+            self.data['ARCHAEOLOGY_CERTAINTY_VALUE.I6'] = {
+                'branch_lists': self.get_nodes('ARCHAEOLOGY_CERTAINTY_VALUE.I6'),
+                'domains': {'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')}
+            }
 
 class ExternalReferenceForm(ResourceForm):
     @staticmethod

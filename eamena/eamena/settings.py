@@ -163,6 +163,23 @@ EXTEND_ONTOLOGY_SQL = (
     os.path.join(ROOT_DIR, 'management', 'commands', 'package_utils', 'add_classes.sql')
 )
 
+ADD_OBSERVED_NEAR = {
+    # each line should have: 
+    # entity type id of parent entity of observed entity: [
+    #     entity type id next to which the observed entity must be added,
+    #     the observed entity,
+    #     the static text
+    # ]
+    'ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4': [
+        'ARCHAEOLOGY_CERTAINTY_VALUE.I6', 'ARCHAEOLOGY_CERTAINTY.S9', '123 text certainty - observed property'
+    ],
+    'test.1234': [
+        'TEST1234.S4', 'TEST1235.S5', 'test1234'
+    ]
+}
+
+
+
 APP_NAME = 'eamena'
 
 LOGGING = {

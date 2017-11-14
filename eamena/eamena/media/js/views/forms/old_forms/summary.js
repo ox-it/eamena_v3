@@ -15,15 +15,6 @@ define(['jquery',
                 });
 
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#site_ID-section')[0],
-                    data: this.data,
-                    dataKey: 'SITE_ID.E42',
-                    validateBranch: function (nodes) {
-                          return this.validateHasValues(nodes);
-                    }
-                }));
-
-                this.addBranchList(new BranchList({
                     el: this.$el.find('#names-section')[0],
                     data: this.data,
                     dataKey: 'NAME.E41',
@@ -54,22 +45,21 @@ define(['jquery',
                 }));
 
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#designation-section')[0],
+                    el: this.$el.find('#assessment-section')[0],
                     data: this.data,
-                    dataKey: 'DESIGNATION.E55',
+                    dataKey: 'ASSESSMENT_TYPE.E55',
                     rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
                 }));
-
+                
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#description-section')[0],
+                    el: this.$el.find('#site_ID-section')[0],
                     data: this.data,
-                    dataKey: 'DESCRIPTION_ASSIGNEMENT.E13',
-                    rules: true,
+                    dataKey: 'SITE_ID.E42',
                     validateBranch: function (nodes) {
-                        return this.validateHasValues(nodes);
+                          return this.validateHasValues(nodes);
                     }
                 }));
 
