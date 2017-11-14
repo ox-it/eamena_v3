@@ -221,14 +221,14 @@
             <div class="padding-left-10">
                 <h5 id="arches-names-form" class="section-headline">
                     {% trans "Investigator name" %}
-                    <i class="fa fa-pencil edit-actor show-box hidde" aria-hidden="true"></i>
-                    <i class="fa fa-pencil-square edit-actor hide-box hidde" aria-hidden="true"></i>
+                    <i class="fa fa-pencil edit-actor show-box" aria-hidden="true"></i>
+                    <i class="fa fa-pencil-square edit-actor hide-box hidden" aria-hidden="true"></i>
                 </h5>
             </div>
         </div>
     </div>
     <!-- actor CRUD Form -->
-    <div class="row">
+    <div class="row edit-actors-row hidden">
         <div class="col-xs-12">
             <div class="padding-left-10">
                 <dl>
@@ -248,12 +248,12 @@
     <!-- End actor CRUD Form Container -->
     
     <!-- actor Records -->
-    <div class="row">
+    <div class="row edit-actors-row hidden">
         <div class="col-xs-12">
             <div class="arches-crud-child-section">
                 <dl>
                     <dd class="arches-CRUD-child-title">
-                        {% trans "This resource has the following INVESTIGATOR? :" %}
+                        {% trans "This resource has the following investigator:" %}
                     </dd>
                     <dd class="margin-left-5" style="display: none;" data-bind="visible: true">
                         <div data-bind="visible: getBranchLists().length == 0" class="txt-color-blue">{% trans "No actor Defined" %}</div>
