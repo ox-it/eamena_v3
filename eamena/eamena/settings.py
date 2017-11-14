@@ -201,6 +201,11 @@ SEARCH_GROUP_ROOTS= [
     ('PLACE_ADDRESS.E45', _('Addresses'))
 ]
 
+SEARCH_RESOURCE_TYPES= [
+    ('HERITAGE_RESOURCE_GROUP.E27', _('E27')),
+    ('ACTOR.E39', _('Actor')),
+]
+
 EXPORT_CONFIG = os.path.normpath(os.path.join(PACKAGE_ROOT, 'source_data', 'business_data', 'resource_export_mappings.json'))
 
 try:

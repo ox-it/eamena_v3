@@ -45,7 +45,8 @@ def home_page(request):
             'min_date': min_max_dates['val__min'].year if min_max_dates['val__min'] != None else 0,
             'max_date': min_max_dates['val__max'].year if min_max_dates['val__min'] != None else 1,
             'timefilterdata': JSONSerializer().serialize(Concept.get_time_filter_data()),
-            'group_options': settings.SEARCH_GROUP_ROOTS
+            'group_options': settings.SEARCH_GROUP_ROOTS,
+            'resource_types': settings.SEARCH_RESOURCE_TYPES
         }, 
         context_instance=RequestContext(request))
 

@@ -86,6 +86,19 @@
                       <i class="fa fa-sliders" aria-hidden="true"></i>
                   </button>
 
+                  <span class="dropdown pull-left resource-type">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                          <span class="resource-type-value">
+                              {% trans "Resource Type" %} <i class="fa fa-chevron-down"></i>
+                          </span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                          {% for type in resource_types %}
+                              <li><a href="#" class="resource-type-item" data-value='{{type.0}}'>{{type.1}}</a></li>
+                          {% endfor %}
+                      </ul>
+                  </span>
+
                   <button class="btn btn-default toggle-related-resources toggle-related-off" type="button">
                       <span class="term-group-value">
                           <i class="fa fa-sitemap" style="padding: 0"></i>
