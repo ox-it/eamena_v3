@@ -115,8 +115,10 @@ define(['jquery',
                 }
             },
             
-            events: {
-                'click .edit-actor': 'toggleEditActor'
+            events: function(){
+                var events = BaseForm.prototype.events.apply(this);
+                events['click .edit-actor'] = 'toggleEditActor';
+                return events;
             },
 
         });
