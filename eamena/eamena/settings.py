@@ -178,7 +178,11 @@ ADD_OBSERVED_NEAR = {
     ]
 }
 
-
+# Map new actor nodes to the pre-existing nodes to search for edits to the affected resource
+# ( actor node entityid, parent node entityid of actor node, node entityid to check in edit log )
+ACTOR_NODES = [
+    ('FUNCTION_AND_INTERPRETATION_ACTOR.E39', 'FUNCTION_AND_INTERPRETATION.I5', 'FEATURE_EVIDENCE_INTERPRETATION_TYPE.E55')
+]
 
 APP_NAME = 'eamena'
 
