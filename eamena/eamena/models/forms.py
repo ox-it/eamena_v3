@@ -36,9 +36,9 @@ from django.conf import settings
 import logging
 from arches.app.utils.JSONResponse import JSONResponse
 
-def add_observed_values(o, data):
-    observed_row = settings.ADD_OBSERVED_NEAR[o]
-    for branch in data[o]:
+def add_observed_values(observed_field, data):
+    observed_row = settings.ADD_OBSERVED_NEAR[observed_field]
+    for branch in data[observed_field]:
         x = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[0]), None)
         if not x == None:
             has_observed = next((item for item in branch['nodes'] if item["entitytypeid"] == observed_row[1]), None)
@@ -48,9 +48,20 @@ def add_observed_values(o, data):
                     "entitytypeid": observed_row[1],
                     "value": observed_row[2],
                 });
-                # logging.warning('------> add observed: %s', JSONResponse(branch, indent=4))
     return data
 
+def add_actor(observed_field, data, user):
+    observed_row = settings.ADD_ACTOR_TO[observed_field]
+    if not observed_row in data or len(data[observed_row]) == 0:
+        data[observed_row] = [{
+            "nodes": [{
+                "entityid": "",
+                "entitytypeid": observed_row,
+                "value": user.first_name + ' ' + user.last_name,
+            }]
+        }]
+        
+    return data
 
 def datetime_nodes_to_dates(branch_list):
     for branch in branch_list:
@@ -131,7 +142,8 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         # self.update_nodes('SITE_OVERALL_SHAPE_TYPE.E55', data)
         
         data = add_observed_values('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
-        # logging.warning('------> data after observed: %s', JSONResponse(data, indent=4))
+        data = add_actor('FUNCTION_AND_INTERPRETATION.I5', data, self.user)
+        self.update_nodes('FUNCTION_AND_INTERPRETATION_ACTOR.E39', data)
         self.update_nodes('FUNCTION_BELIEF.I2', data)
         self.update_nodes('INTERPRETATION_BELIEF.I2', data)
         self.update_nodes('ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4', data)
@@ -182,6 +194,10 @@ class ArchaeologicalAssessmentForm(ResourceForm):
                 'domains': {
                     'ARCHAEOLOGY_CERTAINTY_VALUE.I6' : Concept().get_e55_domain('ARCHAEOLOGY_CERTAINTY_VALUE.I6')
                 }
+            }
+
+            self.data['FUNCTION_AND_INTERPRETATION_ACTOR.E39'] = {
+                'branch_lists': self.get_nodes('FUNCTION_AND_INTERPRETATION_ACTOR.E39'),
             }
 
 class ManMadeForm(ResourceForm):
