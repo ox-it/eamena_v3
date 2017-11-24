@@ -59,7 +59,7 @@ ENCODING_KEY =''
 # MAP_MAX_ZOOM = 19
 # MAP_EXTENT = '-13228037.69691764,3981296.0184014924,-13123624.71628009,4080358.407059081'
 
-EAMENA_RESOURCES = ['HERITAGE_RESOURCE_GROUP.E27'] #Specify which resource types should take on the identifier EAMENA-. All other resource types will take on an identifier beginning with their truncated EntityType, e.g. ACTOR for ACTOR.E39, INFORMATION for INFORMATION_RESOURCE.E73
+EAMENA_RESOURCES = ['HERITAGE_RESOURCE_GROUP.E27', 'PHYSICAL_MAN_MADE_THING.E24'] #Specify which resource types should take on the identifier EAMENA-. All other resource types will take on an identifier beginning with their truncated EntityType, e.g. ACTOR for ACTOR.E39, INFORMATION for INFORMATION_RESOURCE.E73
 ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag, e.g. 7 -> EAMENA-0000001. MUST BE GIVEN, AND BE 2 OR OVER.
 
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
@@ -73,6 +73,25 @@ def RESOURCE_TYPE_CONFIGS():
         'HERITAGE_RESOURCE_GROUP.E27': {
             'resourcetypeid': 'HERITAGE_RESOURCE_GROUP.E27',
             'name': _('Heritage Resource E27'),
+            'icon_class': 'fa fa-university',
+            'default_page': 'summary',
+            'default_description': _('No name available'),
+            'description_node': _('NAME.E41'),
+            'categories': [_('Resource')],
+            'has_layer': True,
+            'on_map': True,
+            'marker_color': '#FFC53D',
+            'stroke_color': '#d9b562',
+            'fill_color': '#eedbad',
+            'primary_name_lookup': {
+                'entity_type': 'EAMENA_ID.E42',
+                'lookup_value': 'Primary'
+            },
+            'sort_order': 1
+        },
+        'PHYSICAL_MAN_MADE_THING.E24': {
+            'resourcetypeid': 'PHYSICAL_MAN_MADE_THING.E24',
+            'name': _('Physical man-made thing E27'),
             'icon_class': 'fa fa-university',
             'default_page': 'summary',
             'default_description': _('No name available'),
@@ -138,7 +157,8 @@ RESOURCE_GRAPH_LOCATIONS = (
 #     # Put strings here, like "/home/data/resource_graphs" or "C:/data/resource_graphs".
 #     # Always use forward slashes, even on Windows.
 #     # Don't forget to use absolute paths, not relative paths.
-     os.path.join(PACKAGE_ROOT, 'source_data', 'resource_graphs'),
+    #  os.path.join(PACKAGE_ROOT, 'source_data', 'resource_graphs'),
+     os.path.join(PACKAGE_ROOT, 'resource_graphs'),
 )
 
 
