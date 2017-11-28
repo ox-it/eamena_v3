@@ -138,3 +138,25 @@ The conversion process is executed by the following command
 python manage.py packages -o convert_resources -s path/to/config_file.csv
 ```
 Affected resources and relationships are reindexed during the conversion process
+
+
+# Data validation utilities
+2 utilities have been added to diagnose schema/data issues, which can be fixed with the above tools:
+ - validate_values
+ - find_unused_entity_types
+ 
+### Validate values
+This utility will examine all domain values for entity types, and verify that the chosen value is a member of the collection specified by the entity type.
+```
+python manage.py packages -o validate_values
+```
+The results are written to a file at /logs/concept_value_errors.txt
+
+N.B.This operation takes a long time. It may be more convenient to run it for a subset of the values by setting a value. This will likely identify the general cases affected.
+
+### Find unused entities
+```
+python manage.py packages -o find_unused_entity_types
+```
+
+This identifies any entity types for which there are no entities in the database. The results are written to logs/unused_entity_types.txt
