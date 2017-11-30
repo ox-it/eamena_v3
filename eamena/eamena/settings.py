@@ -65,7 +65,7 @@ ID_LENGTH = 7 #Indicates the length of the Unique Resource IDs after the set tag
 # DATE_SEARCH_ENTITY_TYPES = ['BEGINNING_OF_EXISTENCE_TYPE.E55', 'END_OF_EXISTENCE_TYPE.E55', 'DISTURBANCE_DATE_TYPE.E55']
 
 ADDITIONAL_RESOURCE_GRAPH_LOCATIONS = (
-     os.path.join(PACKAGE_ROOT, 'additional_resource_graphs'),
+     os.path.join(PACKAGE_ROOT, 'final_resource_graphs', 'modified'),
 )
 
 def RESOURCE_TYPE_CONFIGS():
@@ -158,7 +158,8 @@ RESOURCE_GRAPH_LOCATIONS = (
 #     # Always use forward slashes, even on Windows.
 #     # Don't forget to use absolute paths, not relative paths.
     #  os.path.join(PACKAGE_ROOT, 'source_data', 'resource_graphs'),
-     os.path.join(PACKAGE_ROOT, 'resource_graphs'),
+     # os.path.join(PACKAGE_ROOT, 'resource_graphs'),
+     os.path.join(PACKAGE_ROOT, 'final_resource_graphs', 'new')
 )
 
 
