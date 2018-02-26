@@ -18,7 +18,7 @@ define(['jquery',
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#site_ID-section')[0],
                     data: this.data,
-                    dataKey: 'SITE_ID.E42',
+                    dataKey: 'HERITAGE_PLACE_TYPE.E55',
                     validateBranch: function (nodes) {
                           return this.validateHasValues(nodes);
                     }

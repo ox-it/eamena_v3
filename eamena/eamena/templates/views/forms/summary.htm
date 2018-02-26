@@ -13,17 +13,17 @@
                 <dl>
                     <!-- Title -->
                     <dt>
-                        <h5 id="arches-names-form" class="section-headline">{% trans "Resource ID" %}</h5>
+                        <h5 id="arches-names-form" class="section-headline">{% trans "Heritage Classification" %}</h5>
                     </dt>
                     <!-- Form -->
                     <dd>
                         <div class="row">
                             <div class="col-xs-12 hidden-xs">
-                                <input class="form-control arches-form-input" id="resource-name" style="width: 18%;" placeholder='{% trans "Resource ID" %}' data-bind='value: getEditedNode("SITE_ID.E42", "value")'>
+                                <input class="form-control arches-form-input" id="resource-classification" style="width: 18%;" placeholder='{% trans "Heritage Classification" %}' data-bind='value: getEditedNode("HERITAGE_PLACE_TYPE.E55", "value")'>
                                 {% include 'views/components/add-item-button.htm' %}
                             </div>
                             <div class="col-xs-12 hidden-sm hidden-md hidden-lg">
-                                <input class="form-control arches-form-input" id="resource-name" style="width: 33%;" placeholder='{% trans "Resource ID" %}' data-bind='value: getEditedNode("SITE_ID.E42", "value")'>
+                                <input class="form-control arches-form-input" id="resource-classification" style="width: 33%;" placeholder='{% trans "Heritage Classification" %}' data-bind='value: getEditedNode("HERITAGE_PLACE_TYPE.E55", "value")'>
                                 <div class="margin-top-5"></div>
                                 <!-- Spacer (for xs screens) -->
                                 <div class="margin-top-5"></div>
@@ -45,14 +45,14 @@
             <div class="arches-crud-child-section">
                 <dl>
                     <dd class="arches-CRUD-child-title">
-                        {% trans "This resource has the following ID code:" %}
+                        {% trans "This resource has the following classifications:" %}
                     </dd>
                     <dd class="margin-left-5" style="display: none;" data-bind="visible: true">
-                        <div data-bind="visible: getBranchLists().length == 0" class="txt-color-blue">{% trans "No ID Defined" %}</div>
+                        <div data-bind="visible: getBranchLists().length == 0" class="txt-color-blue">{% trans "No classification Defined" %}</div>
                         <div data-bind='foreach: getBranchLists()'>
                             <div class="arches-crud-record">
-                                <a href="javascript:void(0)" class="arches-CRUD-child" title="{% trans "Delete this name" %}"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
-                                <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this name" %}"><span data-bind='text: nodes.get("SITE_ID.E42", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier"></span>
+                                <a href="javascript:void(0)" class="arches-CRUD-child" title="{% trans "Delete this classification" %}"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
+                                <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this name" %}"><span data-bind='text: nodes.get("HERITAGE_PLACE_TYPE.E55", "value")' style="padding-right:2px;"></span><span class="text-muted arches-crud-type-identifier"></span>
                                 </a>
                             </div>
                         </div>
