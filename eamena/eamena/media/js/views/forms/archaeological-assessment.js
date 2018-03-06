@@ -10,108 +10,95 @@ define(['jquery',
                 BaseForm.prototype.initialize.apply(this);                
                 
                 var self = this;
-                // var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
-                // date_picker.on('dp.change', function(evt){
-                //     $(this).find('input').trigger('change'); 
-                // });
-                // 
+                var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
+                date_picker.on('dp.change', function(evt){
+                    $(this).find('input').trigger('change'); 
+                });
+                
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#subjects-section')[0],
+                    el: this.$el.find('#overall-archaeological-certainty')[0],
                     data: this.data,
-                    dataKey: 'FUNCTION_BELIEF.I2',
+                    dataKey: 'ARCHAEOLOGICAL_CERTAINTY_OBSERVATION.S4',
                     rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
                 }));
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#interpretation-section')[0],
+                    el: this.$el.find('#date-inference-making')[0],
                     data: this.data,
-                    dataKey: 'INTERPRETATION_BELIEF.I2',
+                    dataKey: 'DATE_INFERENCE_MAKING.I5',
+                    rules: true,
+                    validateBranch: function (nodes) {
+                        var canBeEmpty = ['DATE_INFERENCE_MAKING_ACTOR_NAME.E41'];
+                        var valid = nodes != undefined && nodes.length > 0;
+                        _.each(nodes, function (node) {
+                            if (node.entityid === '' && node.value === '' &&
+                                canBeEmpty.indexOf(node.entitytypeid) == -1
+                            ){
+                                valid = false;
+                            }
+                        }, this);
+                        return valid;
+                    }
+                }));
+                this.addBranchList(new BranchList({
+                    el: this.$el.find('#period-of-occupation')[0],
+                    data: this.data,
+                    dataKey: 'ARCHAEOLOGICAL_TIMESPAN.E52',
                     rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
                 }));
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#overall-certainty-section')[0],
+                    el: this.$el.find('#feature-morphology')[0],
                     data: this.data,
-                    dataKey: 'ARCHAEOLOGY_CERTAINTY_OBSERVATION.S4',
+                    dataKey: 'FEATURE_ASSIGNMENT.E13',
                     rules: true,
                     validateBranch: function (nodes) {
-                         return this.validateHasValues(nodes);
+                        var canBeEmpty = ['FEATURE_ASSIGNMENT_INVESTIGATOR_NAME.E41'];
+                        var valid = nodes != undefined && nodes.length > 0;
+                        _.each(nodes, function (node) {
+                            if (node.entityid === '' && node.value === '' &&
+                                canBeEmpty.indexOf(node.entitytypeid) == -1
+                            ){
+                                valid = false;
+                            }
+                        }, this);
+                        return valid;
                     }
                 }));
                 this.addBranchList(new BranchList({
-                    el: this.$el.find('#function-actor')[0],
+                    el: this.$el.find('#feature-interpretation')[0],
                     data: this.data,
-                    dataKey: 'FUNCTION_AND_INTERPRETATION_ACTOR.E39',
-                    rules: false,
+                    dataKey: 'FUNCTION_INTERPRETATION_INFERENCE_MAKING.I5',
+                    rules: true,
                     validateBranch: function (nodes) {
-                         return this.validateHasValues(nodes);
+                        var canBeEmpty = ['FUNCTION_INTERPRETATION_INFERENCE_MAKING_ACTOR_NAME.E41'];
+                        var valid = nodes != undefined && nodes.length > 0;
+                        _.each(nodes, function (node) {
+                            if (node.entityid === '' && node.value === '' &&
+                                canBeEmpty.indexOf(node.entitytypeid) == -1
+                            ){
+                                valid = false;
+                            }
+                        }, this);
+                        return valid;
                     }
                 }));
-                var actorList = this.data['FUNCTION_AND_INTERPRETATION_ACTOR.E39'].branch_lists;
-                
-                if (actorList.length) {
-                    $(".show-box").addClass('hidden');
-                    $(".hide-box").addClass('hidden');
-                    $(".edit-actors-row").removeClass('hidden');
-                }
-                
-                // this.addBranchList(new BranchList({
-                //      el: this.$el.find('#culturalperiod-section')[0],
-                //      data: this.data,
-                //      dataKey: 'CULTURAL_PERIOD.E55',
-                //      rules: true,
-                //      validateBranch: function (nodes) {
-                //            return this.validateHasValues(nodes);
-                //      }
-                // }));
-                // 
-                // this.addBranchList(new BranchList({
-                //      el: this.$el.find('#phase-section')[0],
-                //      data: this.data,
-                //      dataKey: 'TIME-SPAN_PHASE.E52',
-                //      validateBranch: function (nodes) {
-                //           return true;
-                //           return this.validateHasValues(nodes);
-                //      }
-                // }));
-                // 
-                // this.addBranchList(new BranchList({
-                //     el: this.$el.find('#sitemorph-section')[0],
-                //     data: this.data,
-                //     dataKey: 'SITE_MORPHOLOGY_TYPE.E55',
-                //     rules: true,
-                //     validateBranch: function (nodes) {
-                //          return this.validateHasValues(nodes);
-                //     }
-                // }));
-                //                
-                // this.addBranchList(new BranchList({
-                //     el: this.$el.find('#siteshape-section')[0],
-                //     data: this.data,
-                //     dataKey: 'SITE_OVERALL_SHAPE_TYPE.E55',
-                //     rules: true,
-                //     validateBranch: function (nodes) {
-                //          return this.validateHasValues(nodes);
-                //     }                                         
-                // }));
-                //                
-
-                               
             },
             
             toggleEditActor: function (e) {
+                var actorClass = e.target.dataset.actor;
                 if ($(e.target).hasClass("show-box")) {
-                    $(".show-box").addClass('hidden');
-                    $(".hide-box").removeClass('hidden');
-                    $(".edit-actors-row").removeClass('hidden');
+                    $(".show-box." + actorClass).addClass('hidden');
+                    $(".hide-box." + actorClass).removeClass('hidden');
+                    $(".edit-actors-row." + actorClass).removeClass('hidden');
                 } else {
-                    $(".show-box").removeClass('hidden');
-                    $(".hide-box").addClass('hidden');
-                    $(".edit-actors-row").addClass('hidden');
+                    $(".show-box." + actorClass).removeClass('hidden');
+                    $(".hide-box." + actorClass).addClass('hidden');
+                    $(".edit-actors-row." + actorClass).addClass('hidden');
                 }
             },
             

@@ -53,18 +53,21 @@ class Resource(ArchesResource):
 
         elif self.entitytypeid == 'HERITAGE_RESOURCE_GROUP.E27':
             description_group['forms'][:0] = [
+                forms.AssessmentSummaryForm.get_info(),
                 forms.SummaryForm.get_info(),
+                forms.LocationResForm.get_info(),
+                forms.MeasurementvaluesForm.get_info(),
                 forms.ArchaeologicalAssessmentForm.get_info(),
-                # forms.LocationForm.get_info(),
-                # forms.MeasurementvaluesForm.get_info(),
+                forms.ConditionAssessmentForm.get_info(),
                 # forms.Classification1Form.get_info(),
-                # forms.MeasurementForm.get_info(),
-                # forms.RelatedFilesForm.get_info(),
+                # forms.MeasurementForm.get_info( ),
+                forms.RelatedFilesForm.get_info(),
                 # forms.DesignationForm.get_info(),
-                # forms.RelatedResourcesForm.get_info(),
+                forms.ManMadeForm.get_info(),
+                forms.RelatedResourcesForm.get_info(),
                 # forms.DescriptionForm.get_info(),
                 # forms.TestWizForm.get_info(),
-                forms.ManMadeForm.get_info(),
+        
             ]
 
 
