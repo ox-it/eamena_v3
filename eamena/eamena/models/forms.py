@@ -75,7 +75,6 @@ class SummaryForm(ResourceForm):
         }
 
     def update(self, data, files):
-        self.update_nodes('SITE_ID.E42', data)
         self.update_nodes('NAME.E41', data)
         self.update_nodes('RIGHT.E30', data)
         self.update_nodes('DESCRIPTION_ASSIGNMENT.E13', data)
@@ -83,10 +82,6 @@ class SummaryForm(ResourceForm):
 
     def load(self, lang):
         if self.resource:
-            self.data['SITE_ID.E42'] = {
-                'branch_lists': self.get_nodes('SITE_ID.E42'),
-                'domains': {}
-            }
             self.data['NAME.E41'] = {
                 'branch_lists': self.get_nodes('NAME.E41'),
                 'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
