@@ -75,7 +75,6 @@ class SummaryForm(ResourceForm):
         }
 
     def update(self, data, files):
-        self.update_nodes('SITE_ID.E42', data)
         self.update_nodes('NAME.E41', data)
         self.update_nodes('RIGHT.E30', data)
         self.update_nodes('DESCRIPTION_ASSIGNMENT.E13', data)
@@ -83,10 +82,6 @@ class SummaryForm(ResourceForm):
 
     def load(self, lang):
         if self.resource:
-            self.data['SITE_ID.E42'] = {
-                'branch_lists': self.get_nodes('SITE_ID.E42'),
-                'domains': {}
-            }
             self.data['NAME.E41'] = {
                 'branch_lists': self.get_nodes('NAME.E41'),
                 'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
@@ -174,6 +169,7 @@ class ArchaeologicalAssessmentForm(ResourceForm):
         self.update_nodes('ARCHAEOLOGICAL_CERTAINTY_OBSERVATION.S4', data)
         self.update_nodes('DATE_INFERENCE_MAKING.I5', data)
         self.update_nodes('ARCHAEOLOGICAL_TIMESPAN.E52', data)
+        self.update_nodes('FEATURE_MORPHOLOGY_TYPE.E55', data)
         self.update_nodes('FEATURE_ASSIGNMENT.E13', data)
         self.update_nodes('FUNCTION_INTERPRETATION_INFERENCE_MAKING.I5', data)
         return
@@ -199,10 +195,17 @@ class ArchaeologicalAssessmentForm(ResourceForm):
                 'branch_lists': self.get_nodes('ARCHAEOLOGICAL_TIMESPAN.E52'),
                 'domains': {}
             }
+            
+            self.data['FEATURE_MORPHOLOGY_TYPE.E55'] = {
+                'branch_lists': self.get_nodes('FEATURE_MORPHOLOGY_TYPE.E55'),
+                'domains': {
+                    'FEATURE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('FEATURE_MORPHOLOGY_TYPE.E55')
+                }
+            }
+            
             self.data['FEATURE_ASSIGNMENT.E13'] = {
                 'branch_lists': self.get_nodes('FEATURE_ASSIGNMENT.E13'),
                 'domains': {
-                    'FEATURE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('FEATURE_MORPHOLOGY_TYPE.E55'),
                     'FEATURE_FORM_TYPE.I4' : Concept().get_e55_domain('FEATURE_FORM_TYPE.I4'),
                     'FEATURE_FORM_TYPE_CERTAINTY.I6' : Concept().get_e55_domain('FEATURE_FORM_TYPE_CERTAINTY.I6'),
                     'FEATURE_SHAPE_TYPE.E55' : Concept().get_e55_domain('FEATURE_SHAPE_TYPE.E55'),
