@@ -13,7 +13,7 @@ define(['jquery',
             var self = this;
             var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});            
             var currentEdited = this.getBlankFormData();
-
+            console.log("this.data", this.data);
             // date_picker.on('dp.change', function(evt){
             //     $(this).find('input').trigger('change'); 
             // });
@@ -26,8 +26,52 @@ define(['jquery',
             //     self.deleteClicked(branchlist);
             // }
 
-            ko.applyBindings(this, this.$el.find('#existing')[0]);
+            // ko.applyBindings(this, this.$el.find('#existing')[0]);
 
+        
+            var relationBranchList = new BranchList({
+                el: this.$el.find('.relation-list')[0],
+                data: this.data,
+                dataKey: 'related-resources',
+                validateBranch: function (nodes) {
+                    return this.validateHasValues(nodes);
+                },
+                addBlankEditBranch: function(){
+                    return null;
+                },
+                editItem: function(branch, e) {
+                    var editingBranch = this.getEditedBranch();
+                    if (editingBranch) {
+                        editingBranch.editing(false);
+                    }
+                    this.originalItem = koMapping.toJS(branch);
+                    branch.editing(true);
+                    
+                    this.trigger('change', 'edit', branch);
+                },
+                deleteItem: function(branch, e) {
+                    this.trigger('change', 'delete', branch);   
+                    this.viewModel.branch_lists.remove(branch);
+                    branch.related(false);
+                },
+                // getData: function(){
+                //     var data = koMapping.toJS(this.viewModel.branch_lists());
+                //     _.each(data, function(item){
+                //         var i = item;
+                //         delete item.editing;
+                //     }, this); 
+                //     return data;
+                // },
+                getEditedBranchTypeInfo: function() {
+                    if (!this.getEditedBranch()) {
+                        return {};
+                    }
+                    return resourceTypes[this.getEditedBranch().relatedresourcetype()];
+                }
+            });
+
+            this.addBranchList(relationBranchList);
+        
             this.addBranchList(new BranchList({
                 el: this.$el.find('#heritage-classification')[0],
                 data: this.data,
@@ -94,6 +138,9 @@ define(['jquery',
                     'branch_lists': []
                 },
                 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7': {
+                    'branch_lists':[]
+                },
+                'related-resources': {
                     'branch_lists':[]
                 },
                 // 'TO_DATE.E49': {

@@ -6,7 +6,7 @@
 
 <div>
     <!-- E24 Container -->
-    <div id="existing">
+    <div id="related-features">
 
         <div class="row">
             <div class="col-xs-12">
@@ -15,52 +15,41 @@
                         <dt style="display: none;" data-bind="visible: true">
                             <h5 id="arches-names-form" class="section-headline">{% trans "E24 Feature" %}</h5>
                         </dt>
-                        <dt data-bind="visible: false">
-                            <h5 id="arches-names-form" class="section-headline modal-title loading"> {% trans "Loading ...." %}</h5>
-                        </dt>
-                        
+
+                        <div class="relation-list">
+                            <div class="row margin-top-minus-5 margin-bottom-10" id="no-relationships" style="">
+                                <div class="col-xs-12">
+                                    <div class="margin-left-5" data-bind="visible: true" style="display:none;">
+                                        <dl class="margin-bottom-10"> 
+                                            <dd class="margin-left-5">
+                                                <div data-bind="visible: viewModel.branch_lists().length == 0">
+                                                    <p class="arches-CRUD-child text-primary">{% trans 'This resource has no relationships yet' %}</p>
+                                                </div>
+                                                <div data-bind='foreach: getBranchLists()'>
+                                                    <div data-bind='if: relationship'>
+                                                        <div class="arches-crud-record">
+                                                            <a href="javascript:void(0)" class="arches-CRUD-child" title="Delete this relationship"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
+                                                            <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this relationship" %}">
+                                                                <strong data-bind='text: relatedresourcename'></strong>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </dl>
                 </div>
             </div>
         </div>
-
-        <!--Existing Classifications-->
-        <div id="current-items" style="display: none;" data-bind="foreach: data.data, visible: true">
-            <div class="arches-crud-record">
-                <div  class="row margin-top-minus-5 margin-bottom-10" style="display: block;">
-                    <div class="col-xs-12">
-                        <div class="margin-left-5">
-                            <dl class="margin-bottom-10"> 
-                                <dd>
-                                    <div class="">
-                                        <h5>
-                                            <a href="#" title="Remove this Feature" data-bind="click: $root.deleteAssessment"><i class="arches-CRUD-delete fa fa-times-circle"></i></a>
-                                            <a href="#" class="" title="Edit this Feature" data-bind="click: $root.editAssessment">{% trans "Feature" %} 
-                                            <span data-bind="if: $data['NAME.E41'].branch_lists.length > 0">
-                                                <span data-bind="text: ': ' + $data['NAME.E41'].branch_lists[0].nodes[0].label"></span>
-                                            </span>
-                                            </a>
-                                        </h5>
-                                    </div>
-                                </dd>
-                            </dl>
-
-                            <dl>   
-                                <dt class="arches-evaluation-header">{% trans "Type" %}</dt>
-                                <dd class="arches-evaluation-content" data-bind="if: $data['NAME.E41'].branch_lists.length > 0">
-                                    <span data-bind="html: $data['NAME.E41'].branch_lists[0].nodes[0].label"></span>
-                                </dd>
-                                <dd class="arches-evaluation-content" data-bind="ifnot: $data['NAME.E41'].branch_lists.length > 0">
-                                    <span data-bind="html: 'no entries'"></span>
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    <!-- End Existing Classifications -->
+
+
+
+
 
 
     <!-- Condition Assessement Wizard Container --> 
