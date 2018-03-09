@@ -315,9 +315,18 @@ class ManMadeForm(ResourceForm):
 
         resource = Resource()
         resource.entitytypeid = 'HERITAGE_FEATURE.E24'
-        resource.set_entity_value('NAME.E41', data['NAME.E41'][0]['nodes'][0]['value'])
-        resource.set_entity_value('NAME_TYPE.E55', data['NAME.E41'][0]['nodes'][1]['value'])
-
+        for node in data['NAME.E41'][0]['nodes']:
+            if node['entitytypeid'] == "NAME.E41":
+                resource.set_entity_value('NAME.E41', node['value'])
+            if node['entitytypeid'] == "NAME_TYPE.E55":
+                resource.set_entity_value('NAME_TYPE.E55', node['value'])
+                
+        for node in data['INVESTIGATION_ASSESSMENT_ACTIVITY.E7'][0]['nodes']:
+            if node['entitytypeid'] == "INVESTIGATOR_ROLE_TYPE.E55":
+                resource.set_entity_value('INVESTIGATOR_ROLE_TYPE.E55', node['value'])
+            if node['entitytypeid'] == "ASSESSMENT_ACTIVITY_TYPE.E55":
+                resource.set_entity_value('ASSESSMENT_ACTIVITY_TYPE.E55', node['value'])
+            
         resource.save()
         resource.index()
         # if self.resource.entityid == '':

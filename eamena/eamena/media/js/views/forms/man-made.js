@@ -37,7 +37,8 @@ define(['jquery',
             this.addBranchList(new BranchList({
                 el: this.$el.find('#assessment-summary')[0],
                 data: this.data,
-                dataKey: 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7'
+                dataKey: 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7',
+                singleEdit: true
             }));
             // this.addBranchList(new BranchList({
             //     el: this.$el.find('#to-date-section')[0],
