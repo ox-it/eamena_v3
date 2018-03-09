@@ -310,32 +310,14 @@ class ManMadeForm(ResourceForm):
 
         }
     def update(self, data, files):
-        logging.warning('------> ManMadeForm update1: %s', JSONResponse(data['SITE_MORPHOLOGY_TYPE.E55'][0]['nodes'][0]['value'], indent=4))
-        # filedict = {}
+        logging.warning('------> ManMadeForm update1: %s', JSONResponse(data, indent=4))
         se = SearchEngineFactory().create()
-        # for name in files:
-        #     for f in files.getlist(name):
-        #         filedict[f.name] = f
 
-    # for newfile in data.get('new-files', []):
         resource = Resource()
-        # resource.entitytypeid = 'MAN_MADE_RESOURCE.E24'
-        
-        resource.entitytypeid = 'HERITAGE_RESOURCE_GROUP.E27'
-        resource.set_entity_value('NAME.E41', 'test name')
-        resource.set_entity_value('SITE_MORPHOLOGY_TYPE.E55', data['SITE_MORPHOLOGY_TYPE.E55'][0]['nodes'][0]['value'])
-        
-        # if 'image' in filedict[newfile['id']].content_type:
-        #     resource.set_entity_value('CATALOGUE_ID.E42', newfile['title'])
-        # else:
-        #     resource.set_entity_value('TITLE.E41', newfile['title'])
-        # if newfile.get('description') and len(newfile.get('description')) > 0:
-        #     #  resource.set_entity_value('INFORMATION_RESOURCE_TYPE.E55', newfile['description_type']['value'])
-        #     resource.set_entity_value('DESCRIPTION.E62', newfile.get('description'))
-        # resource.set_entity_value('FILE_PATH.E62', filedict[newfile['id']])            
-        # thumbnail = generate_thumbnail(filedict[newfile['id']])
-        # if thumbnail != None:
-        #     resource.set_entity_value('THUMBNAIL.E62', thumbnail)
+        resource.entitytypeid = 'HERITAGE_FEATURE.E24'
+        resource.set_entity_value('NAME.E41', data['NAME.E41'][0]['nodes'][0]['value'])
+        resource.set_entity_value('NAME_TYPE.E55', data['NAME.E41'][0]['nodes'][1]['value'])
+
         resource.save()
         resource.index()
         # if self.resource.entityid == '':
@@ -394,13 +376,16 @@ class ManMadeForm(ResourceForm):
         #     nodes.append(dummy_relationship_entity)
         #     data.append({'nodes': nodes, 'relationshiptypelabel': get_preflabel_from_valueid(relatedentity['relationship'].relationshiptype, lang)['value']})
         
-        self.data['SITE_MORPHOLOGY_TYPE.E55'] = {
-            'branch_lists': self.get_nodes('SITE_MORPHOLOGY_TYPE.E55'),
-            'domains': {'SITE_MORPHOLOGY_TYPE.E55' : Concept().get_e55_domain('SITE_MORPHOLOGY_TYPE.E55')}
+        self.data['NAME.E41'] = {
+            'branch_lists': self.get_nodes('NAME.E41'),
+            'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
         }
-        self.data['SITE_OVERALL_SHAPE_TYPE.E55'] = {
-            'branch_lists': self.get_nodes('SITE_OVERALL_SHAPE_TYPE.E55'),
-            'domains': {'SITE_OVERALL_SHAPE_TYPE.E55' : Concept().get_e55_domain('SITE_OVERALL_SHAPE_TYPE.E55')}
+        self.data['INVESTIGATION_ASSESSMENT_ACTIVITY.E7'] = {
+            'branch_lists': self.get_nodes('INVESTIGATION_ASSESSMENT_ACTIVITY.E7'),
+            'domains': {
+                'ASSESSMENT_ACTIVITY_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_ACTIVITY_TYPE.E55'),
+                'INVESTIGATOR_ROLE_TYPE.E55' : Concept().get_e55_domain('INVESTIGATOR_ROLE_TYPE.E55'),
+            }
         }
 
         return

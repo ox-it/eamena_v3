@@ -14,9 +14,9 @@ define(['jquery',
             var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});            
             var currentEdited = this.getBlankFormData();
 
-            date_picker.on('dp.change', function(evt){
-                $(this).find('input').trigger('change'); 
-            });
+            // date_picker.on('dp.change', function(evt){
+            //     $(this).find('input').trigger('change'); 
+            // });
 
             // this.editAssessment = function(branchlist){
             //     self.switchBranchForEdit(branchlist);
@@ -29,34 +29,34 @@ define(['jquery',
             ko.applyBindings(this, this.$el.find('#existing')[0]);
 
             this.addBranchList(new BranchList({
-                el: this.$el.find('#resource-morphology')[0],
+                el: this.$el.find('#heritage-classification')[0],
                 data: this.data,
-                dataKey: 'SITE_MORPHOLOGY_TYPE.E55',
+                dataKey: 'NAME.E41',
                 singleEdit: true
             }));
             this.addBranchList(new BranchList({
-                el: this.$el.find('#resource-shape')[0],
+                el: this.$el.find('#assessment-summary')[0],
                 data: this.data,
-                dataKey: 'SITE_OVERALL_SHAPE_TYPE.E55'
+                dataKey: 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7'
             }));
-            this.addBranchList(new BranchList({
-                el: this.$el.find('#to-date-section')[0],
-                data: currentEdited,
-                dataKey: 'TO_DATE.E49',
-                singleEdit: true,
-                validateBranch: function (nodes) {
-                    return this.validateHasValues(nodes);
-                }
-            }));   
-            this.addBranchList(new BranchList({
-                el: this.$el.find('#from-date-section')[0],
-                data: currentEdited,
-                dataKey: 'FROM_DATE.E49',
-                singleEdit: true,
-                validateBranch: function (nodes) {
-                    return this.validateHasValues(nodes);
-                }
-            })); 
+            // this.addBranchList(new BranchList({
+            //     el: this.$el.find('#to-date-section')[0],
+            //     data: currentEdited,
+            //     dataKey: 'TO_DATE.E49',
+            //     singleEdit: true,
+            //     validateBranch: function (nodes) {
+            //         return this.validateHasValues(nodes);
+            //     }
+            // }));   
+            // this.addBranchList(new BranchList({
+            //     el: this.$el.find('#from-date-section')[0],
+            //     data: currentEdited,
+            //     dataKey: 'FROM_DATE.E49',
+            //     singleEdit: true,
+            //     validateBranch: function (nodes) {
+            //         return this.validateHasValues(nodes);
+            //     }
+            // })); 
             
             
             $('#end-workflow').removeClass('disabled');      
@@ -86,18 +86,18 @@ define(['jquery',
 
         getBlankFormData: function(){
             return this.prepareData({
-                'SITE_MORPHOLOGY_TYPE.E55': {
-                    'branch_lists':[]
-                },
-                'SITE_OVERALL_SHAPE_TYPE.E55': {
-                    'branch_lists':[]
-                },
-                'FROM_DATE.E49': {
+                // 'SITE_MORPHOLOGY_TYPE.E55': {
+                //     'branch_lists':[]
+                // },
+                'NAME.E41': {
                     'branch_lists': []
                 },
-                'TO_DATE.E49': {
-                    'branch_lists': []
-                },        
+                'INVESTIGATION_ASSESSMENT_ACTIVITY.E7': {
+                    'branch_lists':[]
+                },
+                // 'TO_DATE.E49': {
+                //     'branch_lists': []
+                // },        
             })
         },
 
