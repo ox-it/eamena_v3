@@ -39,21 +39,6 @@ define(['jquery',
                 addBlankEditBranch: function(){
                     return null;
                 },
-                editItem: function(branch, e) {
-                    var editingBranch = this.getEditedBranch();
-                    if (editingBranch) {
-                        editingBranch.editing(false);
-                    }
-                    this.originalItem = koMapping.toJS(branch);
-                    branch.editing(true);
-                    
-                    this.trigger('change', 'edit', branch);
-                },
-                deleteItem: function(branch, e) {
-                    this.trigger('change', 'delete', branch);   
-                    this.viewModel.branch_lists.remove(branch);
-                    branch.related(false);
-                },
                 // getData: function(){
                 //     var data = koMapping.toJS(this.viewModel.branch_lists());
                 //     _.each(data, function(item){
@@ -84,25 +69,6 @@ define(['jquery',
                 dataKey: 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7',
                 singleEdit: true
             }));
-            // this.addBranchList(new BranchList({
-            //     el: this.$el.find('#to-date-section')[0],
-            //     data: currentEdited,
-            //     dataKey: 'TO_DATE.E49',
-            //     singleEdit: true,
-            //     validateBranch: function (nodes) {
-            //         return this.validateHasValues(nodes);
-            //     }
-            // }));   
-            // this.addBranchList(new BranchList({
-            //     el: this.$el.find('#from-date-section')[0],
-            //     data: currentEdited,
-            //     dataKey: 'FROM_DATE.E49',
-            //     singleEdit: true,
-            //     validateBranch: function (nodes) {
-            //         return this.validateHasValues(nodes);
-            //     }
-            // })); 
-            
             
             $('#end-workflow').removeClass('disabled');      
         },
