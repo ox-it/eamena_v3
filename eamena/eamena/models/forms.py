@@ -449,6 +449,7 @@ class ManMadeForm(ResourceForm):
                 'relatedresourcename':relatedentity['related_entity'].get_primary_name(),
                 'relatedresourcetype':relatedentity['related_entity'].entitytypeid,
                 'relatedresourceid':relatedentity['related_entity'].entityid,
+                'relatedresourceidlink': '/resources/HERITAGE_FEATURE.E24/default/' + relatedentity['related_entity'].entityid,
                 'related': True,
             })
 

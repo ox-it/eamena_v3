@@ -28,8 +28,7 @@
                                                 <div data-bind='foreach: getBranchLists()'>
                                                     <div data-bind='if: relationship'>
                                                         <div class="arches-crud-record">
-                                                            <a href="javascript:void(0)" class="arches-CRUD-child" title="Delete this relationship"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
-                                                            <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this relationship" %}">
+                                                            <a data-bind="attr: { href: relatedresourceidlink }"  class="arches-CRUD-child arches-CRUD-edit" title="{% trans "Edit this relationship" %}">
                                                                 <strong data-bind='text: relatedresourcename'></strong>
                                                             </a>
                                                         </div>
