@@ -25,6 +25,20 @@ define(['jquery',
                     }
                 }));
                 
+                var maxBranchLists = 3;
+                this.data['DAMAGE_STATE.E3'].branch_lists.forEach(function (branchList) {
+                    for (var i = branchList.nodes[0].length; i < maxBranchLists; i++) {
+                        branchList.nodes[0].push([
+                            {
+                                entitytypeid:"EFFECT_TYPE.I4",
+                                value: "", label: "", entityid: "",
+                            }, {
+                                entitytypeid: "EFFECT_CERTAINTY.I6",
+                                value: "", label: "", entityid: "",
+                            },
+                        ])
+                    }
+                })
                 this.addBranchList(new BranchList({
                     el: this.$el.find('#damage-overall-extent')[0],
                     data: this.data,

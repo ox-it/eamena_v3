@@ -242,8 +242,6 @@ class ConditionAssessmentForm(ResourceForm):
         self.update_nodes('DAMAGE_EXTENT_TYPE.E55', data)
         self.update_nodes('THREAT_INFERENCE_MAKING.I5', data)
         self.update_nodes('DAMAGE_STATE.E3', data)
-        self.update_nodes('RECOMMENDATION_PLAN.E100', data)
-        self.update_nodes('PRIORITY_ASSIGNMENT.E13', data)
         return
     
     def load(self, lang):
@@ -272,14 +270,14 @@ class ConditionAssessmentForm(ResourceForm):
             }
 
             self.data['DAMAGE_STATE.E3'] = {
-                'branch_lists': self.get_nodes('DAMAGE_STATE.E3'),
+                'branch_lists': datetime_nodes_to_dates(self.get_nodes_hierarchical('DAMAGE_STATE.E3', 'DAMAGE_EFFECT_BELIEF.I2')),
                 'domains': {
                     'DISTURBANCE_CAUSE_CATEGORY_TYPE.E55' : Concept().get_e55_domain('DISTURBANCE_CAUSE_CATEGORY_TYPE.E55'),
                     'DISTURBANCE_CAUSE_TYPE.I4' : Concept().get_e55_domain('DISTURBANCE_CAUSE_TYPE.I4'),
                     'DISTURBANCE_CAUSE_CERTAINTY.I6' : Concept().get_e55_domain('DISTURBANCE_CAUSE_CERTAINTY.I6'),
                     'EFFECT_TYPE.I4' : Concept().get_e55_domain('EFFECT_TYPE.I4'),
                     'EFFECT_CERTAINTY.I6' : Concept().get_e55_domain('EFFECT_CERTAINTY.I6'),
-                    'DAMAGE_TREND_TYPE.E55' : Concept().get_e55_domain('DAMAGE_TREND_TYPE.E55'),
+                    'DAMAGE_TREND_TYPE.E55' : Concept().get_e55_domain('DAMAGE_TREND_TYPE.E55')
                 }
             }
             
