@@ -360,11 +360,11 @@ class ManMadeForm(ResourceForm):
         }
 
         self.data['NAME.E41'] = {
-            'branch_lists': self.get_nodes('NAME.E41'),
+            'branch_lists': [],
             'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
         }
         self.data['INVESTIGATION_ASSESSMENT_ACTIVITY.E7'] = {
-            'branch_lists': self.get_nodes('INVESTIGATION_ASSESSMENT_ACTIVITY.E7'),
+            'branch_lists': [],
             'domains': {
                 'ASSESSMENT_ACTIVITY_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_ACTIVITY_TYPE.E55'),
                 'INVESTIGATOR_ROLE_TYPE.E55' : Concept().get_e55_domain('INVESTIGATOR_ROLE_TYPE.E55'),
