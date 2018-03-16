@@ -236,8 +236,10 @@ class ConditionAssessmentForm(ResourceForm):
         }
 
     def update(self, data, files):
-        data = add_actor('DAMAGE_STATE.E3', 'DISTURBANCE_CAUSE_ASSIGNMENT_ASSESSOR_NAME.E41', data, self.user)
+        # data = add_actor('DAMAGE_STATE.E3', 'DISTURBANCE_CAUSE_ASSIGNMENT_ASSESSOR_NAME.E41', data, self.user)
         data = add_actor('THREAT_INFERENCE_MAKING.I5', 'THREAT_INFERENCE_MAKING_ASSESSOR_NAME.E41', data, self.user)
+        logging.warning('------> ConditionAssessmentForm update1: %s', JSONResponse(data, indent=4))
+        
         self.update_nodes('OVERALL_CONDITION_STATE_TYPE.E55', data)
         self.update_nodes('DAMAGE_EXTENT_TYPE.E55', data)
         self.update_nodes('THREAT_INFERENCE_MAKING.I5', data)
@@ -312,18 +314,8 @@ class ManMadeForm(ResourceForm):
 
         resource = Resource()
         resource.entitytypeid = 'HERITAGE_FEATURE.E24'
-        for node in data['NAME.E41'][0]['nodes']:
-            if node['entitytypeid'] == "NAME.E41":
-                resource.set_entity_value('NAME.E41', node['value'])
-            if node['entitytypeid'] == "NAME_TYPE.E55":
-                resource.set_entity_value('NAME_TYPE.E55', node['value'])
-                
-        for node in data['INVESTIGATION_ASSESSMENT_ACTIVITY.E7'][0]['nodes']:
-            if node['entitytypeid'] == "INVESTIGATOR_ROLE_TYPE.E55":
-                resource.set_entity_value('INVESTIGATOR_ROLE_TYPE.E55', node['value'])
-            if node['entitytypeid'] == "ASSESSMENT_ACTIVITY_TYPE.E55":
-                resource.set_entity_value('ASSESSMENT_ACTIVITY_TYPE.E55', node['value'])
-            
+        self.update_nodes('NAME.E41', data, resource)
+        self.update_nodes('INVESTIGATION_ASSESSMENT_ACTIVITY.E7', data, resource)
         resource.save()
         resource.index()
         relationships = Concept().get_e55_domain('ARCHES_RESOURCE_CROSS-REFERENCE_RELATIONSHIP_TYPES.E55')
@@ -335,6 +327,24 @@ class ManMadeForm(ResourceForm):
         se.index_data(index='resource_relations', doc_type='all', body=model_to_dict(relationship), idfield='resourcexid')
 
         return
+
+    def update_nodes(self, entitytypeid, data, resource):
+        resource.prune(entitytypes=[entitytypeid])
+        if self.schema == None:
+            self.schema = Entity.get_mapping_schema(resource.entitytypeid)
+        for value in data[entitytypeid]:
+            self.baseentity = None
+            for newentity in value['nodes']:
+                entity = Entity()
+                entity.create_from_mapping(resource.entitytypeid, self.schema[newentity['entitytypeid']]['steps'], newentity['entitytypeid'], newentity['value'], newentity['entityid'])
+                if self.baseentity == None:
+                    self.baseentity = entity
+                else:
+                    self.baseentity.merge(entity)
+
+            resource.merge_at(self.baseentity, resource.entitytypeid)
+
+        self.resource.trim()
 
     def load(self, lang):
         data = []
@@ -358,11 +368,11 @@ class ManMadeForm(ResourceForm):
         }
 
         self.data['NAME.E41'] = {
-            'branch_lists': self.get_nodes('NAME.E41'),
+            'branch_lists': [],
             'domains': {'NAME_TYPE.E55' : Concept().get_e55_domain('NAME_TYPE.E55')}
         }
         self.data['INVESTIGATION_ASSESSMENT_ACTIVITY.E7'] = {
-            'branch_lists': self.get_nodes('INVESTIGATION_ASSESSMENT_ACTIVITY.E7'),
+            'branch_lists': [],
             'domains': {
                 'ASSESSMENT_ACTIVITY_TYPE.E55' : Concept().get_e55_domain('ASSESSMENT_ACTIVITY_TYPE.E55'),
                 'INVESTIGATOR_ROLE_TYPE.E55' : Concept().get_e55_domain('INVESTIGATOR_ROLE_TYPE.E55'),

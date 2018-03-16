@@ -110,22 +110,43 @@
                                                 <h3 class="margin-bottom-5"><strong>{% trans "Part 2" %}</strong> {% trans "Assessment Summary" %}</h3>
                                                 <div class="alert alert-info fade in">
                                                     <i class="fa-fw fa fa-info"></i>
-                                                    {% trans "Step 2 description...." %}
+                                                    {% trans "step 2 description....." %}
                                                 </div>
                                                 <div>
-                                                    <dl class="">   
-                                                        <dd class="" style="margin-bottom:5px">
-                                                            <div class="row" style="margin-bottom: 10px;">
-                                                                <div id="assessment-summary" class="col-xs-12 col-sm-6">
-                                                                    <div style="padding-right: 0px; padding-left: 0px;">
-                                                                        <input style="width:100%" class="select2 arches-select2-crud-form" data-bind="select2: {value: getEditedNode('INVESTIGATOR_ROLE_TYPE.E55', 'value'), placeholder: '{% trans "Assessment type" %}', dataKey: 'INVESTIGATOR_ROLE_TYPE.E55'}">
-                                                                        <input style="width:100%" class="select2 arches-select2-crud-form" data-bind="select2: {value: getEditedNode('ASSESSMENT_ACTIVITY_TYPE.E55', 'value'), placeholder: '{% trans "Investigator role" %}', dataKey: 'ASSESSMENT_ACTIVITY_TYPE.E55'}">
-                                                                        </input>
+                                                <dl id="assessment-summary">
+                                                    <dt>
+                                                        <h5 id="arches-names-form" class="section-headline">{% trans "Assessment Summary" %}</h5>
+                                                    </dt>
+                                                    <dd class="arches-RDM-labels">
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <input style="height: 36px; width:50%; padding-top: 2px;" placeholder='{% trans "Assessment type" %}' class="select2 arches-select2-crud-form" data-bind="select2: {value: getEditedNode('INVESTIGATOR_ROLE_TYPE.E55', 'value'), dataKey: 'INVESTIGATOR_ROLE_TYPE.E55'}"></input>
+                                                                <input style="height: 36px; width:50%; padding-top: 2px;" placeholder='{% trans "Investigator role" %}' class="select2 arches-select2-crud-form" data-bind="select2: {value: getEditedNode('ASSESSMENT_ACTIVITY_TYPE.E55', 'value'), dataKey: 'ASSESSMENT_ACTIVITY_TYPE.E55'}"></input>
+                                                                {% include 'views/components/add-item-button.htm' %}
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <div class="margin-left-5">
+                                                                        <dl class="margin-bottom-10"> 
+                                                                            <dd class="margin-left-10 margin-top-5" style="display: none;" data-bind="visible: true">
+                                                                                <div data-bind="visible: getBranchLists().length == 0" class="txt-color-blue">{% trans "No Assessment Summaries added" %}</div>   
+                                                                                <div data-bind="foreach: getBranchLists()">
+                                                                                    <div class="arches-crud-record">
+                                                                                        <a href="javascript:void(0)" class="arches-CRUD-child" title="Delete this Summary"><i data-bind="click: $parent.deleteItem.bind($parent)" class="arches-CRUD-delete fa fa-times-circle"></i></a>
+                                                                                        <a href="javascript:void(0)" class="arches-CRUD-child arches-CRUD-edit" data-bind="click: $parent.editItem.bind($parent)" title="{% trans "Edit this Summary" %}">
+                                                                                            <span data-bind="text: nodes.get('ASSESSMENT_ACTIVITY_TYPE.E55', 'label')" style="padding-right:2px;"></span>
+                                                                                            <span data-bind="text: nodes.get('INVESTIGATOR_ROLE_TYPE.E55', 'label')" style="padding-right:2px;"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </dd>
+                                                                        </dl>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </dd>
-                                                    </dl>
+                                                        </div>
+                                                    </dd>
+                                                </dl>
                                                 </div>  
                                             </div>
                                             <!-- End Tab 2 -->
