@@ -67,7 +67,6 @@ define(['jquery',
                 el: this.$el.find('#assessment-summary')[0],
                 data: this.data,
                 dataKey: 'INVESTIGATION_ASSESSMENT_ACTIVITY.E7',
-                singleEdit: true
             }));
             
             $('#end-workflow').removeClass('disabled');      
