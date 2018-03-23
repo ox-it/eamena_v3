@@ -8,7 +8,7 @@ define(['jquery',
         return BaseForm.extend({
             initialize: function() {
                 BaseForm.prototype.initialize.apply(this);                
-                
+console.log("this.data");                
                 var self = this;
                 var date_picker = $('.datetimepicker').datetimepicker({pickTime: false});
                 date_picker.on('dp.change', function(evt){
@@ -19,9 +19,9 @@ define(['jquery',
                     el: this.$el.find('#overall-site-condition')[0],
                     data: this.data,
                     dataKey: 'OVERALL_CONDITION_STATE_TYPE.E55',
-                    rules: true,
                     validateBranch: function (nodes) {
-                        return this.validateHasValues(nodes);
+                        return true;
+                        // return this.validateHasValues(nodes);
                     }
                 }));
                 
@@ -43,7 +43,6 @@ define(['jquery',
                     el: this.$el.find('#damage-overall-extent')[0],
                     data: this.data,
                     dataKey: 'DAMAGE_EXTENT_TYPE.E55',
-                    rules: true,
                     validateBranch: function (nodes) {
                         return this.validateHasValues(nodes);
                     }
@@ -79,7 +78,6 @@ define(['jquery',
                     el: this.$el.find('#threats')[0],
                     data: this.data,
                     dataKey: 'THREAT_INFERENCE_MAKING.I5',
-                    rules: true,
                     validateBranch: function (nodes) {
                         var canBeEmpty = ['THREAT_INFERENCE_MAKING_ASSESSOR_NAME.E41'];
                         var valid = nodes != undefined && nodes.length > 0;
@@ -111,7 +109,7 @@ define(['jquery',
                     }
                 }));
 
-                this.listenTo(this,'change', this.dateEdit)
+                // this.listenTo(this,'change', this.dateEdit)
             },
             
             toggleEditActor: function (e) {
